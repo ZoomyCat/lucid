@@ -1,0 +1,50 @@
+#!/usr/bin/env bash
+##Created by Edward "edge226" Tunnah.
+
+## This is a work in progress. The use case is not in effect right now
+## and will only operate from the current working directory.
+
+## defines the usage of the program.
+usage="
+Name: 				lucid-build
+  
+Description:    	lucid-build compiles all PKGBUILD's recursively 
+					within the working directory. It has options to
+					modify where it starts searching and what
+					architecture you would like to build within that
+					working directory.
+					
+					Currently you can only use one architecture at
+					a time but that will change.
+
+Usage:				lucid-build <Options>
+
+Options: 		
+
+	-h or --help 	You're reading it.
+	
+	-d location		Changes the location where you start recursively
+					searching for PKGBUILD files.
+					
+	-6				Compiles x86_64 packages.
+	
+	-3				Compiles i686 packages.
+	
+	-m				Compiles multilib packages.
+					
+Examples:		
+	
+	lb -6 -d /var/abs/core/
+	lb -3 -d /var/abs/core/
+	lb -m -d /var/abs/core/"
+	
+	
+	
+findpkgbuild() {
+	## This stuff just finds pkgbuilds and then runs an inputted command
+	
+	## The flags passed to findpkgbuild decide what is inputted into
+	## the find command.
+	build="unstable-x86_64-build"
+	find -name PKGBUILD -type f -print0 -exec "$build" \;
+}
