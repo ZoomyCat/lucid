@@ -3,8 +3,12 @@ lucid
 
 Lucid OS Repository
 
-This is where all the PKGBUILDS and custom programs will reside for the Lucid OS Linux distribution.
+--- We are currently in the early development stages. ---
 
-Lucid OS will be an independent Linux distribution that uses tools from both Arch Linux and Manjaro. We follow the kiss principle from multiple perspectives. Having a system that is equally easy for the developer as it is the user is important and this is our goal.
+This is where all the PKGBUILDS and tools will reside for the Lucid OS Linux distribution.
 
-We are currently in the early development stages.
+Lucid OS will be an independent Linux distribution that uses tools primarily from both Arch Linux and Manjaro.
+
+We follow the kiss principle from not only one but multiple perspectives. Having a system that is equally as easy for the developer as it is the user is an important aspect of the kiss principle and this is our goal.
+
+The official Lucis OS builds will be built with ease of use, functionality, productivity and quality in mind.
