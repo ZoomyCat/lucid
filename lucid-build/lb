@@ -14,10 +14,8 @@ Description:    	lucid-build compiles all PKGBUILD's recursively
 					Currently you can only use one architecture at
 					a time but that will change.
 
-Usage:				lucid-build [-d] (Options)
+Usage:				lucid-build (Options)
 
-
-					-d
 Options: 		
 
 	-h or --help 	You're reading it.
