@@ -6,7 +6,7 @@ usage="
 Name: 				lucid-build
   
 Description:    			lucid-build compiles all PKGBUILD's recursively 
-					within the working directory. It has options to
+					within the working directory. It will have options to
 					modify where it starts searching and what
 					architecture you would like to build within that
 					working directory.
