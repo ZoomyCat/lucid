@@ -1,10 +1,6 @@
 #!/usr/bin/env bash
 ##Created by Edward "edge226" Tunnah.
 
-## This is a work in progress. The use case is not in effect right now
-## and will only operate from the current working directory.
-## It will also only do 64 bit right now unless modified.
-
 ## defines the usage of the program.
 usage="
 Name: 				lucid-build
@@ -18,34 +14,55 @@ Description:    	lucid-build compiles all PKGBUILD's recursively
 					Currently you can only use one architecture at
 					a time but that will change.
 
-Usage:				lucid-build <Options>
+Usage:				lucid-build [-d] (Options)
 
+
+					-d
 Options: 		
 
 	-h or --help 	You're reading it.
 	
-	-d location		Changes the location where you start recursively
-					searching for PKGBUILD files.
-					
 	-6				Compiles x86_64 packages.
+	-64				^    ^    ^    ^    ^
 	
 	-3				Compiles i686 packages.
+	-32				^    ^    ^    ^    ^
 	
 	-m				Compiles multilib packages.
+	-multilib		^    ^    ^    ^    ^    ^
 					
 Examples:		
 	
-	lb -6 -d /var/abs/core/
-	lb -3 -d /var/abs/core/
-	lb -m -d /var/abs/core/"
-	
-	
+	lb -6 /var/abs/core/
+	lb -3 /var/abs/core/
+	lb -m /var/abs/core/"
 	
 findpkgbuild() {
 	## This stuff just finds pkgbuilds and then runs an inputted command
-	
-	## The flags passed to findpkgbuild decide what is inputted into
-	## the find command.
-	build="unstable-x86_64-build"
-	find -name PKGBUILD -type f -print0 -exec "$build" \;
+
+		if [ "$1" = "" ]; then
+			local build="unstable-x86_64-build"
+		elif [ ! "$1" = "" ]; then
+			local build="$1"
+			echo "$build"
+		fi
+		if [ "$2" = "" ]; then
+			local dir="./"
+			echo "$dir"
+		elif [ ! "$2" = "" ]; then
+			local dir="$2"
+			echo "$dir"
+		fi
+
+	find "$dir" -name PKGBUILD -type f -print0 -exec "$build" \;
 }
+
+## The main stuff.
+
+case "$@" in
+	( -6 | -64 ) 			build="unstable-x86_64-build"; findpkgbuild "$build";;
+	( -3 | -32 ) 			build="unstable-i686-build"; findpkgbuild "$build";;
+	( -m | --multilib ) 	build="unstable-multilib-build"; findpkgbuild "$build";;
+	( -h | --help )			echo "$usage";;
+	*) build=""; findpkgbuild "$build";;
+esac
