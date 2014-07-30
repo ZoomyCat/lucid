@@ -3,6 +3,7 @@
 
 ## This is a work in progress. The use case is not in effect right now
 ## and will only operate from the current working directory.
+## It will also only do 64 bit right now unless modified.
 
 ## defines the usage of the program.
 usage="
