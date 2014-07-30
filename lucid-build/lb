@@ -5,7 +5,7 @@
 usage="
 Name: 				lucid-build
   
-Description:    	lucid-build compiles all PKGBUILD's recursively 
+Description:    			lucid-build compiles all PKGBUILD's recursively 
 					within the working directory. It has options to
 					modify where it starts searching and what
 					architecture you would like to build within that
@@ -14,11 +14,11 @@ Description:    	lucid-build compiles all PKGBUILD's recursively
 					Currently you can only use one architecture at
 					a time but that will change.
 
-Usage:				lucid-build (Options)
+Usage:					lucid-build (Options)
 
 Options: 		
 
-	-h or --help 	You're reading it.
+	-h or --help 			You're reading it.
 	
 	-6				Compiles x86_64 packages.
 	-64				^    ^    ^    ^    ^
@@ -27,7 +27,7 @@ Options:
 	-32				^    ^    ^    ^    ^
 	
 	-m				Compiles multilib packages.
-	-multilib		^    ^    ^    ^    ^    ^
+	-multilib			^    ^    ^    ^    ^    ^
 					
 Examples:		
 	
@@ -38,19 +38,19 @@ Examples:
 findpkgbuild() {
 	## This stuff just finds pkgbuilds and then runs an inputted command
 
-		if [ "$1" = "" ]; then
-			local build="unstable-x86_64-build"
-		elif [ ! "$1" = "" ]; then
-			local build="$1"
-			echo "$build"
-		fi
-		if [ "$2" = "" ]; then
-			local dir="./"
-			echo "$dir"
-		elif [ ! "$2" = "" ]; then
-			local dir="$2"
-			echo "$dir"
-		fi
+	if [ "$1" = "" ]; then
+		local build="unstable-x86_64-build"
+	elif [ ! "$1" = "" ]; then
+		local build="$1"
+		echo "$build"
+	fi
+	if [ "$2" = "" ]; then
+		local dir="./"
+		echo "$dir"
+	elif [ ! "$2" = "" ]; then
+		local dir="$2"
+		echo "$dir"
+	fi
 
 	find "$dir" -name PKGBUILD -type f -print0 -exec "$build" \;
 }
@@ -60,7 +60,7 @@ findpkgbuild() {
 case "$@" in
 	( -6 | -64 ) 			build="unstable-x86_64-build"; findpkgbuild "$build";;
 	( -3 | -32 ) 			build="unstable-i686-build"; findpkgbuild "$build";;
-	( -m | --multilib ) 	build="unstable-multilib-build"; findpkgbuild "$build";;
+	( -m | --multilib ) 		build="unstable-multilib-build"; findpkgbuild "$build";;
 	( -h | --help )			echo "$usage";;
-	*) build=""; findpkgbuild "$build";;
+	*) 				build=""; findpkgbuild "$build";;
 esac
