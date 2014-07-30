@@ -1,0 +1,4 @@
+lucid
+=====
+
+Lucid OS Repository
