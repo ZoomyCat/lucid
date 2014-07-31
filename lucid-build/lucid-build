@@ -1,0 +1,13 @@
+#!/usr/bin/env bash
+##Created by Edward "edge226" Tunnah.
+
+## This is the script that actually builds the packages in the build
+## area and then moves everything out of the respective build areas into
+## a staging area to be processed. This script should always be run
+## through the shorter lb command instead of manually since it will always
+## pass the parameters in the same way.
+
+build="$1"
+repo="$2"
+
+"$build"
