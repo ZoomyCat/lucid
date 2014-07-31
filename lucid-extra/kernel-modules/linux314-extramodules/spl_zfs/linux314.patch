@@ -1,0 +1,403 @@
+diff --git a/config/kernel-bio-bvec-iter.m4 b/config/kernel-bio-bvec-iter.m4
+new file mode 100644
+index 0000000..64c9893
+--- /dev/null
++++ b/config/kernel-bio-bvec-iter.m4
+@@ -0,0 +1,20 @@
++dnl #
++dnl # 3.14 API change,
++dnl # Immutable biovecs. A number of fields of struct bio are moved to
++dnl # struct bvec_iter.
++dnl #
++AC_DEFUN([ZFS_AC_KERNEL_BIO_BVEC_ITER], [
++	AC_MSG_CHECKING([whether bio has bi_iter])
++	ZFS_LINUX_TRY_COMPILE([
++		#include <linux/bio.h>
++	],[
++		struct bio bio;
++		bio.bi_iter.bi_sector = 0;
++	],[
++		AC_MSG_RESULT(yes)
++		AC_DEFINE(HAVE_BIO_BVEC_ITER, 1, [bio has bi_iter])
++	],[
++		AC_MSG_RESULT(no)
++	])
++])
++
+diff --git a/config/kernel-rq-for-each_segment.m4 b/config/kernel-rq-for-each_segment.m4
+index 449168d..84ce7d1 100644
+--- a/config/kernel-rq-for-each_segment.m4
++++ b/config/kernel-rq-for-each_segment.m4
+@@ -1,10 +1,13 @@
+ dnl #
+ dnl # 2.6.x API change
+ dnl #
++dnl # 3.14 API change
++dnl #
+ AC_DEFUN([ZFS_AC_KERNEL_RQ_FOR_EACH_SEGMENT], [
+-	AC_MSG_CHECKING([whether rq_for_each_segment() is available])
+ 	tmp_flags="$EXTRA_KCFLAGS"
+ 	EXTRA_KCFLAGS="${NO_UNUSED_BUT_SET_VARIABLE}"
++
++	AC_MSG_CHECKING([whether rq_for_each_segment() wants bio_vec *])
+ 	ZFS_LINUX_TRY_COMPILE([
+ 		#include <linux/blkdev.h>
+ 	],[
+@@ -16,8 +19,29 @@ AC_DEFUN([ZFS_AC_KERNEL_RQ_FOR_EACH_SEGMENT], [
+ 		AC_MSG_RESULT(yes)
+ 		AC_DEFINE(HAVE_RQ_FOR_EACH_SEGMENT, 1,
+ 		          [rq_for_each_segment() is available])
++		AC_DEFINE(HAVE_RQ_FOR_EACH_SEGMENT_BVP, 1,
++		          [rq_for_each_segment() wants bio_vec *])
++	],[
++		AC_MSG_RESULT(no)
++	])
++
++	AC_MSG_CHECKING([whether rq_for_each_segment() wants bio_vec])
++	ZFS_LINUX_TRY_COMPILE([
++		#include <linux/blkdev.h>
++	],[
++		struct bio_vec bv;
++		struct req_iterator iter;
++		struct request *req = NULL;
++		rq_for_each_segment(bv, req, iter) { }
++	],[
++		AC_MSG_RESULT(yes)
++		AC_DEFINE(HAVE_RQ_FOR_EACH_SEGMENT, 1,
++		          [rq_for_each_segment() is available])
++		AC_DEFINE(HAVE_RQ_FOR_EACH_SEGMENT_BV, 1,
++		          [rq_for_each_segment() wants bio_vec])
+ 	],[
+ 		AC_MSG_RESULT(no)
+ 	])
++
+ 	EXTRA_KCFLAGS="$tmp_flags"
+ ])
+diff --git a/config/kernel.m4 b/config/kernel.m4
+index 74ce22c..08913e5 100644
+--- a/config/kernel.m4
++++ b/config/kernel.m4
+@@ -17,6 +17,7 @@ AC_DEFUN([ZFS_AC_CONFIG_KERNEL], [
+ 	ZFS_AC_KERNEL_INVALIDATE_BDEV_ARGS
+ 	ZFS_AC_KERNEL_BDEV_LOGICAL_BLOCK_SIZE
+ 	ZFS_AC_KERNEL_BDEV_PHYSICAL_BLOCK_SIZE
++	ZFS_AC_KERNEL_BIO_BVEC_ITER
+ 	ZFS_AC_KERNEL_BIO_FAILFAST
+ 	ZFS_AC_KERNEL_BIO_FAILFAST_DTD
+ 	ZFS_AC_KERNEL_REQ_FAILFAST_MASK
+diff --git a/include/linux/blkdev_compat.h b/include/linux/blkdev_compat.h
+index ec9926f..b5013fc 100644
+--- a/include/linux/blkdev_compat.h
++++ b/include/linux/blkdev_compat.h
+@@ -284,9 +284,43 @@ struct req_iterator {
+ # define rq_for_each_segment(bvl, _rq, _iter)                   \
+ 	__rq_for_each_bio(_iter.bio, _rq)                       \
+ 		bio_for_each_segment(bvl, _iter.bio, _iter.i)
++
++#define HAVE_RQ_FOR_EACH_SEGMENT_BVP 1
+ #endif /* HAVE_RQ_FOR_EACH_SEGMENT */
+ 
+ /*
++ * 3.14 API change
++ * rq_for_each_segment changed from taking bio_vec * to taking bio_vec.
++ * We provide rq_for_each_segment4 which takes both.
++ * You should not modify the fields in @bv and @bvp.
++ *
++ * Note: the if-else is just to inject the assignment before the loop body.
++ */
++#ifdef HAVE_RQ_FOR_EACH_SEGMENT_BVP
++#define rq_for_each_segment4(bv, bvp, rq, iter)	\
++	rq_for_each_segment(bvp, rq, iter)	\
++		if ((bv = *bvp), 0)		\
++			;			\
++		else
++#else
++#define rq_for_each_segment4(bv, bvp, rq, iter)	\
++	rq_for_each_segment(bv, rq, iter)	\
++		if ((bvp = &bv), 0)		\
++			;			\
++		else
++#endif
++
++#ifdef HAVE_BIO_BVEC_ITER
++#define BIO_BI_SECTOR(bio)	(bio)->bi_iter.bi_sector
++#define BIO_BI_SIZE(bio)	(bio)->bi_iter.bi_size
++#define BIO_BI_IDX(bio)		(bio)->bi_iter.bi_idx
++#else
++#define BIO_BI_SECTOR(bio)	(bio)->bi_sector
++#define BIO_BI_SIZE(bio)	(bio)->bi_size
++#define BIO_BI_IDX(bio)		(bio)->bi_idx
++#endif
++
++/*
+  * Portable helper for correctly setting the FAILFAST flags.  The
+  * correct usage has changed 3 times from 2.6.12 to 2.6.38.
+  */
+diff --git a/module/zfs/dmu.c b/module/zfs/dmu.c
+index 0a90333..9603262 100644
+--- a/module/zfs/dmu.c
++++ b/module/zfs/dmu.c
+@@ -993,35 +993,42 @@ xuio_stat_wbuf_nocopy()
+ 
+ /*
+  * Copy up to size bytes between arg_buf and req based on the data direction
+- * described by the req.  If an entire req's data cannot be transfered the
+- * req's is updated such that it's current index and bv offsets correctly
+- * reference any residual data which could not be copied.  The return value
+- * is the number of bytes successfully copied to arg_buf.
++ * described by the req.  If an entire req's data cannot be transfered in one
++ * pass, you should pass in @req_offset to indicate where to continue. The
++ * return value is the number of bytes successfully copied to arg_buf.
+  */
+ static int
+-dmu_req_copy(void *arg_buf, int size, int *offset, struct request *req)
++dmu_req_copy(void *arg_buf, int size, int *offset, struct request *req, size_t req_offset)
+ {
+-	struct bio_vec *bv;
++	struct bio_vec bv, *bvp;
+ 	struct req_iterator iter;
+ 	char *bv_buf;
+-	int tocpy;
++	int tocpy, bv_len, bv_offset;
+ 
+ 	*offset = 0;
+-	rq_for_each_segment(bv, req, iter) {
+-
+-		/* Fully consumed the passed arg_buf */
++	rq_for_each_segment4(bv, bvp, req, iter) {
++		/*
++		 * Fully consumed the passed arg_buf. We use goto here because
++		 * rq_for_each_segment is a double loop
++		 */
+ 		ASSERT3S(*offset, <=, size);
+ 		if (size == *offset)
+-			break;
++			goto out;
+ 
+-		/* Skip fully consumed bv's */
+-		if (bv->bv_len == 0)
++		/* Skip already copied bv */
++		if (req_offset >=  bv.bv_len) {
++			req_offset -= bv.bv_len;
+ 			continue;
++		}
++
++		bv_len = bv.bv_len - req_offset;
++		bv_offset = bv.bv_offset + req_offset;
++		req_offset = 0;
+ 
+-		tocpy = MIN(bv->bv_len, size - *offset);
++		tocpy = MIN(bv_len, size - *offset);
+ 		ASSERT3S(tocpy, >=, 0);
+ 
+-		bv_buf = page_address(bv->bv_page) + bv->bv_offset;
++		bv_buf = page_address(bv.bv_page) + bv_offset;
+ 		ASSERT3P(bv_buf, !=, NULL);
+ 
+ 		if (rq_data_dir(req) == WRITE)
+@@ -1030,55 +1037,8 @@ dmu_req_copy(void *arg_buf, int size, int *offset, struct request *req)
+ 			memcpy(bv_buf, arg_buf + *offset, tocpy);
+ 
+ 		*offset += tocpy;
+-		bv->bv_offset += tocpy;
+-		bv->bv_len -= tocpy;
+-	}
+-
+-	return 0;
+-}
+-
+-static void
+-dmu_bio_put(struct bio *bio)
+-{
+-	struct bio *bio_next;
+-
+-	while (bio) {
+-		bio_next = bio->bi_next;
+-		bio_put(bio);
+-		bio = bio_next;
+-	}
+-}
+-
+-static int
+-dmu_bio_clone(struct bio *bio, struct bio **bio_copy)
+-{
+-	struct bio *bio_root = NULL;
+-	struct bio *bio_last = NULL;
+-	struct bio *bio_new;
+-
+-	if (bio == NULL)
+-		return EINVAL;
+-
+-	while (bio) {
+-		bio_new = bio_clone(bio, GFP_NOIO);
+-		if (bio_new == NULL) {
+-			dmu_bio_put(bio_root);
+-			return ENOMEM;
+-		}
+-
+-		if (bio_last) {
+-			bio_last->bi_next = bio_new;
+-			bio_last = bio_new;
+-		} else {
+-			bio_root = bio_new;
+-			bio_last = bio_new;
+-		}
+-
+-		bio = bio->bi_next;
+ 	}
+-
+-	*bio_copy = bio_root;
+-
++out:
+ 	return 0;
+ }
+ 
+@@ -1087,9 +1047,9 @@ dmu_read_req(objset_t *os, uint64_t object, struct request *req)
+ {
+ 	uint64_t size = blk_rq_bytes(req);
+ 	uint64_t offset = blk_rq_pos(req) << 9;
+-	struct bio *bio_saved = req->bio;
+ 	dmu_buf_t **dbp;
+ 	int numbufs, i, err;
++	size_t req_offset;
+ 
+ 	/*
+ 	 * NB: we could do this block-at-a-time, but it's nice
+@@ -1100,17 +1060,7 @@ dmu_read_req(objset_t *os, uint64_t object, struct request *req)
+ 	if (err)
+ 		return (err);
+ 
+-	/*
+-	 * Clone the bio list so the bv->bv_offset and bv->bv_len members
+-	 * can be safely modified.  The original bio list is relinked in to
+-	 * the request when the function exits.  This is required because
+-	 * some file systems blindly assume that these values will remain
+-	 * constant between bio_submit() and the IO completion callback.
+-	 */
+-	err = dmu_bio_clone(bio_saved, &req->bio);
+-	if (err)
+-		goto error;
+-
++	req_offset = 0;
+ 	for (i = 0; i < numbufs; i++) {
+ 		int tocpy, didcpy, bufoff;
+ 		dmu_buf_t *db = dbp[i];
+@@ -1122,7 +1072,7 @@ dmu_read_req(objset_t *os, uint64_t object, struct request *req)
+ 		if (tocpy == 0)
+ 			break;
+ 
+-		err = dmu_req_copy(db->db_data + bufoff, tocpy, &didcpy, req);
++		err = dmu_req_copy(db->db_data + bufoff, tocpy, &didcpy, req, req_offset);
+ 
+ 		if (didcpy < tocpy)
+ 			err = EIO;
+@@ -1132,12 +1082,9 @@ dmu_read_req(objset_t *os, uint64_t object, struct request *req)
+ 
+ 		size -= tocpy;
+ 		offset += didcpy;
++		req_offset += didcpy;
+ 		err = 0;
+ 	}
+-
+-	dmu_bio_put(req->bio);
+-	req->bio = bio_saved;
+-error:
+ 	dmu_buf_rele_array(dbp, numbufs, FTAG);
+ 
+ 	return (err);
+@@ -1148,11 +1095,9 @@ dmu_write_req(objset_t *os, uint64_t object, struct request *req, dmu_tx_t *tx)
+ {
+ 	uint64_t size = blk_rq_bytes(req);
+ 	uint64_t offset = blk_rq_pos(req) << 9;
+-	struct bio *bio_saved = req->bio;
+ 	dmu_buf_t **dbp;
+-	int numbufs;
+-	int err = 0;
+-	int i;
++	int numbufs, i, err;
++	size_t req_offset;
+ 
+ 	if (size == 0)
+ 		return (0);
+@@ -1162,17 +1107,7 @@ dmu_write_req(objset_t *os, uint64_t object, struct request *req, dmu_tx_t *tx)
+ 	if (err)
+ 		return (err);
+ 
+-	/*
+-	 * Clone the bio list so the bv->bv_offset and bv->bv_len members
+-	 * can be safely modified.  The original bio list is relinked in to
+-	 * the request when the function exits.  This is required because
+-	 * some file systems blindly assume that these values will remain
+-	 * constant between bio_submit() and the IO completion callback.
+-	 */
+-	err = dmu_bio_clone(bio_saved, &req->bio);
+-	if (err)
+-		goto error;
+-
++	req_offset = 0;
+ 	for (i = 0; i < numbufs; i++) {
+ 		int tocpy, didcpy, bufoff;
+ 		dmu_buf_t *db = dbp[i];
+@@ -1191,7 +1126,7 @@ dmu_write_req(objset_t *os, uint64_t object, struct request *req, dmu_tx_t *tx)
+ 		else
+ 			dmu_buf_will_dirty(db, tx);
+ 
+-		err = dmu_req_copy(db->db_data + bufoff, tocpy, &didcpy, req);
++		err = dmu_req_copy(db->db_data + bufoff, tocpy, &didcpy, req, req_offset);
+ 
+ 		if (tocpy == db->db_size)
+ 			dmu_buf_fill_done(db, tx);
+@@ -1204,14 +1139,11 @@ dmu_write_req(objset_t *os, uint64_t object, struct request *req, dmu_tx_t *tx)
+ 
+ 		size -= tocpy;
+ 		offset += didcpy;
++		req_offset += didcpy;
+ 		err = 0;
+ 	}
+ 
+-	dmu_bio_put(req->bio);
+-	req->bio = bio_saved;
+-error:
+ 	dmu_buf_rele_array(dbp, numbufs, FTAG);
+-
+ 	return (err);
+ }
+ 
+diff --git a/module/zfs/vdev_disk.c b/module/zfs/vdev_disk.c
+index 2869716..5ef2cdc 100644
+--- a/module/zfs/vdev_disk.c
++++ b/module/zfs/vdev_disk.c
+@@ -430,11 +430,11 @@ BIO_END_IO_PROTO(vdev_disk_physio_completion, bio, size, error)
+ 		    "bi_next: %p, bi_flags: %lx, bi_rw: %lu, bi_vcnt: %d\n"
+ 		    "bi_idx: %d, bi_size: %d, bi_end_io: %p, bi_cnt: %d\n",
+ 		    bio->bi_next, bio->bi_flags, bio->bi_rw, bio->bi_vcnt,
+-		    bio->bi_idx, bio->bi_size, bio->bi_end_io,
++		    BIO_BI_IDX(bio), BIO_BI_SIZE(bio), bio->bi_end_io,
+ 		    atomic_read(&bio->bi_cnt));
+ 
+ #ifndef HAVE_2ARGS_BIO_END_IO_T
+-	if (bio->bi_size)
++	if (BIO_BI_SIZE(bio))
+ 		return 1;
+ #endif /* HAVE_2ARGS_BIO_END_IO_T */
+ 
+@@ -554,7 +554,7 @@ retry:
+ 		vdev_disk_dio_get(dr);
+ 
+ 		dr->dr_bio[i]->bi_bdev = bdev;
+-		dr->dr_bio[i]->bi_sector = bio_offset >> 9;
++		BIO_BI_SECTOR(dr->dr_bio[i]) = bio_offset >> 9;
+ 		dr->dr_bio[i]->bi_rw = dr->dr_rw;
+ 		dr->dr_bio[i]->bi_end_io = vdev_disk_physio_completion;
+ 		dr->dr_bio[i]->bi_private = dr;
+@@ -563,8 +563,8 @@ retry:
+ 		bio_size = bio_map(dr->dr_bio[i], bio_ptr, bio_size);
+ 
+ 		/* Advance in buffer and construct another bio if needed */
+-		bio_ptr    += dr->dr_bio[i]->bi_size;
+-		bio_offset += dr->dr_bio[i]->bi_size;
++		bio_ptr    += BIO_BI_SIZE(dr->dr_bio[i]);
++		bio_offset += BIO_BI_SIZE(dr->dr_bio[i]);
+ 	}
+ 
+ 	/* Extra reference to protect dio_request during submit_bio */

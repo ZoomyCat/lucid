@@ -1,0 +1,214 @@
+# Contributor: Vi0L0 <vi0l093@gmail.com>
+# Maintainer: Lane Wiscombe anex[dot]dem0n[dot]com
+
+pkgbase=catalyst-utils
+pkgname=('catalyst-utils' 'opencl-catalyst' 'mhwd-catalyst')
+pkgver=14.10.1006.1001
+pkgrel=1
+_tarball=14-4-rev2-linux-x86-x86-64-may6
+pkgdesc="AMD/ATI Catalyst drivers utilities and libraries."
+arch=('i686' 'x86_64')
+url="http://www.amd.com"
+license=('custom')
+source=(amd-catalyst-14-4-rev2-linux-x86-x86-64-may6.zip
+    catalyst.sh
+    atieventsd.sh
+    atieventsd.service
+    arch-fglrx-authatieventsd_new.patch
+    mhwd-catalyst
+    temp-links-catalyst.service  temp_links_catalyst)
+
+sha256sums=('93e213e5b182a0863aa926d1e3ab4498adc0e0007aac4fc14a3abae84bb170f5'
+            'd5583bfb5977f73b4ca65533030f490350daca9e0ed10aefe517ffb70817531e'
+            '9b347c3f518ddf12bb08a3cf09afcc3096e5dd4488e7ca3445df97b392985e8b'
+            '398bade6ea2cb084043d87f6580569dd54b769055cdb518e2a074124c20f2606'
+            'e9db1f09c6ebbe2024bcbb40a86482d4fdbcf227a6f1d58385101efe46dab9e5'
+            '4f36dd7b3bf2beec22af68f1aedf96cbdb9fa7b0586af71bac5c8b1f4a952358'
+            'c97a2735f80416151b2a71504e42385c4d8d95cf42aa8f90a6c7bd5a966c54e1'
+            'efd26980888943293a7cf1d8d781b96b3bc7a5cdf23f926aa68ac4bc348b7691')
+
+prepare() {
+	cd ${srcdir}/fglrx-$pkgver
+ls
+	/bin/sh ./amd-driver-installer-${pkgver}-x86.x86_64.run --extract archive_files
+	#/bin/sh ./amd-catalyst-${pkgver}-linux-x86.x86_64.run --extract archive_files
+	#/bin/sh ./amd-catalyst-${pkgver}-linux-x86.x86_64.run --extract archive_files
+}
+
+
+package_catalyst-utils() {
+	pkgdesc="AMD Catalyst drivers utilities and libraries."
+	depends=('xorg-server>=1.7.0' 'xorg-server<1.16.0' 'libxrandr' 'libsm' 'fontconfig' 'libxcursor' 'libxi' 'gcc-libs' 'libxinerama' 'mhwd')
+	optdepends=('qt: to run ATi Catalyst Control Center (amdcccle)'
+		    'libxxf86vm: to run ATi Catalyst Control Center (amdcccle)'
+		    'acpid: acpi event support  / atieventsd')
+	conflicts=('catalyst-legacy' 'catalyst-legacy-utils' 'catalyst-13.4' 'catalyst-13.4-utils')
+	install="${pkgname}.install"
+
+	cd fglrx-$pkgver
+
+  ## Install userspace tools and libraries
+    # Create directories
+      install -m755 -d ${pkgdir}/etc/ati
+      install -m755 -d ${pkgdir}/etc/rc.d
+      install -m755 -d ${pkgdir}/etc/profile.d
+      install -m755 -d ${pkgdir}/etc/acpi/events
+      install -m755 -d ${pkgdir}/etc/security/console.apps
+
+      install -m755 -d ${pkgdir}/usr/lib/xorg/modules/dri
+      install -m755 -d ${pkgdir}/usr/lib/xorg/modules/drivers
+      install -m755 -d ${pkgdir}/usr/lib/xorg/modules/linux
+      install -m755 -d ${pkgdir}/usr/lib/dri
+      install -m755 -d ${pkgdir}/usr/lib/fglrx
+      install -m755 -d ${pkgdir}/usr/lib/systemd/system
+
+      install -m755 -d ${pkgdir}/usr/bin
+      install -m755 -d ${pkgdir}/usr/bin
+
+      install -m755 -d ${pkgdir}/usr/include/GL
+
+      install -m755 -d ${pkgdir}/usr/share/applications
+      install -m755 -d ${pkgdir}/usr/share/ati/amdcccle
+      install -m755 -d ${pkgdir}/usr/share/licenses/${pkgname}
+      install -m755 -d ${pkgdir}/usr/share/man/man8
+      install -m755 -d ${pkgdir}/usr/share/pixmaps
+
+    # X.org driver
+      if [ "${CARCH}" = "i686" ]; then
+	cd ${srcdir}/fglrx-$pkgver/archive_files/xpic/usr/X11R6/lib/modules
+      elif [ "${CARCH}" = "x86_64" ]; then
+	cd ${srcdir}/fglrx-$pkgver/archive_files/xpic_64a/usr/X11R6/lib64/modules
+      fi
+
+      install -m755 *.so ${pkgdir}/usr/lib/xorg/modules
+      install -m755 drivers/*.so ${pkgdir}/usr/lib/xorg/modules/drivers
+      install -m755 linux/*.so ${pkgdir}/usr/lib/xorg/modules/linux
+
+	# GLX extension module for X
+	install -D -m755 extensions/fglrx/fglrx-libglx.so "${pkgdir}/usr/lib/fglrx/xorg/modules/extensions/libglx.so"
+
+    # Controlcenter / libraries
+      if [ "${CARCH}" = "i686" ]; then
+	cd ${srcdir}/fglrx-$pkgver/archive_files/arch/x86/usr
+	_lib=lib
+      elif [ "${CARCH}" = "x86_64" ]; then
+	cd ${srcdir}/fglrx-$pkgver/archive_files/arch/x86_64/usr
+	_lib=lib64
+      fi
+
+	# OpenGL library
+	install -D -m755 X11R6/${_lib}/fglrx/fglrx-libGL.so.1.2 "${pkgdir}/usr/lib/fglrx/libGL.so.1.2"
+	ln -s "libGL.so.1.2" "${pkgdir}/usr/lib/fglrx/libGL.so.1"
+	ln -s "libGL.so.1.2" "${pkgdir}/usr/lib/fglrx/libGL.so"
+
+	# Fallback links
+	ln -s "/usr/lib/fglrx/libGL.so.1.2" "${pkgdir}/usr/lib/libGL.so.catalyst"
+	mkdir -p "${pkgdir}/usr/lib/xorg/modules/extensions/"
+	ln -s "/usr/lib/fglrx/xorg/modules/extensions/libglx.so" "${pkgdir}/usr/lib/xorg/modules/extensions/libglx.so.catalyst"
+
+      install -m755 X11R6/bin/* ${pkgdir}/usr/bin
+      install -m755 sbin/* ${pkgdir}/usr/bin
+      install -m755 X11R6/${_lib}/libAMDXvBA.so.1.0 ${pkgdir}/usr/lib
+      ln -snf libAMDXvBA.so.1.0 ${pkgdir}/usr/lib/libAMDXvBA.so.1
+      ln -snf libAMDXvBA.so.1.0 ${pkgdir}/usr/lib/libAMDXvBA.so
+      install -m755 X11R6/${_lib}/libatiadlxx.so ${pkgdir}/usr/lib
+      install -m755 X11R6/${_lib}/libfglrx_dm.so.1.0 ${pkgdir}/usr/lib
+      install -m755 X11R6/${_lib}/libXvBAW.so.1.0 ${pkgdir}/usr/lib
+      ln -snf libXvBAW.so.1.0 ${pkgdir}/usr/lib/libXvBAW.so.1
+      ln -snf libXvBAW.so.1.0 ${pkgdir}/usr/lib/libXvBAW.so
+      install -m644 X11R6/${_lib}/*.a ${pkgdir}/usr/lib
+      install -m644 X11R6/${_lib}/*.cap ${pkgdir}/usr/lib
+      install -m755 X11R6/${_lib}/modules/dri/*.so ${pkgdir}/usr/lib/xorg/modules/dri
+      install -m755 ${_lib}/*.so* ${pkgdir}/usr/lib
+
+    ## QT libs (only 2 files) - un-comment 2 lines below if you don't want to install qt package
+#      install -m755 -d ${pkgdir}/usr/share/ati/${_lib}
+#      install -m755 share/ati/${_lib}/*.so* ${pkgdir}/usr/share/ati/${_lib}
+
+      ln -snf /usr/lib/xorg/modules/dri/fglrx_dri.so ${pkgdir}/usr/lib/dri/fglrx_dri.so
+      ln -snf libfglrx_dm.so.1.0 ${pkgdir}/usr/lib/libfglrx_dm.so.1
+      ln -snf libfglrx_dm.so.1.0 ${pkgdir}/usr/lib/libfglrx_dm.so
+      ln -snf libatiuki.so.1.0 ${pkgdir}/usr/lib/libatiuki.so.1
+      ln -snf libatiuki.so.1.0 ${pkgdir}/usr/lib/libatiuki.so
+
+      cd ${srcdir}/fglrx-$pkgver/archive_files/common
+      patch -Np2 -i ${srcdir}/arch-fglrx-authatieventsd_new.patch
+      install -m644 etc/ati/* ${pkgdir}/etc/ati
+      chmod 755 ${pkgdir}/etc/ati/authatieventsd.sh
+
+      install -m644 etc/security/console.apps/amdcccle-su ${pkgdir}/etc/security/console.apps
+
+      install -m755 usr/X11R6/bin/* ${pkgdir}/usr/bin
+      install -m644 usr/include/GL/*.h ${pkgdir}/usr/include/GL
+      install -m755 usr/sbin/*.sh ${pkgdir}/usr/bin
+      install -m644 usr/share/ati/amdcccle/* ${pkgdir}/usr/share/ati/amdcccle
+      install -m644 usr/share/icons/*.xpm ${pkgdir}/usr/share/pixmaps
+      install -m644 usr/share/man/man8/*.8 ${pkgdir}/usr/share/man/man8
+      install -m644 usr/share/applications/*.desktop ${pkgdir}/usr/share/applications
+
+    # ACPI example files
+      install -m755 usr/share/doc/fglrx/examples/etc/acpi/*.sh ${pkgdir}/etc/acpi
+      sed -i -e "s/usr\/X11R6/usr/g" ${pkgdir}/etc/acpi/ati-powermode.sh
+      install -m644 usr/share/doc/fglrx/examples/etc/acpi/events/* ${pkgdir}/etc/acpi/events
+
+    # Add ATI Events Daemon launcher
+      install -m755 ${srcdir}/atieventsd.sh ${pkgdir}/etc/rc.d/atieventsd
+      install -m644 ${srcdir}/atieventsd.service ${pkgdir}/usr/lib/systemd/system
+
+    # thanks to cerebral, we dont need that damned symlink
+      install -m755 ${srcdir}/catalyst.sh ${pkgdir}/etc/profile.d
+
+    # License
+      install -m644 ${srcdir}/fglrx-$pkgver/archive_files/LICENSE.TXT ${pkgdir}/usr/share/licenses/${pkgname}
+      install -m644 ${srcdir}/fglrx-$pkgver/archive_files/common/usr/share/doc/amdcccle/ccc_copyrights.txt \
+	${pkgdir}/usr/share/licenses/${pkgname}/amdcccle_copyrights.txt
+
+    #workaround for the high io bug , thanks to lano1106 for finding this ugly bug! https://bbs.archlinux.org/viewtopic.php?pid=1279977#p1279977
+      install -m755 ${srcdir}/temp_links_catalyst ${pkgdir}/usr/bin
+      install -m644 ${srcdir}/temp-links-catalyst.service ${pkgdir}/usr/lib/systemd/system
+
+    # provided in opencl-catalyst package
+      rm "${pkgdir}"/usr/lib/lib{amdocl*,OpenCL}.so* 
+}
+
+package_opencl-catalyst() {
+      pkgdesc="OpenCL implemention from AMD"
+      provides=('libcl')
+      conflicts=('libcl' 'opencl-catalyst-legacy' 'opencl-catalyst-13.4')
+      depends=('gcc-libs')
+      optdepends=('opencl-headers: headers necessary for OpenCL development')
+
+      cd ${srcdir}/fglrx-$pkgver
+      
+      install -dm755 "${pkgdir}"/usr/{bin,lib}
+      install -dm755 "${pkgdir}/etc/OpenCL/vendors"
+      install -dm755 "${pkgdir}/usr/share/licenses/${pkgname}"
+
+      if [ "${CARCH}" = "i686" ]; then
+      _ARCHDIR="x86"
+      _ARCHLIB=""
+      else
+      _ARCHDIR="x86_64"
+      _ARCHLIB="64"
+      fi
+      
+      cd ${srcdir}/fglrx-$pkgver/archive_files/arch/${_ARCHDIR}
+      install -m755 usr/bin/clinfo "${pkgdir}/usr/bin/"
+      install -m644 etc/OpenCL/vendors/amdocl*.icd "${pkgdir}/etc/OpenCL/vendors/"
+      install -m755 usr/lib${_ARCHLIB}/libamdocl*.so "${pkgdir}/usr/lib/"
+      install -m755 usr/lib${_ARCHLIB}/libOpenCL.so.1 "${pkgdir}/usr/lib/"
+      ln -s libOpenCL.so.1 "${pkgdir}/usr/lib/libOpenCL.so"
+      # license
+      install -m644 "${srcdir}/fglrx-$pkgver/archive_files/LICENSE.TXT" "${pkgdir}/usr/share/licenses/${pkgname}/"
+}
+
+package_mhwd-catalyst() {
+    pkgdesc="MHWD module-ids for catalyst $pkgver"
+    arch=('any')
+
+    install -d -m755 "${pkgdir}/var/lib/mhwd/ids/pci/"
+    # Generate mhwd database
+    sh -e ${srcdir}/mhwd-catalyst \
+    ${srcdir}/fglrx-$pkgver/archive_files/common/lib/modules/fglrx/build_mod/fglrxko_pci_ids.h \
+    > ${pkgdir}/var/lib/mhwd/ids/pci/catalyst.ids
+}

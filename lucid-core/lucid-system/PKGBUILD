@@ -1,0 +1,13 @@
+#
+# maintainer: Lane Wiscombe[at]dem0n[dot]com
+
+pkgname=lucid-system
+pkgver=20$(date +%y%m%d)
+pkgrel=2
+pkgdesc="Lucid OS System - Update script"
+arch=('any')
+url="http://www.cupoflinux.com"
+license=('GPL')
+groups=('base')
+depends=('mkinitcpio>=0.12.0-2' 'pcmciautils>=018-5' 'linux>=3.4' 'pacman' 'coreutils' 'sed' 'awk' 'keyboardctl' 'pacman-init')
+install=lucid-update-system.sh

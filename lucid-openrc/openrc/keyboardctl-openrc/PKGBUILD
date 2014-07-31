@@ -1,0 +1,25 @@
+# Maintainer: artoo <flower_of_life@gmx.net>
+
+pkgname=keyboardctl-openrc
+pkgver=20140711
+pkgrel=1
+pkgdesc="keyboardctl openrc support"
+arch=('any')
+url="https://github.com/udeved"
+license=('GPL')
+groups=('openrc' 'openrc-base')
+depends=('keyboardctl' 'dbus-openrc')
+install=keyboardctl.install
+source=('confd.keyboardctl'
+		'initd.keyboardctl')
+sha256sums=('2efaa7c40066dcd5a5976d4d203ae39465764a2cc1eb73658ecfdbbeff0ec840'
+            '13817f5b040acbb7795c34af68ecd7ef21b3c0885d97852cc2397e20eac3aa66')
+
+pkgver() {
+  date +%Y%m%d
+}
+
+package() {
+	install -Dm755 $srcdir/confd.keyboardctl $pkgdir/etc/conf.d/keyboardctl
+	install -Dm755 $srcdir/initd.keyboardctl $pkgdir/etc/init.d/keyboardctl
+}

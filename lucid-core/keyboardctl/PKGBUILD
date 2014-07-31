@@ -1,0 +1,27 @@
+#
+# maintainer: Lane Wiscombe anex[at]dem0n[dot]com
+
+pkgname=('keyboardctl')
+pkgver=0.1.5
+pkgrel=2
+arch=('any')
+url="https://github.com/manjaro/keyboardctl"
+license=('GPL')
+options=('emptydirs')
+depends=('kbd' 'xkeyboard-config')
+makedepends=('git')
+groups=('base')
+install=keyboardctl.install
+   source=(git+https://github.com/manjaro/keyboardctl.git)
+   sha256sums=('SKIP')
+
+package() {
+  pkgdesc="Lucid OS keymap setup program"
+  depends=('kbd' 'xkeyboard-config')
+  conflicts=('console-setup')
+  replaces=('console-setup')
+  provides=('console-setup')
+  backup=('etc/keyboard.conf')
+  cd ${srcdir}/${pkgname}
+  make DESTDIR="$pkgdir" install
+}

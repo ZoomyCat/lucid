@@ -1,0 +1,12 @@
+broadcom-wl-dkms
+catalyst-utils
+lucid-firmware
+mesa-libgl
+nvidia-304xx-utils
+nvidia-utils
+pam_encfs
+spl-dkms
+spl-utils
+xdg-su
+zfs-dkms
+zfs-utils
