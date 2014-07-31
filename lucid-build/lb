@@ -2,6 +2,7 @@
 ##Created by Edward "edge226" Tunnah.
 
 ## defines the usage of the program.
+
 usage="
 Name: 				lucid-build
   
@@ -44,6 +45,7 @@ Examples:
 	lb -md /var/abs/multilib/zsnes"
 	
 findpkgbuild() {
+
 	## This stuff just finds pkgbuilds and then runs an inputted command
 
 	find "$dir" -name PKGBUILD -type f -print0 -exec "$build" \;
@@ -57,6 +59,7 @@ dir=""	 ## makes sure there is a default set for dir.
 
 ## This case statement sets the build parameters of the program for
 ## which architecture to use. 
+
 while getopts "6d:3d:md:*:" opt; do
 	case "$opt" in
 		( d )	dir=$OPTARG;;
@@ -69,11 +72,13 @@ while getopts "6d:3d:md:*:" opt; do
 		( * )	echo "$usage";;
 	esac
 done
+
+## Verifies the parameters in which the program is set to the user.
 if [ "$build" = "" ]; then
 	local build="unstable-x86_64-build"
 	printf "The build has been set to 64 bit as default.\n"
 else
-	printf "The build environment has been set to: $build\n"
+	printf "The build environment being used is: $build\n"
 fi
 if [ "$dir" = "" ]; then
 	local dir="./"
