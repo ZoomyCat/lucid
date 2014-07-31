@@ -107,7 +107,7 @@ OpenRC pkgbuilds
 * eudev-openrc
 * upower-pm-utils
 
-#####nosystemd#####
+#####nosystemd#####  * Not part of own group
 
 * cups-nosystemd
 * dbus-nosystemd
@@ -115,5 +115,4 @@ OpenRC pkgbuilds
 * libpulse-nosystemd
 * procps-ng-nosystemd
 * qt5-base-nosystemd
-* syslog-ng-nosystemd
 * udisks2-nosystemd
