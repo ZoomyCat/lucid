@@ -22,8 +22,8 @@ depends=('dbus-glib'
 	'dhcp-client'
 	'libsoup'
 	'libmm-glib'
-	'dbus-openrc
-  'rrdtool')
+	'dbus-openrc'
+        'rrdtool')
 makedepends=('intltool'
 	    'dhcpcd'
 	    'dhclient'
