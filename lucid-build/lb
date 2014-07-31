@@ -2,7 +2,6 @@
 ##Created by Edward "edge226" Tunnah.
 
 ## defines the usage of the program.
-
 usage="
 Name: 				lucid-build
   
@@ -44,47 +43,59 @@ Examples:
 	lb -3d /var/abs/core/pacman
 	lb -md /var/abs/multilib/zsnes"
 	
-findpkgbuild() {
 
-	## This stuff just finds pkgbuilds and then runs an inputted command
-
-	find "$dir" -name PKGBUILD -type f -print0 -exec "$build" \;
-}
+#findpkgbuild() {
+#	## This stuff just finds pkgbuilds and then runs an inputted command
+#	find "$dir" -name PKGBUILD -type f -print0 \
+#		-execdir "$build $buildtype $repo" \;
+#}
 
 ## The main stuff.
 
 OPTIND=1 ## make sure the optargs are reset for getopts
-build="" ## makes sure there is a default set for build.
+buildtype="" ## makes sure there is a default set for build.
 dir=""	 ## makes sure there is a default set for dir.
 
 ## This case statement sets the build parameters of the program for
 ## which architecture to use. 
-
-while getopts "6d:3d:md:*:" opt; do
+while getopts "36d:hmr:" opt; do
 	case "$opt" in
-		( d )	dir=$OPTARG;;
-		( 6 )	build="unstable-x86_64-build"
+		d)	dir=$OPTARG;;
+		6)	buildtype="unstable-x86_64-build"
 				printf "The build has been set to 64 bit.\n";;
-		( 3 )	build="unstable-i686-build"
+		3)	buildtype="unstable-i686-build"
 				printf "The build has been set to 32 bit.\n";;
-		( m )	build="unstable-multilib-build"
+		m)	buildtype="unstable-multilib-build"
 				printf "The build has been set to multilib.\n";;
-		( * )	echo "$usage";;
+		r)	repo=$OPTARG;;
+		h)	printf printf '%s\n' "$usage"; exit 0;;
+		\?)	printf printf '%s\n' "$usage" >&2; exit 1;;
 	esac
 done
-
-## Verifies the parameters in which the program is set to the user.
-if [ "$build" = "" ]; then
-	local build="unstable-x86_64-build"
+if [ "$buildtype" = "" ]; then
+	buildtype="unstable-x86_64-build"
 	printf "The build has been set to 64 bit as default.\n"
 else
-	printf "The build environment being used is: $build\n"
+	printf "The build environment being used is: $buildtype\n"
 fi
 if [ "$dir" = "" ]; then
-	local dir="./"
+	dir="./"
 	printf "Finding packagebuilds in "pwd" directory.\n"
 else 
 	printf "Finding packagebuilds in $dir directory.\n"
 fi
+if [ "$repo" = "" ]; then
+#	mkdir -p /var/repo
+	repo=/var/repo
+	printf "Using $repo as the default repository location\n"
+else
+	printf "Using $repo as the repository location\n"
+fi
 
-findpkgbuild "$build" "$dir"
+build="/home/edge/scripts/pkgbuild-interfacer/lucid-build"
+
+find "$dir" -name PKGBUILD -type f -execdir "$buildtype" \;
+## The next line will eventually be used to reference another script
+## that will deal with moving packages and build information to a
+## seperate location.
+#find "$dir" -name PKGBUILD -type f -execdir "$build" "$buildtype" "$repo" \;
