@@ -5,8 +5,8 @@
 usage="
 Name: 				lucid-build
   
-Description:    			lucid-build compiles all PKGBUILD's recursively 
-					within the working directory. It will have options to
+Description:    	lucid-build compiles all PKGBUILD's recursively 
+					within the working directory. It has options to
 					modify where it starts searching and what
 					architecture you would like to build within that
 					working directory.
@@ -14,24 +14,17 @@ Description:    			lucid-build compiles all PKGBUILD's recursively
 					Currently you can only use one architecture at
 					a time but that will change.
 
-<<<<<<< HEAD
 Usage:				lucid-build (Options) [-d] <location>
-=======
-Usage:					lucid-build (Options)
->>>>>>> 32855546c9002d22e251a9b670a8f14d9d872dd9
 
 Options: 		
 
-	-h or --help 			You're reading it.
+	-h or --help 	You're reading it.
 	
 	-6				Compiles x86_64 packages.
-	-64				^    ^    ^    ^    ^
 	
 	-3				Compiles i686 packages.
-	-32				^    ^    ^    ^    ^
 	
 	-m				Compiles multilib packages.
-	-multilib			^    ^    ^    ^    ^    ^
 					
 	-d				Specifies the directory to start searching for
 					PKGBUILD files.
@@ -39,7 +32,6 @@ Examples:
 	The following examples will compile packages for the appropriate 
 	architecture starting in the current working directory.
 	
-<<<<<<< HEAD
 	lb -6
 	lb -3
 	lb -m
@@ -50,38 +42,15 @@ Examples:
 	lb -6d /var/abs/core/pacman
 	lb -3d /var/abs/core/pacman
 	lb -md /var/abs/multilib/zsnes"
-=======
-	lb -6 /var/abs/core/
-	lb -3 /var/abs/core/
-	lb -m /var/abs/core/"
->>>>>>> 32855546c9002d22e251a9b670a8f14d9d872dd9
 	
 findpkgbuild() {
 	## This stuff just finds pkgbuilds and then runs an inputted command
 
-<<<<<<< HEAD
-=======
-	if [ "$1" = "" ]; then
-		local build="unstable-x86_64-build"
-	elif [ ! "$1" = "" ]; then
-		local build="$1"
-		echo "$build"
-	fi
-	if [ "$2" = "" ]; then
-		local dir="./"
-		echo "$dir"
-	elif [ ! "$2" = "" ]; then
-		local dir="$2"
-		echo "$dir"
-	fi
-
->>>>>>> 32855546c9002d22e251a9b670a8f14d9d872dd9
 	find "$dir" -name PKGBUILD -type f -print0 -exec "$build" \;
 }
 
 ## The main stuff.
 
-<<<<<<< HEAD
 OPTIND=1 ## make sure the optargs are reset for getopts
 build="" ## makes sure there is a default set for build.
 dir=""	 ## makes sure there is a default set for dir.
@@ -114,12 +83,3 @@ else
 fi
 
 findpkgbuild "$build" "$dir"
-=======
-case "$@" in
-	( -6 | -64 ) 			build="unstable-x86_64-build"; findpkgbuild "$build";;
-	( -3 | -32 ) 			build="unstable-i686-build"; findpkgbuild "$build";;
-	( -m | --multilib ) 		build="unstable-multilib-build"; findpkgbuild "$build";;
-	( -h | --help )			echo "$usage";;
-	*) 				build=""; findpkgbuild "$build";;
-esac
->>>>>>> 32855546c9002d22e251a9b670a8f14d9d872dd9
