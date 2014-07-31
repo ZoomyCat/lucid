@@ -3,22 +3,24 @@
 
 ## defines the usage of the program.
 usage="
-Name: 				lucid-build
-  
-Description:    	lucid-build compiles all PKGBUILD's recursively 
+Name: 					lucid-build
+
+
+Description:    			lucid-build compiles all PKGBUILD's recursively 
 					within the working directory. It has options to
 					modify where it starts searching and what
 					architecture you would like to build within that
 					working directory.
 					
 					Currently you can only use one architecture at
-					a time but that will change.
+					a time but that may change in the future.
 
-Usage:				lucid-build (Options) [-d] <location>
+
+Usage:					lucid-build (Options) [-d] <location>
 
 Options: 		
 
-	-h or --help 	You're reading it.
+	-h or --help 			You're reading it.
 	
 	-6				Compiles x86_64 packages.
 	
@@ -28,6 +30,11 @@ Options:
 					
 	-d				Specifies the directory to start searching for
 					PKGBUILD files.
+					
+	-r				This specifies the final repository location to
+					that all built packages are moved into.
+					
+					
 Examples:		
 	The following examples will compile packages for the appropriate 
 	architecture starting in the current working directory.
@@ -42,60 +49,65 @@ Examples:
 	lb -6d /var/abs/core/pacman
 	lb -3d /var/abs/core/pacman
 	lb -md /var/abs/multilib/zsnes"
-	
 
-#findpkgbuild() {
-#	## This stuff just finds pkgbuilds and then runs an inputted command
-#	find "$dir" -name PKGBUILD -type f -print0 \
-#		-execdir "$build $buildtype $repo" \;
-#}
 
 ## The main stuff.
 
-OPTIND=1 ## make sure the optargs are reset for getopts
-buildtype="" ## makes sure there is a default set for build.
-dir=""	 ## makes sure there is a default set for dir.
+## Check for root! If the user is not running the script as root advise
+## that root is required to operate this script and then drop out. If
+## The user is 
+if [ "$EUID" != "0" ]; then
+    printf "error: This script must be run as root.\n"
+    exit 1
+else
+
+	OPTIND=1 ## make sure the optargs are reset for getopts
+	buildtype="" ## makes sure there is a default set for build.
+	dir=""	 ## makes sure there is a default set for dir.
 
 ## This case statement sets the build parameters of the program for
 ## which architecture to use. 
-while getopts "36d:hmr:" opt; do
-	case "$opt" in
-		d)	dir=$OPTARG;;
-		6)	buildtype="unstable-x86_64-build"
-				printf "The build has been set to 64 bit.\n";;
-		3)	buildtype="unstable-i686-build"
-				printf "The build has been set to 32 bit.\n";;
-		m)	buildtype="unstable-multilib-build"
-				printf "The build has been set to multilib.\n";;
-		r)	repo=$OPTARG;;
-		h)	printf printf '%s\n' "$usage"; exit 0;;
-		\?)	printf printf '%s\n' "$usage" >&2; exit 1;;
-	esac
-done
-if [ "$buildtype" = "" ]; then
-	buildtype="unstable-x86_64-build"
-	printf "The build has been set to 64 bit as default.\n"
-else
-	printf "The build environment being used is: $buildtype\n"
-fi
-if [ "$dir" = "" ]; then
-	dir="./"
-	printf "Finding packagebuilds in "pwd" directory.\n"
-else 
-	printf "Finding packagebuilds in $dir directory.\n"
-fi
-if [ "$repo" = "" ]; then
-#	mkdir -p /var/repo
-	repo=/var/repo
-	printf "Using $repo as the default repository location\n"
-else
-	printf "Using $repo as the repository location\n"
-fi
+	while getopts "36d:hmr:" opt; do
+		case "$opt" in
+			d)	dir=$OPTARG;;
+			6)	buildtype="unstable-x86_64-build"
+					printf "The build has been set to 64 bit.\n";;
+			3)	buildtype="unstable-i686-build"
+					printf "The build has been set to 32 bit.\n";;
+			m)	buildtype="unstable-multilib-build"
+					printf "The build has been set to multilib.\n";;
+			r)	repo=$OPTARG;;
+			h)	printf printf '%s\n' "$usage"; exit 0;;
+			\?)	printf printf '%s\n' "$usage" >&2; exit 1;;
+		esac
+	done
+	
+## Check and make sure the proper build parameters are set, if they are 
+## not currently set then set the build options to reasonable 
+## default options.
+	if [ "$buildtype" = "" ]; then
+		buildtype="unstable-x86_64-build"
+		printf "The build has been set to 64 bit as default.\n"
+	else
+		printf "The build environment being used is: $buildtype\n"
+	fi
+	if [ "$dir" = "" ]; then
+		dir="./"
+		printf "Finding packagebuilds in "pwd" directory.\n"
+	else 
+		printf "Finding packagebuilds in $dir directory.\n"
+	fi
+	
+	if [ "$repo" = "" ]; then
+		mkdir -p /var/repo
+		repo=/var/repo
+		printf "Using $repo as the default repository location\n"
+	else
+		printf "Using $repo as the repository location\n"
+	fi
 
-build="/home/edge/scripts/pkgbuild-interfacer/lucid-build"
+	build="/home/edge/scripts/pkgbuild-interfacer/lucid-build"
 
-find "$dir" -name PKGBUILD -type f -execdir "$buildtype" \;
-## The next line will eventually be used to reference another script
-## that will deal with moving packages and build information to a
-## seperate location.
-#find "$dir" -name PKGBUILD -type f -execdir "$build" "$buildtype" "$repo" \;
+	find "$dir" -name PKGBUILD -type f -execdir "$build" "$buildtype" "$repo" \;
+
+fi
