@@ -11,4 +11,4 @@ Lucid OS will be an independent Linux distribution that uses tools primarily fro
 
 We follow the kiss principle from not only one but multiple perspectives. Having a system that is equally as easy for the developer as it is the user is an important aspect of the kiss principle and this is our goal.
 
-The official Lucis OS builds will be built with ease of use, functionality, productivity and quality in mind.
+The official Lucid OS builds will be built with ease of use, functionality, productivity and quality in mind.
