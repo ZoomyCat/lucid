@@ -1,10 +1,6 @@
 #!/usr/bin/env bash
 ##Created by Edward "edge226" Tunnah.
 
-## This is a work in progress. The use case is not in effect right now
-## and will only operate from the current working directory.
-## It will also only do 64 bit right now unless modified.
-
 ## defines the usage of the program.
 usage="
 Name: 				lucid-build
@@ -18,34 +14,72 @@ Description:    	lucid-build compiles all PKGBUILD's recursively
 					Currently you can only use one architecture at
 					a time but that will change.
 
-Usage:				lucid-build <Options>
+Usage:				lucid-build (Options) [-d] <location>
 
 Options: 		
 
 	-h or --help 	You're reading it.
 	
-	-d location		Changes the location where you start recursively
-					searching for PKGBUILD files.
-					
 	-6				Compiles x86_64 packages.
 	
 	-3				Compiles i686 packages.
 	
 	-m				Compiles multilib packages.
 					
+	-d				Specifies the directory to start searching for
+					PKGBUILD files.
 Examples:		
+	The following examples will compile packages for the appropriate 
+	architecture starting in the current working directory.
 	
-	lb -6 -d /var/abs/core/
-	lb -3 -d /var/abs/core/
-	lb -m -d /var/abs/core/"
+	lb -6
+	lb -3
+	lb -m
 	
+	The following examples will compile packages for the appropriate
+	architecture at the location you point it at.
 	
+	lb -6d /var/abs/core/pacman
+	lb -3d /var/abs/core/pacman
+	lb -md /var/abs/multilib/zsnes"
 	
 findpkgbuild() {
 	## This stuff just finds pkgbuilds and then runs an inputted command
-	
-	## The flags passed to findpkgbuild decide what is inputted into
-	## the find command.
-	build="unstable-x86_64-build"
-	find -name PKGBUILD -type f -print0 -exec "$build" \;
+
+	find "$dir" -name PKGBUILD -type f -print0 -exec "$build" \;
 }
+
+## The main stuff.
+
+OPTIND=1 ## make sure the optargs are reset for getopts
+build="" ## makes sure there is a default set for build.
+dir=""	 ## makes sure there is a default set for dir.
+
+## This case statement sets the build parameters of the program for
+## which architecture to use. 
+while getopts "6d:3d:md:*:" opt; do
+	case "$opt" in
+		( d )	dir=$OPTARG;;
+		( 6 )	build="unstable-x86_64-build"
+				printf "The build has been set to 64 bit.\n";;
+		( 3 )	build="unstable-i686-build"
+				printf "The build has been set to 32 bit.\n";;
+		( m )	build="unstable-multilib-build"
+				printf "The build has been set to multilib.\n";;
+		( * )	echo "$usage";;
+	esac
+done
+if [ "$build" = "" ]; then
+	local build="unstable-x86_64-build"
+	printf "The build has been set to 64 bit as default.\n"
+else
+	printf "The build environment has been set to: $build\n"
+fi
+if [ "$dir" = "" ]; then
+	local dir="./"
+	printf "Finding packagebuilds in "pwd" directory.\n"
+else 
+	printf "Finding packagebuilds in $dir directory.\n"
+fi
+
+findpkgbuild "$build" "$dir"
