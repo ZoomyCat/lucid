@@ -12,6 +12,9 @@ Description:    			lucid-build compiles all PKGBUILD's recursively
 					architecture you would like to build within that
 					working directory.
 					
+					It also allows the user to choose the location
+					of their final repository and sub repository.
+					
 					Currently you can only use one architecture at
 					a time but that may change in the future.
 
