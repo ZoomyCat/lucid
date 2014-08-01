@@ -7,7 +7,27 @@
 ## through the shorter lb command instead of manually since it will always
 ## pass the parameters in the same way.
 
-build="$1"
-repo="$2"
+## Deal with incoming parameters here.
+build="$1" ## The program that starts the actual build.
+archtype="$2" ## The architecture. ie x86_64 or i686.
+repo="$3" ## location for the repository to go. Packages go here.
 
+## Set parameters for the program to be able to move all the resulting
+## packages where they need to go.
+pkg=".pkg.tar.xz" ## This mixed with $archtype allows me to know the pkg.
+srcdir="$repo/src/" ## The src location.
+logdir="$repo/log/" ## The log location.
+echo "$repo"
+
+## Do the build.
 "$build"
+
+## Create the appropriate repository directories.
+mkdir -p "$repo" "$logdir" "$srcdir"
+
+## Copy the Sources, Packages and logs to the appropriate directories.
+## also has the benefitted effect of cleaning the working directory also
+mv *debug* "$logdir"
+mv *.log "$logdir"
+mv *"$archtype$pkg" "$repo"
+mv *.tar.* "$srcdir"
