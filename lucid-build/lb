@@ -31,8 +31,15 @@ Options:
 	-d				Specifies the directory to start searching for
 					PKGBUILD files.
 					
-	-r				This specifies the final repository location to
-					that all built packages are moved into.
+	-t				This specifies the repository target. This location
+					is modified by this script to place things in a
+					proper repository location for the proper arch.
+					Default: /var/lucid/repo
+					
+	-r				This will select the final repository the packages 
+					are to be built in. 
+					eg. core, extra, community, multilib.
+					Default: unstable
 					
 					
 Examples:		
@@ -46,9 +53,9 @@ Examples:
 	The following examples will compile packages for the appropriate
 	architecture at the location you point it at.
 	
-	lb -6d /var/abs/core/pacman
-	lb -3d /var/abs/core/pacman
-	lb -md /var/abs/multilib/zsnes"
+	lb -6d /var/abs/core/pacman -t /var/lucid/repo -r core
+	lb -3d /var/abs/core/pacman -t /var/lucid/repo -r core
+	lb -md /var/abs/multilib/zsnes -t /var/lucid/repo -r multilib"
 
 
 ## The main stuff.
@@ -68,16 +75,20 @@ else
 
 ## This case statement sets the build parameters of the program for
 ## which architecture to use. 
-	while getopts "36d:hmr:" opt; do
+	while getopts "36d:hmt:r:" opt; do
 		case "$opt" in
 			d)	dir=$OPTARG;;
 			6)	buildtype="unstable-x86_64-build"
+					archtype="x86_64"
 					printf "The build has been set to 64 bit.\n";;
 			3)	buildtype="unstable-i686-build"
+					archtype="i686"
 					printf "The build has been set to 32 bit.\n";;
 			m)	buildtype="unstable-multilib-build"
+					archtype="x86_64"
 					printf "The build has been set to multilib.\n";;
-			r)	repo=$OPTARG;;
+			t)	repodir=$OPTARG;;
+			r)  repo=$OPTARG;;
 			h)	printf printf '%s\n' "$usage"; exit 0;;
 			\?)	printf printf '%s\n' "$usage" >&2; exit 1;;
 		esac
@@ -86,27 +97,29 @@ else
 ## Check and make sure the proper build parameters are set, if they are 
 ## not currently set then set the build options to reasonable 
 ## default options.
-	if [ "$buildtype" = "" ]; then
+	if [ "$buildtype" = "" ]; then ## if no arch is select set one.
 		buildtype="unstable-x86_64-build"
-		printf "The build has been set to 64 bit as default.\n"
+		archtype="x86_64"
+		printf "The build has been set to $archtype as default.\n"
 	else
-		printf "The build environment being used is: $buildtype\n"
+		printf "The build environment being used is: %s\n" "$archtype"
 	fi
-	if [ "$dir" = "" ]; then
+	if [ "$dir" = "" ]; then ## if no directory selected set one.
 		dir="./"
 		printf "Finding packagebuilds in "pwd" directory.\n"
 	else 
 		printf "Finding packagebuilds in $dir directory.\n"
 	fi
-	
-	if [ "$repo" = "" ]; then
-		mkdir -p /var/repo
-		repo=/var/repo
-		printf "Using $repo as the default repository location\n"
+	if [ "$repodir" = "" ]; then ## if no repodir is selected set one.
+		repodir="/var/lucid/repo"
+		printf "Using $repodir as the default repository location\n"
 	else
-		printf "Using $repo as the repository location\n"
+		printf "Using $repodir as the repository location\n"
 	fi
-
-	find "$dir" -name PKGBUILD -type f -execdir "$build" "$buildtype" "$repo" \;
-
+	if [ "$repo" = "" ]; then ## if no repo is set the set one.
+		repo="unstable"
+	fi
+	
+	## Finally find the pkgbuilds and build them!
+	find "$dir" -name PKGBUILD -type f -execdir "$build" "$buildtype" "$archtype" "$repodir/$archtype/$repo" \;
 fi
