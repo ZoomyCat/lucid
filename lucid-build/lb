@@ -64,6 +64,7 @@ else
 	OPTIND=1 ## make sure the optargs are reset for getopts
 	buildtype="" ## makes sure there is a default set for build.
 	dir=""	 ## makes sure there is a default set for dir.
+	build="lucid-build"
 
 ## This case statement sets the build parameters of the program for
 ## which architecture to use. 
