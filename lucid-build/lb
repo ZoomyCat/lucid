@@ -13,7 +13,7 @@ Description:    			lucid-build compiles all PKGBUILD's recursively
 					working directory.
 					
 					It also allows the user to choose the location
-					of their final repository and sub repository.
+					of their repository and sub repository.
 					
 					Currently you can only use one architecture at
 					a time but that may change in the future.
@@ -21,14 +21,14 @@ Description:    			lucid-build compiles all PKGBUILD's recursively
 
 Usage:					lucid-build (Options) [-d] <location>
 
-Options: 		
+Options: 			
 
 	-h or --help 			You're reading it.
-	
+					
 	-6				Compiles x86_64 packages.
-	
+					
 	-3				Compiles i686 packages.
-	
+					
 	-m				Compiles multilib packages.
 					
 	-d				Specifies the directory to start searching for
@@ -45,20 +45,49 @@ Options:
 					Default: unstable
 					
 					
-Examples:		
+Examples:
 	The following examples will compile packages for the appropriate 
 	architecture starting in the current working directory.
 	
-	lb -6
-	lb -3
-	lb -m
+	To build packages under the respective architectures.
+	lb -6 ## x86_64 packages in /var/lucid/repo/x86_64/unstable
+	lb -3 ## i686 packages in /var/lucid/repo/i686/unstable
+	lb -m ## x86_64 packages in /var/lucid/repo/x86_64/unstable
 	
 	The following examples will compile packages for the appropriate
 	architecture at the location you point it at.
 	
+	To build a single package point lb to the PKGBUILD file.
 	lb -6d /var/abs/core/pacman -t /var/lucid/repo -r core
 	lb -3d /var/abs/core/pacman -t /var/lucid/repo -r core
-	lb -md /var/abs/multilib/zsnes -t /var/lucid/repo -r multilib"
+	lb -md /var/abs/multilib/zsnes -t /var/lucid/repo -r multilib
+	
+	The results of these commands would create a repository that has
+	three directories inside of it. A directory for packages, sources
+	and logs/debug information.
+	
+	The resulting location would be:
+	
+		-6 or (-m - replace core with multilib)
+			/var/lucid/repo/x86_64/core
+	
+		-3
+			/var/lucid/repo/i686/core
+	
+	Excluding the architecture field will default to x86_64 this can be
+	modified within this script at any time.
+
+	To build a package into the core repository:
+
+		Inside the repo(core):
+			lb -r core
+
+		Outside of the repo directory:
+			lb -d /var/abs/core -r core
+			
+	In both cases the results are the same:
+		You magically get a repository at:
+				/var/lucid/repo/x86_64/core"
 
 
 ## The main stuff.
