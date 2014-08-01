@@ -27,7 +27,10 @@ mkdir -p "$repo" "$logdir" "$srcdir"
 
 ## Copy the Sources, Packages and logs to the appropriate directories.
 ## also has the benefitted effect of cleaning the working directory also
-mv *debug* "$logdir"
-mv *.log "$logdir"
-mv *"$archtype$pkg" "$repo"
-mv *.tar.* "$srcdir"
+## add some for loops with conditional globs to check and see if these files exist then move them. This will
+## get rid of the harmless error that happens when these files do not exist.
+mv *debug* "$logdir" ## Copying this before $pkg makes sure all debug files have been moved to the correct place.
+mv *.log "$logdir" ## This does contain some tar files so I copy it before $pkg. This leaves only $pkg and $src info left
+mv *"$archtype$pkg" "$repo" ## Copy the pkg into the repo.
+mv *"any$pkg" "$repo" ## Copy any files for all architectures were compiled move them into the repo.
+mv *.tar.* "$srcdir" ## 
