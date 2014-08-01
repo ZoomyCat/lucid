@@ -5,4 +5,4 @@ Put them both in /usr/local/bin.
 
 If you get odd permissions issues make sure the files have executable properties by running chmod a+x /usr/local/bin/l*.
 
-Check the help for usage and run as desired. The command is written for developers in mind so is as short as possible to get what you need done.
+Check the help for usage and run as desired. The command is written for developers in mind so it is as short as possible to get what you need done.
