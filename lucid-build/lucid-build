@@ -32,5 +32,6 @@ mkdir -p "$pkgdir" "$logdir" "$srcdir"
 mv *debug* "$logdir" ## Copying this before $pkg makes sure all debug files have been moved to the correct place.
 mv *.log "$logdir" ## This does contain some tar files so I copy it before $pkg. This leaves only $pkg and $src info left
 mv *"$archtype$pkg" "$pkgdir" ## Copy the pkg into the repo.
+mv *"multilib$pkg" "$pkgdir" ## Copy multilib packages into the repo, make sure to use -m through lb.
 mv *"any$pkg" "$pkgdir" ## Copy any files for all architectures were compiled move them into the repo.
-mv *.tar.* "$srcdir" ## 
+mv *.tar.* "$srcdir" ## Copy all remaining tarballs into the src directory.
