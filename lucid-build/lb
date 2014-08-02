@@ -53,9 +53,9 @@ Examples:
 	architecture starting in the current working directory.
 	
 	To build packages under the respective architectures.
-	lb -6 ## x86_64 packages in /var/lucid/repo/unstable/x86_64/
-	lb -3 ## i686 packages in /var/lucid/repo/unstable/i686/
-	lb -m ## x86_64 packages in /var/lucid/repo/unstable/x86_64/
+	lb -6 ## x86_64 packages in /var/lucid/repo/unstable/x86_64/core
+	lb -3 ## i686 packages in /var/lucid/repo/unstable/i686/core
+	lb -m ## x86_64 packages in /var/lucid/repo/unstable/x86_64/core
 	
 	The following examples will compile packages for the appropriate
 	architecture at the location you point it at.
