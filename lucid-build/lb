@@ -120,9 +120,9 @@ else
 					archtype="x86_64"
 					printf "The build has been set to multilib.\n";;
 			t)	repodir=$OPTARG;;
-			r)  repo=$OPTARG;;
-			h)	printf printf '%s\n' "$usage"; exit 0;;
-			\?)	printf printf '%s\n' "$usage" >&2; exit 1;;
+			r)  	repo=$OPTARG;;
+			h)		printf '%s\n' "$usage"; exit 0;;
+			\?)		printf '%s\n' "$usage" >&2; exit 1;;
 		esac
 	done
 	
