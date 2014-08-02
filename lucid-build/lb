@@ -31,17 +31,20 @@ Options:
 					
 	-m				Compiles multilib packages.
 					
-	-d				Specifies the directory to start searching for
+	-d <directory>	Specifies the directory to start searching for
 					PKGBUILD files.
 					
-	-t				This specifies the repository target. This location
+	-t <target>		This specifies the repository target. This location
 					is modified by this script to place things in a
 					proper repository location for the proper arch.
 					Default: /var/lucid/repo
 					
-	-r				This will select the final repository the packages 
+	-r <repository>	This will select the final repository the packages 
 					are to be built in. 
 					eg. core, extra, community, multilib.
+					Default: core
+					
+	-b <branch>		Change the default branch. unstable/stable.
 					Default: unstable
 					
 					
@@ -50,9 +53,9 @@ Examples:
 	architecture starting in the current working directory.
 	
 	To build packages under the respective architectures.
-	lb -6 ## x86_64 packages in /var/lucid/repo/x86_64/unstable
-	lb -3 ## i686 packages in /var/lucid/repo/i686/unstable
-	lb -m ## x86_64 packages in /var/lucid/repo/x86_64/unstable
+	lb -6 ## x86_64 packages in /var/lucid/repo/unstable/x86_64/
+	lb -3 ## i686 packages in /var/lucid/repo/unstable/i686/
+	lb -m ## x86_64 packages in /var/lucid/repo/unstable/x86_64/
 	
 	The following examples will compile packages for the appropriate
 	architecture at the location you point it at.
@@ -69,10 +72,10 @@ Examples:
 	The resulting location would be:
 	
 		-6 or (-m - replace core with multilib)
-			/var/lucid/repo/x86_64/core
+			/var/lucid/repo/unstable/x86_64/core
 	
 		-3
-			/var/lucid/repo/i686/core
+			/var/lucid/repo/unstable/i686/core
 	
 	Excluding the architecture field will default to x86_64 this can be
 	modified within this script at any time.
@@ -80,14 +83,14 @@ Examples:
 	To build a package into the core repository:
 
 		Inside the repo(core):
-			lb -r core
+			lb -r core -b unstable
 
 		Outside of the repo directory:
-			lb -d /var/abs/core -r core
+			lb -d /var/abs/core -r core -b unstable
 			
 	In both cases the results are the same:
 		You magically get a repository at:
-				/var/lucid/repo/x86_64/core"
+				/var/lucid/repo/unstable/x86_64/core"
 
 
 ## The main stuff.
@@ -107,7 +110,7 @@ else
 
 ## This case statement sets the build parameters of the program for
 ## which architecture to use. 
-	while getopts "36d:hmt:r:" opt; do
+	while getopts "36d:hmt:r:b:" opt; do
 		case "$opt" in
 			d)	dir=$OPTARG;;
 			6)	buildtype="unstable-x86_64-build"
@@ -121,6 +124,7 @@ else
 					printf "The build has been set to multilib.\n";;
 			t)	repodir=$OPTARG;;
 			r)  	repo=$OPTARG;;
+			b)		branch=$OPTARG;;
 			h)		printf '%s\n' "$usage"; exit 0;;
 			\?)		printf '%s\n' "$usage" >&2; exit 1;;
 		esac
@@ -148,10 +152,13 @@ else
 	else
 		printf "Using $repodir as the repository location\n"
 	fi
-	if [ "$repo" = "" ]; then ## if no repo is set the set one.
-		repo="unstable"
+	if [ "$repo" = "" ]; then ## if no repo is set then set one.
+		repo="core"
+	fi
+	if [ "$branch" = "" ]; then
+		branch="unstable" ## if no branch is set then set one.
 	fi
 	
 	## Finally find the pkgbuilds and build them!
-	find "$dir" -name PKGBUILD -type f -execdir "$build" "$buildtype" "$archtype" "$repodir/$archtype/$repo" \;
+	find "$dir" -name PKGBUILD -type f -execdir "$build" "$buildtype" "$archtype" "$repodir/$branch/$archtype/$repo" \;
 fi
