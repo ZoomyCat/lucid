@@ -15,10 +15,10 @@ source=('Makefile'
         'lucid.gpg'
         'lucid-revoked'
         'lucid-trusted')
-sha256sums=('079c25269c462adae5c57ef46f2f4c280a15ba1bf0b5a607475070c99788e1cc'
-            '1f2563fd7c2b0938ffae7bad0183b6cd784b907c38f9cd4218bd73f0d0aa29ea'
-            'e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855'
-            'c787ec7a764af5893460237aa96a6a5687ce6bf24e173169e304d42f18f04815')
+sha256sums=('SKIP'
+            'SKIP'
+            'SKIP'
+            'SKIP')
 
 package() {
 	#cd "${srcdir}/${pkgname}-${pkgver}"

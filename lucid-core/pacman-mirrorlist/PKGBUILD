@@ -8,14 +8,14 @@ arch=('any')
 depends=('python')
 makedepends=('git')
 optdepends=('gtk3: for GTK UI' 'python-gobject: for GTK UI')
-url="https://github.com/edge226/pacman-mirrors.git"
+url="https://github.com/edge226/lucid.git"
 license=('GPL')
 install=pacman-mirrorlist.install
 backup=(etc/pacman-mirrors.conf)
-source=(git+https://github.com/edge226/pacman-mirrors.git)
+source=(git+https://github.com/edge226/lucid.git)
 sha256sums=('SKIP')
 
 package() {
-  cd "${srcdir}"/pacman-mirrors
+  cd  lucid/lucid-core/lucid-pacman-mirrors/
   make DESTDIR="${pkgdir}" install
 }
