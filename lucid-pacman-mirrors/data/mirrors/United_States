@@ -1,0 +1,7 @@
+##
+## Pacman Mirrorlist
+##
+
+[United_States]
+Server = http://lucid-os.servebeer.com/lucid-os/$branch/$repo/$arch
+Server = http://downloads.sourceforge.net/project/lucid-os/$branch/$repo/$arch
