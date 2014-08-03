@@ -27,7 +27,7 @@ mkdir -p "$pkgdir" "$logdir" "$srcdir"
 printf "Building %s for the %s architecture.\n" "$pkgname" "$archtype"
 printf "The packages, sources and log directory for this build are: \n"
 printf "%s\n%s\n%s\n" "$pkgdir" "$srcdir" "$logdir"
-"$build" > "$logdir$$build-$pkgname.log"
+"$build" > "$logdir$build-$pkgname.log"
 
 ## Copy the Sources, Packages and logs to the appropriate directories.
 ## also has the benefitted effect of cleaning the working directory also
