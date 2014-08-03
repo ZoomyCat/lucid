@@ -13,7 +13,7 @@ url="http://www.archlinux.org/pacman/"
 license=('GPL')
 groups=('base' 'base-devel')
 depends=('bash>=4.2.042-2' 'glibc>=2.17-2' 'libarchive>=3.1.2' 'curl>=7.19.4'
-         'gpgme' 'pacman-mirrorlist>=20130418' 'archlinux-keyring' 'lucid-keyring')
+         'gpgme' 'pacman-mirrorlist>=20130418' 'archlinux-keyring')
 checkdepends=('python2' 'fakechroot')
 makedepends=('asciidoc')
 optdepends=('fakeroot: for makepkg usage as normal user'
@@ -114,12 +114,12 @@ package() {
   install -m644 $srcdir/etc-pacman.d-gnupg.mount $pkgdir/usr/lib/systemd/system/etc-pacman.d-gnupg.mount
   install -m644 $srcdir/pacman-init.service $pkgdir/usr/lib/systemd/system/pacman-init.service
 }
-sha256sums=('7c059b444735ee254cfbd8dc2fac8c5d61453601f8adaf001c7038cdc673334c'
+sha256sums=('SKIP'
             'SKIP'
-            '3a3116693c199362834525a8cb11c13f1d3ec5513adeb1c1ee912cc1ab88f6b1'
-            'fae0994a281428829d5638462ab5c55a1f3751885228a13323610322db98c10c'
-            '5506f85799bcdf7f8cb1b5213af815173b4311029b96f1b96b014dea662b3f34'
-            '79b30adb52f3429433b09f72b60f246f6beeb8bf7b3565559c0aeb31b1c3ec2a'
-            '4ae031c1110e9e4b05a305856f623b7d15b7915264024a5e7c5f8fcee2032f14'
-            'b6d14727ec465bb66d0a0358163b1bbfafcb4eaed55a0f57c30aabafae7eed68'
-            '752da9be3fa5c27eb3716ca5aefa528d9e6d14f5955dae69d120bcfec341843e')
+            'SKIP'
+            'SKIP'
+            'SKIP'
+            'SKIP'
+            'SKIP'
+            'SKIP'
+            'SKIP')
