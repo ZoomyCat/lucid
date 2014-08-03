@@ -136,9 +136,6 @@ else
 	if [ "$buildtype" = "" ]; then ## if no arch is select set one.
 		buildtype="unstable-x86_64-build"
 		archtype="x86_64"
-		printf "The build has been set to $archtype as default.\n"
-	else
-		printf "The build environment being used is: %s\n" "$archtype"
 	fi
 	if [ "$dir" = "" ]; then ## if no directory selected set one.
 		dir="./"
@@ -148,9 +145,6 @@ else
 	fi
 	if [ "$repodir" = "" ]; then ## if no repodir is selected set one.
 		repodir="/var/lucid/repo"
-		printf "Using $repodir as the default repository location\n"
-	else
-		printf "Using $repodir as the repository location\n"
 	fi
 	if [ "$repo" = "" ]; then ## if no repo is set then set one.
 		repo="core"
