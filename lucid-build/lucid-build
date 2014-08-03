@@ -42,7 +42,7 @@ mv *"multilib$pkg" "$pkgdir" ## Copy multilib packages into the repo, make sure 
 mv *"any$pkg" "$pkgdir" ## Copy any files for all architectures were compiled move them into the repo.
 mv *.tar.* "$srcdir" ## Copy all remaining tarballs into the src directory.
 
-printf "Moving build information from $build stage in case of failure.\n"
+printf "Moving build information from $build stage in case of failure.\n\n"
 if [ "$archtype" = "x86_64" ]; then
 	cp -R /var/lib/manjarobuild/unstable-x86_64/*/build "$logdir"
 elif [ "$archtype" = "i686" ]; then
