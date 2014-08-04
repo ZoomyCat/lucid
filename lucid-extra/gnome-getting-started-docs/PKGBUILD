@@ -1,0 +1,28 @@
+# $Id: PKGBUILD 213529 2014-05-24 00:52:20Z heftig $
+# Maintainer: Jan de Groot <jgc@archlinux.org>
+
+pkgname=gnome-getting-started-docs
+pkgver=3.12.1
+pkgrel=1
+pkgdesc="Help a new user get started in GNOME"
+arch=(any)
+license=('CCPL:cc-by-sa-3.0')
+# gst plugins required to decode help videos
+depends=(yelp gst-plugins-base gst-plugins-good)
+makedepends=(yelp-tools)
+url="http://www.gnome.org"
+groups=(gnome-extra)
+source=(http://ftp.gnome.org/pub/gnome/sources/$pkgname/${pkgver:0:4}/$pkgname-$pkgver.tar.xz)
+sha256sums=('e5a0fc2228f1b064d140c9d4c6fb278a0ae949b5d58135c9df9c0a9c607bf3f1')
+
+build() {
+  cd $pkgname-$pkgver
+  ./configure --prefix=/usr --sysconfdir=/etc \
+      --localstatedir=/var
+  make
+}
+
+package() {
+  cd $pkgname-$pkgver
+  make DESTDIR="$pkgdir" install
+}

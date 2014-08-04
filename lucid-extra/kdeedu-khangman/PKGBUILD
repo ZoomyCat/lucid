@@ -1,0 +1,32 @@
+# $Id: PKGBUILD 217596 2014-07-21 20:19:19Z svenstaro $
+# Maintainer: Andrea Scarpino <andrea@archlinux.org>
+
+pkgname=kdeedu-khangman
+pkgver=4.13.3
+pkgrel=1
+pkgdesc="Hangman Game"
+url="http://kde.org/applications/education/khangman/"
+arch=('i686' 'x86_64')
+license=('GPL' 'LGPL' 'FDL')
+groups=('kde' 'kdeedu')
+depends=('kdebase-runtime' 'libkdeedu')
+makedepends=('cmake' 'automoc4')
+install=${pkgname}.install
+source=("http://download.kde.org/stable/${pkgver}/src/khangman-${pkgver}.tar.xz")
+sha1sums=('a07687a78901dd39dc0d15207607e5fbcde1c28e')
+
+build() {
+  cd "${srcdir}"
+  mkdir build
+  cd build
+  cmake ../khangman-${pkgver} \
+    -DCMAKE_BUILD_TYPE=Release \
+    -DKDE4_BUILD_TESTS=OFF \
+    -DCMAKE_INSTALL_PREFIX=/usr
+  make
+}
+
+package() {
+  cd "${srcdir}"/build
+  make DESTDIR="${pkgdir}" install
+}

@@ -1,0 +1,29 @@
+# Maintainer: Jesus Alvarez <jeezusjr at gmail dot com>
+# Contributor: Kyle Fuller <inbox at kylefuller dot co dot uk>
+
+pkgname=("zfs-dkms")
+pkgver=0.6.3
+pkgrel=1
+pkgdesc="Kernel modules for the Zettabyte File System."
+depends=("spl-dkms=${pkgver}" "zfs-utils=${pkgver}" "dkms")
+arch=("any")
+url="http://zfsonlinux.org/"
+source=(http://archive.zfsonlinux.org/downloads/zfsonlinux/zfs/zfs-${pkgver}.tar.gz)
+groups=("lucidzfs")
+sha256sums=('29bcfdd4161521692d2ca2515ad27a9edd9491c9cb5c6fb1e923d8eed28d391b')
+license=("CDDL")
+install=zfs-dkms.install
+
+build() {
+  cd "$srcdir/zfs-${pkgver}"
+  ./autogen.sh
+  scripts/dkms.mkconf -v ${pkgver} -f dkms.conf -n zfs
+}
+
+
+package() {
+   install -d ${pkgdir}/usr/src/zfs-${pkgver}
+   cp -a ${srcdir}/zfs-${pkgver}/ ${pkgdir}/usr/src/
+   # fix dkms.conf
+   sed -i 's|${kernelver}/${arch}|build|g' ${pkgdir}/usr/src/zfs-${pkgver}/dkms.conf
+}

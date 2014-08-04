@@ -1,0 +1,57 @@
+# $Id: PKGBUILD 218191 2014-07-26 09:08:25Z fyan $
+# Maintainer: Angel Velasquez <angvp@archlinux.org> 
+
+pkgbase=python-astroid
+pkgname=('python2-astroid' 'python-astroid')
+pkgver=1.2.0
+pkgrel=1
+pkgdesc="Useful miscellaneous modules used by Logilab projects"
+arch=('any')
+url="https://bitbucket.org/logilab/astroid"
+license=('LGPL')
+makedepends=('python' 'python2')
+checkdepends=('python-logilab-common' 'python2-logilab-common')
+source=(https://pypi.python.org/packages/source/a/astroid/astroid-${pkgver}.tar.gz)
+sha1sums=('9943a0bbd3410164c161ae11039dd09762023629')
+
+prepare() {
+  cp -a astroid-${pkgver}{,-py3}
+}
+
+build() {
+  cd astroid-${pkgver}
+  python2 setup.py build
+
+  cd ../astroid-${pkgver}-py3
+  python3 setup.py build
+}
+
+check() {
+  # must be ran in target system, how?
+
+  cd astroid-${pkgver}/test
+  #python2 -m unittest discover -p "unittest*.py"
+
+  cd ../../astroid-${pkgver}-py3/test
+  #python -m unittest discover -p "unittest*.py"
+}
+
+package_python2-astroid() {
+  depends=('python2' 'python2-logilab-common')
+  replaces=('python2-logilab-astng')
+  conflicts=('python2-logilab-astng')
+
+  cd astroid-${pkgver}
+
+  python2 setup.py install --optimize=1 --skip-build --prefix=/usr --root="${pkgdir}"
+}
+
+package_python-astroid() {
+  depends=('python' 'python-logilab-common')
+  replaces=('python-logilab-astng')
+  conflicts=('python-logilab-astng')
+
+  cd astroid-${pkgver}-py3
+
+  python3 setup.py install --optimize=1 --skip-build --prefix=/usr --root="${pkgdir}"
+}

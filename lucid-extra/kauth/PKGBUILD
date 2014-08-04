@@ -1,0 +1,43 @@
+# $Id: PKGBUILD 218412 2014-07-30 20:15:41Z svenstaro $
+# Maintainer: Andrea Scarpino <andrea@archlinux.org>
+
+pkgname=kauth
+pkgver=5.0.0
+pkgrel=2
+pkgdesc='KAuth'
+arch=('i686' 'x86_64')
+url='https://projects.kde.org/projects/frameworks/kauth'
+license=('LGPL')
+depends=('kcoreaddons' 'polkit-qt5')
+makedepends=('extra-cmake-modules' 'qt5-tools')
+groups=('kf5')
+source=("http://download.kde.org/stable/frameworks/${pkgver}/${pkgname}-${pkgver}.tar.xz"
+        "${pkgname}-cve-2014-5033.patch")
+md5sums=('eeb5e576c9d0d098cfb9def812f04089'
+         'c24d35b0e96f98f1cfaff8e69e5fe8f6')
+
+prepare() {
+  mkdir -p build
+
+  cd ${pkgname}-${pkgver}
+
+  patch -p1 -i "${srcdir}/kauth-cve-2014-5033.patch"
+}
+
+build() {
+  cd build
+  cmake ../${pkgname}-${pkgver} \
+    -DCMAKE_BUILD_TYPE=Release \
+    -DCMAKE_INSTALL_PREFIX=/usr \
+    -DLIB_INSTALL_DIR=lib \
+    -DECM_MKSPECS_INSTALL_DIR=/usr/share/qt/mkspecs/modules \
+    -DQT_PLUGIN_INSTALL_DIR=lib/qt/plugins \
+    -DSYSCONF_INSTALL_DIR=/etc \
+    -DBUILD_TESTING=OFF
+  make
+}
+
+package() {
+  cd build
+  make DESTDIR="${pkgdir}" install
+}

@@ -1,0 +1,6 @@
+[theme]
+name=Lucid
+description=Lucid Theme
+engine=lightdm-webkit-greeter
+url=index.html
+session=xfce
