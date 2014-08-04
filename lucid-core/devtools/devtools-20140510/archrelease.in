@@ -1,0 +1,86 @@
+#!/bin/bash
+
+m4_include(lib/common.sh)
+m4_include(lib/valid-tags.sh)
+
+# parse command line options
+FORCE=
+while getopts ':f' flag; do
+	case $flag in
+		f) FORCE=1 ;;
+		:) die "Option requires an argument -- '%s'" "$OPTARG" ;;
+		\?) die "Invalid option -- '%s'" "$OPTARG" ;;
+	esac
+done
+shift $(( OPTIND - 1 ))
+
+if ! (( $# )); then
+	echo 'Usage: archrelease [-f] <repo>...'
+	exit 1
+fi
+
+# validate repo is really repo-arch
+if [[ -z $FORCE ]]; then
+	for tag in "$@"; do
+		if ! in_array "$tag" "${_tags[@]}"; then
+			die "archrelease: Invalid tag: '%s' (use -f to force release)" "$tag"
+		fi
+	done
+fi
+
+if [[ ! -f PKGBUILD ]]; then
+	die 'archrelease: PKGBUILD not found'
+fi
+
+trunk=${PWD##*/}
+
+# Normally this should be trunk, but it may be something
+# such as 'gnome-unstable'
+IFS='/' read -r -d '' -a parts <<< "$PWD"
+if [[ "${parts[@]:(-2):1}" == "repos" ]]; then
+	die 'archrelease: Should not be in repos dir (try from trunk/)'
+fi
+unset parts
+
+if [[ $(svn status -q) ]]; then
+	die 'archrelease: You have not committed your changes yet!'
+fi
+
+pushd .. >/dev/null
+IFS=$'\n' read -r -d '' -a known_files < <(svn ls -r HEAD "$trunk")
+for file in "${known_files[@]}"; do
+	if [[ ${file:(-1)} = '/' ]]; then
+		die "archrelease: subdirectories are not supported in package directories!"
+	fi
+done
+
+# gracefully handle files containing an "@" character
+known_files=("${known_files[@]/%/@}")
+
+for tag in "$@"; do
+	stat_busy "Copying ${trunk} to ${tag}"
+
+	if [[ -d repos/$tag ]]; then
+		declare -a trash
+		trash=()
+		while read -r file; do
+			trash+=("repos/$tag/$file")
+		done < <(svn ls "repos/$tag")
+		[[ $trash ]] && svn rm -q "${trash[@]/%/@}"
+	else
+		mkdir -p "repos/$tag"
+		svn add --parents -q "repos/$tag"
+	fi
+
+	# copy all files at once from trunk to the subdirectory in repos/
+	svn copy -q -r HEAD ${known_files[@]/#/$trunk/} "repos/$tag/"
+
+	stat_done
+done
+
+stat_busy "Releasing package"
+printf -v tag_list ", %s" "$@"; tag_list="${tag_list#, }"
+svn commit -q -m "archrelease: copy ${trunk} to $tag_list" || abort
+stat_done
+
+popd >/dev/null

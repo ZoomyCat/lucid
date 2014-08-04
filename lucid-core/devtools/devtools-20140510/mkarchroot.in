@@ -1,0 +1,80 @@
+#!/bin/bash
+# This program is free software; you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation; version 2 of the License.
+#
+# This program is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+
+m4_include(lib/common.sh)
+
+CHROOT_VERSION='v3'
+
+working_dir=''
+
+usage() {
+	echo "Usage: ${0##*/} [options] working-dir [package-list | app]"
+	echo ' options:'
+	echo '    -C <file>     Location of a pacman config file'
+	echo '    -M <file>     Location of a makepkg config file'
+	echo '    -c <dir>      Set pacman cache'
+	echo '    -h            This message'
+	exit 1
+}
+
+while getopts 'hC:M:c:' arg; do
+	case "$arg" in
+		C) pac_conf="$OPTARG" ;;
+		M) makepkg_conf="$OPTARG" ;;
+		c) cache_dir="$OPTARG" ;;
+		h|?) usage ;;
+		*) error "invalid argument '$arg'"; usage ;;
+	esac
+done
+shift $(($OPTIND - 1))
+
+(( $# < 2 )) && die 'You must specify a directory and one or more packages.'
+
+check_root "$0" "$@"
+
+working_dir="$(readlink -f $1)"
+shift 1
+
+[[ -z $working_dir ]] && die 'Please specify a working directory.'
+
+if [[ -z $cache_dir ]]; then
+	cache_dirs=($(pacman -v $cache_conf 2>&1 | grep '^Cache Dirs:' | sed 's/Cache Dirs:\s*//g'))
+else
+	cache_dirs=(${cache_dir})
+fi
+
+umask 0022
+
+[[ -e $working_dir ]] && die "Working directory '%s' already exists" "$working_dir"
+
+mkdir -p "$working_dir"
+
+lock 9 "${working_dir}.lock" "Locking chroot"
+
+if [[ $(stat -f -c %T "$working_dir") == btrfs ]]; then
+	rmdir "$working_dir"
+	if ! btrfs subvolume create "$working_dir"; then
+		die "Couldn't create subvolume for '%s'" "$working_dir"
+	fi
+	chmod 0755 "$working_dir"
+fi
+
+pacstrap -GMcd ${pac_conf:+-C "$pac_conf"} "$working_dir" \
+  "${cache_dirs[@]/#/--cachedir=}" "$@" || die 'Failed to install all packages'
+
+printf '%s.UTF-8 UTF-8\n' en_US de_DE > "$working_dir/etc/locale.gen"
+echo 'LANG=C' > "$working_dir/etc/locale.conf"
+echo "$CHROOT_VERSION" > "$working_dir/.arch-chroot"
+
+exec arch-nspawn \
+	${pac_conf:+-C "$pac_conf"} \
+	${makepkg_conf:+-M "$makepkg_conf"} \
+	${cache_dir:+-c "$cache_dir"} \
+	"$working_dir" locale-gen
