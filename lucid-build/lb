@@ -47,7 +47,8 @@ Options:
 	-b <branch>		Change the default branch. unstable/stable.
 					Default: unstable
 					
-					
+	-v				Verbose. Forces compiling to show in the command
+					line output.
 Examples:
 	The following examples will compile packages for the appropriate 
 	architecture starting in the current working directory.
@@ -110,7 +111,7 @@ else
 
 ## This case statement sets the build parameters of the program for
 ## which architecture to use. 
-	while getopts "36d:hmt:r:b:" opt; do
+	while getopts "36d:hmt:r:b:o" opt; do
 		case "$opt" in
 			d)	dir=$OPTARG;;
 			6)	buildtype="unstable-x86_64-build"
@@ -125,6 +126,7 @@ else
 			t)	repodir=$OPTARG;;
 			r)  	repo=$OPTARG;;
 			b)		branch=$OPTARG;;
+			o)		output="yes";;
 			h)		printf '%s\n' "$usage"; exit 0;;
 			\?)		printf '%s\n' "$usage" >&2; exit 1;;
 		esac
@@ -154,5 +156,5 @@ else
 	fi
 	
 	## Finally find the pkgbuilds and build them!
-	find "$dir" -name PKGBUILD -type f -execdir "$build" "$buildtype" "$archtype" "$repodir/$branch/$archtype/$repo" \;
+	find "$dir" -name PKGBUILD -type f -execdir "$build" "$buildtype" "$archtype" "$repodir/$branch/$archtype/$repo" "$output"\;
 fi
