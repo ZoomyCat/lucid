@@ -1,0 +1,39 @@
+# $Id: PKGBUILD 211662 2014-04-22 16:39:27Z dan $
+# Maintainer: Dan McGee <dan@archlinux.org>
+
+pkgbase=doxygen
+pkgname=('doxygen' 'doxygen-docs')
+pkgver=1.8.7
+pkgrel=1
+license=('GPL')
+arch=(i686 x86_64)
+url="http://www.doxygen.org/"
+makedepends=('gcc-libs' 'flex' 'qt4' 'texlive-core' 'ghostscript'
+             'texlive-latexextra' 'graphviz' 'python2')
+			 source=(http://ftp.stack.nl/pub/users/dimitri/${pkgname}-${pkgver}.src.tar.gz)
+md5sums=('ff0529df773301f63db82c25137b7fd8')
+sha1sums=('3728f183f390f96b4ec39d02782a7c2d91f7bfca')
+
+build() {
+  export PATH=$PATH:/usr/lib/qt4/bin
+  cd "${srcdir}/${pkgbase}-${pkgver}"
+  QTDIR=/usr/lib/qt4 ./configure --prefix /usr --with-doxywizard
+  make
+}
+
+package_doxygen() {
+  pkgdesc="A documentation system for C++, C, Java, IDL and PHP"
+  depends=('gcc-libs')
+  optdepends=('graphviz: for caller/callee graph generation'
+              'qt4: for doxywizard')
+
+  cd "${srcdir}/${pkgbase}-${pkgver}"
+  make INSTALL="${pkgdir}"/usr MAN1DIR=share/man/man1 install
+}
+
+package_doxygen-docs() {
+  pkgdesc="Developer documentation for doxygen"
+
+  cd "${srcdir}/${pkgbase}-${pkgver}"
+  make INSTALL="${pkgdir}"/usr MAN1DIR=share/man/man1 install_docs
+}

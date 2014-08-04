@@ -1,0 +1,28 @@
+# $Id: PKGBUILD 213477 2014-05-23 23:39:45Z heftig $
+# Maintainer: Ionut Biru <ibiru@archlinux.org>
+
+pkgname=gtksourceview3
+_pkgbasename=gtksourceview
+pkgver=3.12.2
+pkgrel=1
+pkgdesc="A text widget adding syntax highlighting and more to GNOME"
+arch=('i686' 'x86_64')
+license=('GPL')
+depends=('gtk3' 'libxml2')
+makedepends=('intltool' 'gobject-introspection' 'glade')
+url="http://www.gnome.org"
+source=(http://ftp.gnome.org/pub/gnome/sources/$_pkgbasename/${pkgver:0:4}/$_pkgbasename-$pkgver.tar.xz)
+sha256sums=('62a31eee00f633d7959efb7eec44049ebd0345d670265853dcd21c057f3f30ad')
+
+build() {
+  cd "$_pkgbasename-$pkgver"
+  ./configure --prefix=/usr --sysconfdir=/etc \
+      --localstatedir=/var --disable-static \
+      --enable-glade-catalog
+  make
+}
+
+package() {
+  cd "$_pkgbasename-$pkgver"
+  make DESTDIR="$pkgdir" install
+}

@@ -1,0 +1,28 @@
+# $Id: PKGBUILD 211560 2014-04-19 21:10:15Z jgc $
+# Maintainer: Jan de Groot <jgc@archlinux.org>
+# Contributor: Thomas Baechler <thomas@archlinux.org>
+# Contributor: Tom Newsom <Jeepster@gmx.co.uk>
+
+pkgname=libdvdread
+pkgver=4.9.9
+pkgrel=1
+pkgdesc="Provides a simple foundation for reading DVD video disks"
+arch=(i686 x86_64)
+url="http://dvdnav.mplayerhq.hu"
+license=('GPL')
+depends=('glibc')
+makedepends=('libdvdcss')
+optdepends=('libdvdcss: for decoding encrypted DVDs')
+source=(http://dvdnav.mplayerhq.hu/releases/${pkgname}-${pkgver}.tar.xz)
+sha256sums=('d91275471ef69d488b05cf15c60e1cd65e17648bfc692b405787419f47ca424a')
+
+build() {
+  cd $pkgname-$pkgver
+  ./configure --prefix=/usr
+  make
+}
+
+package() {
+  cd $pkgname-$pkgver
+  make DESTDIR="${pkgdir}" install
+}

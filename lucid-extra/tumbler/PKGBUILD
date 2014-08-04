@@ -1,0 +1,43 @@
+# $Id: PKGBUILD 206371 2014-02-25 07:17:41Z foutrelis $
+# Maintainer: Evangelos Foutras <evangelos@foutrelis.com>
+# Contributor: Andreas Radke <andyrtr@archlinux.org>
+# Contributor: Jan Jezek <honzin.jezek@gmail.com>
+
+pkgname=tumbler
+pkgver=0.1.30
+pkgrel=1
+pkgdesc="D-Bus service for applications to request thumbnails"
+arch=('i686' 'x86_64')
+url="http://www.xfce.org/"
+license=('GPL2' 'LGPL')
+groups=('xfce4')
+depends=('dbus-glib' 'gdk-pixbuf2')
+makedepends=('intltool' 'ffmpegthumbnailer' 'poppler-glib' 'libgsf'
+             'libopenraw' 'freetype2')
+optdepends=('ffmpegthumbnailer: for video thumbnails'
+            'poppler-glib: for PDF thumbnails'
+            'libgsf: for ODF thumbnails'
+            'libopenraw: for RAW thumbnails'
+            'freetype2: for font thumbnails')
+source=(http://archive.xfce.org/src/apps/$pkgname/0.1/$pkgname-$pkgver.tar.bz2)
+sha256sums=('e7c20d79c830465f8b3b792893f05e8b8d5ba90aec4973e7517e07ef31537304')
+
+build() {
+  cd "$srcdir/$pkgname-$pkgver"
+
+  ./configure \
+    --prefix=/usr \
+    --sysconfdir=/etc \
+    --libexecdir=/usr/lib/xfce4 \
+    --disable-static \
+    --disable-debug \
+    --disable-gstreamer-thumbnailer
+  make
+}
+
+package() {
+  cd "$srcdir/$pkgname-$pkgver"
+  make DESTDIR="$pkgdir" install
+}
+
+# vim:set ts=2 sw=2 et:
