@@ -1,0 +1,21 @@
+# Maintainer: Lane Wiscombe anex[at]dem0n[dot]com
+
+pkgname=pacman-mirrorlist
+pkgver=20$(date +%y%m%d)
+pkgrel=1
+pkgdesc="Lucid OS mirror list for use by pacman"
+arch=('any')
+depends=('python')
+makedepends=('git')
+optdepends=('gtk3: for GTK UI' 'python-gobject: for GTK UI')
+url="https://github.com/edge226/lucid.git"
+license=('GPL')
+install=pacman-mirrorlist.install
+backup=(etc/pacman-mirrors.conf)
+source=(git+https://github.com/edge226/lucid.git)
+sha256sums=('SKIP')
+
+package() {
+  cd  lucid/lucid-core/lucid-pacman-mirrors/
+  make DESTDIR="${pkgdir}" install
+}

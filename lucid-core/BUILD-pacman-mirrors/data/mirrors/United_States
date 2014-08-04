@@ -1,0 +1,7 @@
+##
+## Pacman Mirrorlist
+##
+
+[United_States]
+Server = http://mirror.us.leaseweb.net/archlinux/$repo/$branch/$arch
+Server = http://mirror.csclub.uwaterloo.ca/archlinux/$repo/$branch/$arch
