@@ -1,0 +1,24 @@
+#!/bin/bash
+
+m4_include(lib/common.sh)
+
+scriptname=${0##*/}
+
+if [[ -z $1 ]]; then
+	echo 'Usage: '$scriptname' <package name>...'
+	exit 1
+fi
+
+case $scriptname in
+	archco)
+		SVNURL="svn+ssh://svn-packages@nymeria.archlinux.org/srv/repos/svn-packages/svn";;
+	communityco)
+		SVNURL="svn+ssh://svn-community@nymeria.archlinux.org/srv/repos/svn-community/svn";;
+	*)
+		die "Couldn't find svn url for %s" "$scriptname"
+		;;
+esac
+
+for i in "$@"; do
+	svn co "$SVNURL/$i"
+done
