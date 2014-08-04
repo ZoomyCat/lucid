@@ -1,0 +1,75 @@
+# Maintainer: Guillaume ALAUX <guillaume@archlinux.org>
+pkgname=tomcat6
+pkgver=6.0.41
+pkgrel=1
+pkgdesc='Open source implementation of the Java Servlet 2.5 and JavaServer Pages 2.1 technologies'
+arch=('any')
+url='http://tomcat.apache.org/'
+license=('APACHE')
+depends=('java-runtime>=5' 'java-jsvc' 'java-commons-daemon' 'eclipse-ecj')
+optdepends=('tomcat-native: to allow optimal performance in production environments')
+backup=(etc/${pkgname}/catalina.policy
+        etc/${pkgname}/catalina.properties
+        etc/${pkgname}/context.xml
+        etc/${pkgname}/logging.properties
+        etc/${pkgname}/server.xml
+        etc/${pkgname}/tomcat-users.xml
+        etc/${pkgname}/web.xml)
+install=${pkgname}.install
+source=(http://archive.apache.org/dist/tomcat/tomcat-6/v${pkgver}/bin/apache-tomcat-${pkgver}.tar.gz
+        systemd_${pkgname}.service
+        systemd_tmpfiles.d_${pkgname}.conf
+        ${pkgname}.install)
+
+sha256sums=('2eb2812b42f3559690542fcb9ea0c1f43dd0b0b7dca19787640c2b7755b0f953'
+            'b6d85501b00032a1385222e80a5f8e357276aaad605e699f40d5cc3770b8ce68'
+            '07b9ff0686134b3256cda8b5253b91ba23f54b547640729e2382c3c12067ea80'
+            '16046fc93a569cb817994ac251bbf464659286c39c2d9a5a2f52030d94a50dd0')
+
+_gid_log=19
+_gid_tomcat=66
+_uid_tomcat=66
+
+package() {
+  cd "${srcdir}/apache-tomcat-${pkgver}"
+
+  # Tomcat general files
+  install -dm755 "${pkgdir}"/usr/share/{,java/}${pkgname}
+  cp -r bin "${pkgdir}"/usr/share/${pkgname}
+  # commons-daemon and tomcat-natives are packaged on their own
+  rm "${pkgdir}"/usr/share/${pkgname}/bin/{*.bat,commons-daemon*,tomcat-native.tar.gz}
+  ln -s /usr/share/java/commons-daemon.jar "${pkgdir}"/usr/share/${pkgname}/bin/commons-daemon.jar
+
+  install -m644 lib/* "${pkgdir}"/usr/share/java/${pkgname}
+  # eclipse-ecj is packaged on its own
+  rm "${pkgdir}"/usr/share/java/${pkgname}/ecj-*.jar
+  ln -s ../eclipse-ecj.jar "${pkgdir}"/usr/share/java/${pkgname}/ecj.jar
+
+  ln -s /usr/share/java/${pkgname} "${pkgdir}"/usr/share/${pkgname}/lib
+
+  # We log through systemd but this would still be required for stock Tomcat logging
+  install -dm775 -o ${_uid_tomcat} -g ${_gid_log} "${pkgdir}"/var/log/${pkgname}
+  ln -s /var/log/${pkgname} "${pkgdir}"/usr/share/${pkgname}/logs
+  touch "${pkgdir}"/var/log/${pkgname}/catalina.{out,err}
+  chgrp ${_gid_log} "${pkgdir}"/var/log/${pkgname}/catalina.{out,err}
+
+  install -dm775 "${pkgdir}"/etc/${pkgname}
+  install -g ${_gid_tomcat} -m640 conf/* "${pkgdir}"/etc/${pkgname}
+  install -d -g ${_gid_tomcat} -m775 "${pkgdir}"/etc/${pkgname}/Catalina
+  ln -s /etc/${pkgname} "${pkgdir}"/usr/share/${pkgname}/conf
+
+  install -dm775 "${pkgdir}"/var/lib/${pkgname}
+  cp -r webapps "${pkgdir}"/var/lib/${pkgname}
+  chown -R ${_uid_tomcat}:${_gid_tomcat} "${pkgdir}"/var/lib/${pkgname}
+  ln -s /var/lib/${pkgname}/webapps "${pkgdir}"/usr/share/${pkgname}/webapps
+
+  install -dm1777 "${pkgdir}"/var/tmp
+  install -dm775 -o ${_uid_tomcat} -g ${_gid_tomcat} "${pkgdir}"/var/tmp/${pkgname}/{temp,work}
+  ln -s /var/tmp/${pkgname}/temp "${pkgdir}"/usr/share/${pkgname}/temp
+  ln -s /var/tmp/${pkgname}/work "${pkgdir}"/usr/share/${pkgname}/work
+
+  install -Dm644 "${srcdir}"/systemd_${pkgname}.service \
+                 "${pkgdir}"/usr/lib/systemd/system/${pkgname}.service
+  install -Dm644 "${srcdir}"/systemd_tmpfiles.d_${pkgname}.conf \
+                 "${pkgdir}"/usr/lib/tmpfiles.d/${pkgname}.conf
+}

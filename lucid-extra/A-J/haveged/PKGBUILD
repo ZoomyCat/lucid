@@ -1,0 +1,28 @@
+# $Id: PKGBUILD 210569 2014-04-15 05:49:04Z bpiotrowski $
+# Maintainer:  Bartłomiej Piotrowski <bpiotrowski@archlinux.org>
+# Contributor: kfgz <kfgz at interia dot pl>
+# Contributor: pootzko <pootzko at gmail dot com>
+
+pkgname=haveged
+pkgver=1.9.1
+pkgrel=1
+pkgdesc='Entropy harvesting daemon using CPU timings'
+arch=('i686' 'x86_64')
+url='http://www.issihosts.com/haveged'
+license=('GPL')
+depends=('glibc')
+source=($url/$pkgname-$pkgver.tar.gz
+        service)
+md5sums=('015ff58cd10607db0e0de60aeca2f5f8'
+         '777c7ac7fa145c03fca3ba9dcd4501de')
+
+build() {
+  cd $pkgname-$pkgver
+  ./configure --prefix=/usr --bindir=/usr/bin --sbindir=/usr/bin
+  make
+}
+
+package() {
+  make -C $pkgname-$pkgver DESTDIR="$pkgdir" install
+  install -Dm644 service "$pkgdir"/usr/lib/systemd/system/haveged.service
+}

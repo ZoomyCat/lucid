@@ -1,0 +1,32 @@
+# $Id: PKGBUILD 213501 2014-05-23 23:57:37Z heftig $
+# Maintainer: Jan Alexander Steffens (heftig) <jan.steffens@gmail.com>
+# Contributor: Jan de Groot <jgc@archlinux.org>
+
+pkgname=lightsoff
+pkgver=3.12.2
+pkgrel=1
+pkgdesc="Turn off all the lights"
+arch=('i686' 'x86_64')
+license=('GPL')
+depends=('desktop-file-utils' 'hicolor-icon-theme' 'clutter-gtk' 'librsvg')
+makedepends=('intltool' 'itstool' 'gobject-introspection')
+conflicts=('gnome-games')
+replaces=('gnome-games')
+options=('!emptydirs')
+install=lightsoff.install
+url="https://live.gnome.org/Lightsoff"
+groups=('gnome-extra')
+source=(http://ftp.gnome.org/pub/gnome/sources/$pkgname/${pkgver:0:4}/$pkgname-$pkgver.tar.xz)
+sha256sums=('112cb1fb7cda95189b89549016f671917436b0108fdff21f07c462e3d285138f')
+
+build() {
+  cd $pkgname-$pkgver
+  ./configure --prefix=/usr --sysconfdir=/etc --localstatedir=/var \
+      --disable-schemas-compile
+  make
+}
+
+package() {
+  cd $pkgname-$pkgver
+  make DESTDIR="$pkgdir" install
+}

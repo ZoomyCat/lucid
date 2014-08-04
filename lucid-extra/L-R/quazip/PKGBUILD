@@ -1,0 +1,29 @@
+# $Id: PKGBUILD 205824 2014-02-10 18:35:15Z andrea $
+# Maintainer: Andrea Scarpino <andrea@archlinux.org>
+# Contributor: trya <tryagainprod@gmail.com>
+
+pkgname=quazip
+pkgver=0.6.2
+pkgrel=1
+pkgdesc="C++ wrapper for the Gilles Vollant's ZIP/UNZIP C package"
+url="http://sourceforge.net/projects/quazip/"
+license=('LGPL')
+arch=('i686' 'x86_64')
+depends=('qt4')
+source=("http://downloads.sourceforge.net/${pkgname}/${pkgname}-${pkgver}.tar.gz")
+md5sums=('c11f8e2f757be94fd79dc49e5a4be0ca')
+
+build() {
+  cd ${pkgname}-${pkgver}/${pkgname}
+  qmake-qt4 PREFIX=/usr
+  make
+}
+
+package() {
+  cd ${pkgname}-${pkgver}/${pkgname}
+  make INSTALL_ROOT="${pkgdir}" install
+
+  install -d "${pkgdir}"/usr/share/apps/cmake-2.8/Modules
+  install -m644 ../FindQuaZip.cmake\
+    "${pkgdir}"/usr/share/apps/cmake-2.8/Modules
+}

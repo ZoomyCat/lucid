@@ -1,0 +1,32 @@
+# $Id: PKGBUILD 205964 2014-02-15 00:49:04Z eric $
+# Maintainer: Allan McRae <allan@archlinux.org>
+# Contributor: Andrew Simmons <andrew.simmons@gmail.com>
+
+pkgname=perl-archive-zip
+pkgver=1.37
+pkgrel=1
+pkgdesc="Provide a perl interface to ZIP archive files"
+arch=('any')
+license=('GPL' 'PerlArtistic')
+url="http://search.cpan.org/dist/Archive-Zip/"
+depends=('perl')
+options=('!emptydirs')
+source=(http://search.cpan.org/CPAN/authors/id/P/PH/PHRED/Archive-Zip-${pkgver}.tar.gz)
+md5sums=('e804985def2c1f0ed640ab4ca6aa85a1')
+
+build() {
+  cd Archive-Zip-${pkgver}
+  perl Makefile.PL INSTALLDIRS=vendor
+  make
+}
+
+check() {
+  cd Archive-Zip-${pkgver}
+  make test
+}
+
+
+package() {
+  cd Archive-Zip-${pkgver}
+  make DESTDIR="${pkgdir}" install
+}

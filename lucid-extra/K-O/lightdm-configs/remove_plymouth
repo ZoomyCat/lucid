@@ -1,0 +1,15 @@
+open terminal:
+
+sudo nano /etc/default/grub  (remove quiet splash from GRUB_CMDLINE_LINUX=)
+
+sudo nano /etc/mkinitcpio.conf (remove plymouth from hooks line)
+
+sudo mkinitcpio -p linux314
+
+sudo update-grub
+
+sudo systemctl disable kdm-plymouth.service -f
+
+sudo systemctl enable kdm.service -f
+
+reboot

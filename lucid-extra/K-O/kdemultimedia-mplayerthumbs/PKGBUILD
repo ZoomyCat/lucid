@@ -1,0 +1,31 @@
+# $Id: PKGBUILD 217665 2014-07-21 20:27:22Z svenstaro $
+# Maintainer: Andrea Scarpino <andrea@archlinux.org>
+
+pkgname=kdemultimedia-mplayerthumbs
+pkgver=4.13.3
+pkgrel=1
+pkgdesc="MPlayer based thumbnail generator for video files"
+url='https://projects.kde.org/projects/kde/kdemultimedia/mplayerthumbs'
+arch=('i686' 'x86_64')
+groups=('kde' 'kdemultimedia')
+license=('GPL' 'LGPL' 'FDL')
+depends=('kdebase-runtime' 'mplayer')
+makedepends=('cmake' 'automoc4')
+source=("http://download.kde.org/stable/${pkgver}/src/mplayerthumbs-${pkgver}.tar.xz")
+sha1sums=('7e9e84eca881069d5c31519361f17b1dcacef724')
+
+build() {
+  cd "${srcdir}"
+  mkdir build
+  cd build
+  cmake ../mplayerthumbs-${pkgver} \
+    -DCMAKE_BUILD_TYPE=Release \
+    -DKDE4_BUILD_TESTS=OFF \
+    -DCMAKE_INSTALL_PREFIX=/usr
+  make
+}
+
+package() {
+  cd "${srcdir}"/build
+  make DESTDIR="${pkgdir}" install
+}

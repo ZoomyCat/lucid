@@ -1,0 +1,31 @@
+# $Id: PKGBUILD 217615 2014-07-21 20:21:34Z svenstaro $
+# Maintainer: Andrea Scarpino <andrea@archlinux.org>
+
+pkgname=kdegames-kblackbox
+pkgver=4.13.3
+pkgrel=1
+pkgdesc="A game of hide and seek played on a grid of boxes"
+url="http://kde.org/applications/games/kblackbox/"
+arch=('i686' 'x86_64')
+license=('GPL' 'LGPL' 'FDL')
+groups=('kde' 'kdegames')
+depends=('kdebase-runtime' 'libkdegames')
+makedepends=('cmake' 'automoc4')
+install=${pkgname}.install
+source=("http://download.kde.org/stable/${pkgver}/src/kblackbox-${pkgver}.tar.xz")
+sha1sums=('745ec52f29b8de042facc35c92b7af6e855ade0d')
+
+build() {
+  mkdir build
+  cd build
+  cmake ../kblackbox-${pkgver} \
+    -DCMAKE_BUILD_TYPE=Release \
+    -DKDE4_BUILD_TESTS=OFF \
+    -DCMAKE_INSTALL_PREFIX=/usr
+  make
+}
+
+package() {
+  cd build
+  make DESTDIR="${pkgdir}" install
+}

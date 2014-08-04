@@ -1,0 +1,36 @@
+# $Id: PKGBUILD 216673 2014-07-08 18:32:31Z andrea $
+# Maintainer: Andrea Scarpino <andrea@archlinux.org>
+
+pkgname=sonnet
+pkgver=5.0.0
+pkgrel=1
+pkgdesc='Sonnet'
+arch=('i686' 'x86_64')
+url='https://projects.kde.org/projects/frameworks/sonnet'
+license=('LGPL')
+depends=('qt5-base' 'enchant')
+makedepends=('extra-cmake-modules' 'qt5-tools')
+groups=('kf5')
+source=("http://download.kde.org/stable/frameworks/${pkgver}/${pkgname}-${pkgver}.tar.xz")
+md5sums=('b5608009ca1d34e6fdfd4f89c9752eef')
+
+prepare() {
+  mkdir -p build
+}
+
+build() {
+  cd build
+  cmake ../${pkgname}-${pkgver} \
+    -DCMAKE_BUILD_TYPE=Release \
+    -DCMAKE_INSTALL_PREFIX=/usr \
+    -DLIB_INSTALL_DIR=lib \
+    -DQT_PLUGIN_INSTALL_DIR=lib/qt/plugins \
+    -DECM_MKSPECS_INSTALL_DIR=/usr/share/qt/mkspecs/modules \
+    -DBUILD_TESTING=OFF
+  make
+}
+
+package() {
+  cd build
+  make DESTDIR="${pkgdir}" install
+}

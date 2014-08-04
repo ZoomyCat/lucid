@@ -1,0 +1,32 @@
+# $Id: PKGBUILD 217568 2014-07-21 20:15:26Z svenstaro $
+# Maintainer: Andrea Scarpino <andrea@archlinux.org>
+
+pkgname=libkcddb
+pkgver=4.13.3
+pkgrel=1
+pkgdesc="KDE CDDB library"
+url='https://projects.kde.org/projects/kde/kdemultimedia/libkcddb'
+arch=('i686' 'x86_64')
+license=('GPL' 'LGPL' 'FDL')
+depends=('kdelibs' 'libmusicbrainz5')
+makedepends=('cmake' 'automoc4')
+replaces=('kdemultimedia-kioslave')
+conflicts=('kdemultimedia-kioslave')
+source=("http://download.kde.org/stable/${pkgver}/src/${pkgname}-${pkgver}.tar.xz")
+sha1sums=('562c5f68b22a8955d7896b066c5fd223422833dc')
+
+build() {
+  cd "${srcdir}"
+  mkdir build
+  cd build
+  cmake ../${pkgname}-${pkgver} \
+    -DCMAKE_BUILD_TYPE=Release \
+    -DKDE4_BUILD_TESTS=OFF \
+    -DCMAKE_INSTALL_PREFIX=/usr
+  make
+}
+
+package() {
+  cd "${srcdir}"/build
+  make DESTDIR="${pkgdir}" install
+}

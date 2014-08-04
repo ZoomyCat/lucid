@@ -1,0 +1,39 @@
+# $Id: PKGBUILD 216681 2014-07-08 18:33:37Z andrea $
+# Maintainer: Andrea Scarpino <andrea@archlinux.org>
+
+pkgname=kio
+pkgver=5.0.0
+pkgrel=1
+pkgdesc='KIO'
+arch=('i686' 'x86_64')
+url='https://projects.kde.org/projects/frameworks/kio'
+license=('LGPL')
+depends=('solid' 'karchive' 'kjobwidgets' 'kbookmarks' 'libxslt' 'kwallet'
+        'desktop-file-utils')
+makedepends=('extra-cmake-modules' 'kdoctools')
+groups=('kf5')
+install=kio.install
+source=("http://download.kde.org/stable/frameworks/${pkgver}/${pkgname}-${pkgver}.tar.xz")
+md5sums=('9aaf9448ceb4d834dcbff35c157a0bcd')
+
+prepare() {
+  mkdir -p build
+}
+
+build() {
+  cd build
+  cmake ../${pkgname}-${pkgver} \
+    -DCMAKE_BUILD_TYPE=Release \
+    -DCMAKE_INSTALL_PREFIX=/usr \
+    -DLIB_INSTALL_DIR=lib \
+    -DQT_PLUGIN_INSTALL_DIR=lib/qt/plugins \
+    -DECM_MKSPECS_INSTALL_DIR=/usr/share/qt/mkspecs/modules \
+    -DSYSCONF_INSTALL_DIR=/etc \
+    -DBUILD_TESTING=OFF
+  make
+}
+
+package() {
+  cd build
+  make DESTDIR="${pkgdir}" install
+}

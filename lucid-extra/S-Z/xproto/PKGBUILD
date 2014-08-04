@@ -1,0 +1,27 @@
+# $Id: PKGBUILD 210344 2014-04-14 15:48:25Z lcarlier $
+# Maintainer: AndyRTR <andyrtr@archlinux.org>
+# Maintainer: Jan de Groot <jgc@archlinux.org>
+
+pkgname=xproto
+pkgver=7.0.26
+pkgrel=1
+pkgdesc="X11 core wire protocol and auxiliary headers"
+arch=(any)
+license=('custom')
+url="http://xorg.freedesktop.org/"
+makedepends=('xorg-util-macros')
+source=(${url}/releases/individual/proto/${pkgname}-${pkgver}.tar.bz2)
+sha256sums=('636162c1759805a5a0114a369dffdeccb8af8c859ef6e1445f26a4e6e046514f')
+
+build() {
+  cd ${pkgname}-${pkgver}
+  ./configure --prefix=/usr
+  make
+}
+
+package() {
+  cd ${pkgname}-${pkgver}
+  make DESTDIR="${pkgdir}" install
+  install -m755 -d "${pkgdir}/usr/share/licenses/${pkgname}"
+  install -m644 COPYING "${pkgdir}/usr/share/licenses/${pkgname}/"
+}

@@ -1,0 +1,33 @@
+# $Id: PKGBUILD 217647 2014-07-21 20:25:07Z svenstaro $
+# Maintainer: Andrea Scarpino <andrea@archlinux.org>
+
+pkgname=kdegames-picmi
+pkgver=4.13.3
+pkgrel=1
+pkgdesc="A nonogram logic game for KDE"
+url="http://kde.org/applications/games/picmi/"
+arch=('i686' 'x86_64')
+license=('GPL' 'LGPL' 'FDL')
+groups=('kde' 'kdegames')
+depends=('kdebase-runtime' 'libkdegames')
+makedepends=('cmake' 'automoc4')
+replaces=('picmi')
+conflicts=('picmi')
+install=${pkgname}.install
+source=("http://download.kde.org/stable/${pkgver}/src/picmi-${pkgver}.tar.xz")
+sha1sums=('93dab8b3616dc30a72788c06916144d1afa4700a')
+
+build() {
+  mkdir build
+  cd build
+  cmake ../picmi-${pkgver} \
+    -DCMAKE_BUILD_TYPE=Release \
+    -DKDE4_BUILD_TESTS=OFF \
+    -DCMAKE_INSTALL_PREFIX=/usr
+  make
+}
+
+package() {
+  cd build
+  make DESTDIR="${pkgdir}" install
+}
