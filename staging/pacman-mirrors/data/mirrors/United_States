@@ -4,8 +4,4 @@
 
 [United_States]
 Server = http://mirror.us.leaseweb.net/archlinux/$repo/$branch/$arch
-Server = http://lug.mtu.edu/archlinux/$repo/$branch/$arch
-Server = http://mirrors.acm.wpi.edu/archlinux/$repo/$branch/$arch
-Server = http://archlinux.surlyjake.com/archlinux/$repo/$branch/$arch
-Server = http://mirror.cs.pitt.edu/archlinux/$repo/$branch/$arch
-Server = http://mirror.dacentec.com/manjaro/$branch/$repo/$arch
+Server = http://mirror.csclub.uwaterloo.ca/archlinux/$repo/$branch/$arch
