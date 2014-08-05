@@ -1,0 +1,196 @@
+## created a keyboardctl branch to put the sources in and fix this issue.
+## Currently compiling so I cannot change branches to fix this or it will
+## toss the compile out the window. Edge226
+Building keyboardctl for the x86_64 architecture.
+The packages, sources and log directory for this build are: 
+/var/lucid/repo/staging/x86_64/core/packages/
+/var/lucid/repo/staging/x86_64/core/sources/keyboardctl/
+/var/lucid/repo/staging/x86_64/core/logs/keyboardctl/
+==> Building in chroot for [testing] (x86_64)...
+==> Creating clean working copy [edge]...done
+==> Making package: keyboardctl 0.1.5-2 (Mon Aug  4 16:48:46 MDT 2014)
+==> Retrieving sources...
+==> ERROR: /home/edge/github/lucid/lucid-core/keyboardctl/keyboardctl is not a clone of https://github.com/manjaro/keyboardctl.git
+    Aborting...
+==> ERROR: Could not download sources.
+
+## Edit the grub-extras branch to contain only the needed git
+## information to be able to compile git-extras. I need to be able to
+## set this as a git repository which can be done as a branch.
+Building grub for the x86_64 architecture. Edge226
+The packages, sources and log directory for this build are: 
+/var/lucid/repo/staging/x86_64/core/packages/
+/var/lucid/repo/staging/x86_64/core/sources/grub/
+/var/lucid/repo/staging/x86_64/core/logs/grub/
+==> Building in chroot for [testing] (x86_64)...
+==> Creating clean working copy [edge]...done
+==> Making package: grub 2.02.beta2-6 (Mon Aug  4 20:25:03 MDT 2014)
+==> Retrieving sources...
+  -> Downloading grub-2.02-6.tar.gz...
+==> ERROR: /home/edge/github/lucid/lucid-core/grub/grub-extras is not a clone of git://git.sv.gnu.org/grub-extras.git
+    Aborting...
+==> ERROR: Could not download sources.
+
+## Gummiboot needs checked into. Possibly needs a new branch.
+Building gummiboot for the x86_64 architecture.
+The packages, sources and log directory for this build are: 
+/var/lucid/repo/staging/x86_64/core/packages/
+/var/lucid/repo/staging/x86_64/core/sources/gummiboot/
+/var/lucid/repo/staging/x86_64/core/logs/gummiboot/
+==> Building in chroot for [testing] (x86_64)...
+==> Creating clean working copy [edge]...done
+==> Making package: gummiboot 45-1 (Tue Aug  5 00:02:44 MDT 2014)
+==> Retrieving sources...
+  -> Cloning gummiboot git repo...
+Cloning into bare repository '/home/edge/github/lucid/lucid-core/isdn4k-utils/gummiboot/gummiboot'...
+==> ERROR: Build failed, check /var/lib/archbuild/testing-x86_64/edge/build
+
+## check into how this git repository was merged and possibly fix it.
+Building pacman-mirrorlist for the x86_64 architecture.
+The packages, sources and log directory for this build are: 
+/var/lucid/repo/staging/x86_64/core/packages/
+/var/lucid/repo/staging/x86_64/core/sources/pacman-mirrorlist/
+/var/lucid/repo/staging/x86_64/core/logs/pacman-mirrorlist/
+==> Building in chroot for [testing] (x86_64)...
+==> Creating clean working copy [edge]...done
+==> Making package: pacman-mirrorlist 20140804-1 (Mon Aug  4 20:16:33 MDT 2014)
+==> Retrieving sources...
+  -> Updating lucid git repo...
+remote: Counting objects: 396, done.
+remote: Compressing objects: 100% (277/277), done.
+remote: Total 396 (delta 23), reused 0 (delta 0)
+Receiving objects: 100% (396/396), 245.82 KiB | 0 bytes/s, done.
+Resolving deltas: 100% (23/23), done.
+From https://github.com/edge226/lucid
+   6dd6e42..775656d  merged-repo -> origin/merged-repo
+==> Validating source files with sha256sums...
+    lucid ... Skipped
+==> ERROR: Build failed, check /var/lib/archbuild/testing-x86_64/edge/build
+
+## Mirrors for ipw2100-fw, ipw2200-fw, xinetd are unreachable.
+Building ipw2100-fw for the x86_64 architecture.
+The packages, sources and log directory for this build are: 
+/var/lucid/repo/staging/x86_64/core/packages/
+/var/lucid/repo/staging/x86_64/core/sources/ipw2100-fw/
+/var/lucid/repo/staging/x86_64/core/logs/ipw2100-fw/
+==> Building in chroot for [testing] (x86_64)...
+==> Creating clean working copy [edge]...done
+==> Making package: ipw2100-fw 1.3-7 (Mon Aug  4 18:59:38 MDT 2014)
+==> Retrieving sources...
+  -> Downloading ipw2100-fw-1.3.tgz...
+==> ERROR: Failure while downloading ipw2100-fw-1.3.tgz
+    Aborting...
+==> ERROR: Could not download sources.
+  -> Found MIT-LICENSE
+==> Validating source files with sha1sums...
+    e2fsprogs-1.42.10.tar.gz ... Passed
+    MIT-LICENSE ... Passed
+==> ERROR: Build failed, check /var/lib/archbuild/testing-x86_64/edge/build
+
+Building ipw2200-fw for the x86_64 architecture.
+The packages, sources and log directory for this build are: 
+/var/lucid/repo/staging/x86_64/core/packages/
+/var/lucid/repo/staging/x86_64/core/sources/ipw2200-fw/
+/var/lucid/repo/staging/x86_64/core/logs/ipw2200-fw/
+==> Building in chroot for [testing] (x86_64)...
+==> Creating clean working copy [edge]...done
+==> Making package: ipw2200-fw 3.1-5 (Mon Aug  4 19:44:19 MDT 2014)
+==> Retrieving sources...
+  -> Downloading ipw2200-fw-3.1.tgz...
+==> ERROR: Failure while downloading ipw2200-fw-3.1.tgz
+    Aborting...
+==> ERROR: Could not download sources.
+
+Building xinetd for the x86_64 architecture.
+The packages, sources and log directory for this build are: 
+/var/lucid/repo/staging/x86_64/core/packages/
+/var/lucid/repo/staging/x86_64/core/sources/xinetd/
+/var/lucid/repo/staging/x86_64/core/logs/xinetd/
+==> Building in chroot for [testing] (x86_64)...
+==> Creating clean working copy [edge]...done
+==> Making package: xinetd 2.3.15-4 (Mon Aug  4 20:13:46 MDT 2014)
+==> Retrieving sources...
+  -> Downloading xinetd-2.3.15.tar.gz...
+  ==> ERROR: Failure while downloading xinetd-2.3.15.tar.gz
+    Aborting...
+==> ERROR: Could not download sources.
+
+## This is just a malformed PKGBUILD that needs looking into and 
+## the bugs need to be squashed from it.
+Building lucid-system for the x86_64 architecture.
+The packages, sources and log directory for this build are: 
+/var/lucid/repo/staging/x86_64/core/packages/
+/var/lucid/repo/staging/x86_64/core/sources/lucid-system/
+/var/lucid/repo/staging/x86_64/core/logs/lucid-system/
+==> Building in chroot for [testing] (x86_64)...
+==> Creating clean working copy [edge]...done
+==> Making package: lucid-system 20140804-2 (Mon Aug  4 19:44:45 MDT 2014)
+==> WARNING: Using a PKGBUILD without a package() function is deprecated.
+==> Retrieving sources...
+==> ERROR: Build failed, check /var/lib/archbuild/testing-x86_64/edge/build
+
+## Need to look more into what pcre does, It may be a firmware that
+## has been incorporated into the kernel and thus the sources were no
+## longer relevent.
+Building pcre for the x86_64 architecture.
+The packages, sources and log directory for this build are: 
+/var/lucid/repo/staging/x86_64/core/packages/
+/var/lucid/repo/staging/x86_64/core/sources/pcre/
+/var/lucid/repo/staging/x86_64/core/logs/pcre/
+==> Building in chroot for [testing] (x86_64)...
+==> Creating clean working copy [edge]...done
+==> Making package: pcre 8.35-1 (Mon Aug  4 19:43:25 MDT 2014)
+==> Retrieving sources...
+  -> Downloading pcre-8.35.tar.bz2...
+==> Validating source files with md5sums...
+    pcre-8.35.tar.bz2 ... Passed
+    pcre-8.35.tar.bz2.sig ... Skipped
+==> Verifying source file signatures with gpg...
+    pcre-8.35.tar.bz2 ... FAILED (unknown public key 9766E084FB0F43D8)
+==> WARNING: Warnings have occurred while verifying the signatures.
+    Please make sure you really trust them.
+==> ERROR: Build failed, check /var/lib/archbuild/testing-x86_64/edge/build
+
+## check into what krb5 does and under what circumstances it is needed.
+## look into why it failed to compiled and see if it can be pieced together
+## why the pkgbuild is failing.
+Building krb5 for the x86_64 architecture.
+The packages, sources and log directory for this build are: 
+/var/lucid/repo/staging/x86_64/core/packages/
+/var/lucid/repo/staging/x86_64/core/sources/krb5/
+/var/lucid/repo/staging/x86_64/core/logs/krb5/
+==> Building in chroot for [testing] (x86_64)...
+==> Creating clean working copy [edge]...done
+==> Making package: krb5 1.12.1-1 (Mon Aug  4 20:25:17 MDT 2014)
+==> Retrieving sources...
+  -> Downloading krb5-1.12.1-signed.tar...
+  -> Found krb5-config_LDFLAGS.patch
+  -> Found krb5-kadmind.service
+  -> Found krb5-kdc.service
+  -> Found krb5-kpropd.service
+  -> Found krb5-kpropd@.service
+  -> Found krb5-kpropd.socket
+==> Validating source files with sha1sums...
+    krb5-1.12.1-signed.tar ... Passed
+    krb5-config_LDFLAGS.patch ... Passed
+    krb5-kadmind.service ... Passed
+    krb5-kdc.service ... Passed
+    krb5-kpropd.service ... Passed
+    krb5-kpropd@.service ... Passed
+    krb5-kpropd.socket ... Passed
+==> ERROR: Build failed, check /var/lib/archbuild/testing-x86_64/edge/build
+
+
+## Seems to have successfully created the package in a second iteration.
+Building coreutils for the x86_64 architecture.
+The packages, sources and log directory for this build are: 
+/var/lucid/repo/staging/x86_64/core/packages/
+/var/lucid/repo/staging/x86_64/core/sources/coreutils/
+/var/lucid/repo/staging/x86_64/core/logs/coreutils/
+==> Building in chroot for [testing] (x86_64)...
+==> Creating clean working copy [edge]...done
+==> Making package: coreutils 8.23-1 (Tue Aug  5 00:05:53 MDT 2014)
+==> Retrieving sources...
+  -> Downloading coreutils-8.23.tar.xz...
+==> ERROR: Build failed, check /var/lib/archbuild/testing-x86_64/edge/build
+
