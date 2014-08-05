@@ -18,7 +18,7 @@ CONFIGFILES = \
 	pacman-multilib.conf \
 	pacman-default.conf
 
-LUCIDBUILD_LINKS = \
+ARCHBUILD_LINKS = \
 	lucid-i686-build \
 	lucid-x86_64-build \
 	lucid-multilib-build \
@@ -43,13 +43,13 @@ install:
 	install -dm0755 $(DESTDIR)$(PREFIX)/share/devtools
 	install -m0755 ${BINPROGS} $(DESTDIR)$(PREFIX)/bin
 	install -m0644 ${CONFIGFILES} $(DESTDIR)$(PREFIX)/share/devtools
-	for l in ${LUCIDBUILD_LINKS}; do ln -sf lucidbuild $(DESTDIR)$(PREFIX)/bin/$$l; done
+	for l in ${ARCHBUILD_LINKS}; do ln -sf lucidbuild $(DESTDIR)$(PREFIX)/bin/$$l; done
 	ln -sf find-libdeps $(DESTDIR)$(PREFIX)/bin/find-libprovides
 
 uninstall:
 	for f in ${BINPROGS}; do rm -f $(DESTDIR)$(PREFIX)/bin/$$f; done
 	for f in ${CONFIGFILES}; do rm -f $(DESTDIR)$(PREFIX)/share/devtools/$$f; done
-	for l in ${LUCIDBUILD_LINKS}; do rm -f $(DESTDIR)$(PREFIX)/bin/$$l; done
+	for l in ${ARCHBUILD_LINKS}; do rm -f $(DESTDIR)$(PREFIX)/bin/$$l; done
 	rm -f $(DESTDIR)$(PREFIX)/bin/find-libprovides
 
 dist:
