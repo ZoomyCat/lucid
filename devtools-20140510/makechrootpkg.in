@@ -88,7 +88,7 @@ check_root "$0" "$@"
 # Canonicalize chrootdir, getting rid of trailing /
 chrootdir=$(readlink -e "$passeddir")
 [[ ! -d $chrootdir ]] && die "No chroot dir defined, or invalid path '%s'" "$passeddir"
-[[ ! -d $chrootdir/root ]] && die "Missing chroot dir root directory. Try using: mkarchroot %s/root base-devel" "$chrootdir"
+[[ ! -d $chrootdir/root ]] && mklucidroot "%s/root" "base-devel" "$chrootdir"
 
 # Detect chrootdir filesystem type
 chroottype=$(stat -f -c %T "$chrootdir")
@@ -185,7 +185,7 @@ install_packages() {
 		pkgname="${install_pkg##*/}"
 		cp "$install_pkg" "$copydir/$pkgname"
 
-		arch-nspawn "$copydir" \
+		lucid-nspawn "$copydir" \
 			"${bindmounts_ro[@]}" "${bindmounts_rw[@]}" \
 			pacman -U /$pkgname --noconfirm
 		(( ret += !! $? ))
@@ -365,7 +365,7 @@ load_vars /etc/makepkg.conf
 
 create_chroot
 
-$update_first && arch-nspawn "$copydir" \
+$update_first && lucid-nspawn "$copydir" \
 		"${bindmounts_ro[@]}" "${bindmounts_rw[@]}" \
 		pacman -Syu --noconfirm
 
@@ -375,7 +375,7 @@ prepare_chroot
 
 download_sources
 
-if arch-nspawn "$copydir" \
+if lucid-nspawn "$copydir" \
 	--bind-ro="$PWD:/startdir_host" \
 	--bind-ro="$SRCDEST:/srcdest_host" \
 	"${bindmounts_ro[@]}" "${bindmounts_rw[@]}" \
