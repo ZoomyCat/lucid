@@ -68,7 +68,7 @@ if ${clean_first} || [[ ! -d "${chroots}/${repo}-${arch}" ]]; then
 		"${base_packages[@]}" || abort
 else
 	lock 9 "${chroots}/${repo}-${arch}/root.lock" "Locking clean chroot"
-	arch-nspawn \
+	lucid-nspawn \
 		-C "@pkgdatadir@/pacman-${pacman_conf_arch}.conf" \
 		-M "@pkgdatadir@/makepkg-${arch}.conf" \
 		"${chroots}/${repo}-${arch}/root" \

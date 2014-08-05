@@ -1,8 +1,8 @@
 # Maintainer: Edward Tunnah <edge226@dem0n.com>
 # Contributors: Lane Wiscombe <anex@dem0n.com>
 
-pkgname=devtools-systemd
-pkgver=20140728
+pkgname=devtools
+pkgver=20140805
 pkgrel=1
 pkgdesc='Packaging Tools For Lucid Systems'
 arch=('any')
