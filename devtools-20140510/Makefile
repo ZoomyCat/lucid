@@ -5,6 +5,8 @@ PREFIX = /usr/local
 BINPROGS = \
 	checkpkg \
 	lucidbuild \
+	lucid-build \
+	lb \
 	lddd \
 	finddeps \
 	find-libdeps \
