@@ -3,124 +3,124 @@
 
 ## defines the usage of the program.
 usage="
-Name: 					lucid-build
+Name:               lucid-build
 
 
-Description:		lucid-build compiles all PKGBUILD's recursively 
-					within the working directory. It has options to
-					modify where it starts searching and what
-					architecture you would like to build within that
-					working directory.
-					
-					It also allows the user to choose the location
-					of their repository and sub repository.
-					
-					Currently you can only use one architecture at
-					a time but that may change in the future.
+Description:        lucid-build compiles all PKGBUILD's recursively 
+                    within the working directory. It has options to
+                    modify where it starts searching and what
+                    architecture you would like to build within that
+                    working directory.
+                    
+                    It also allows the user to choose the location
+                    of their repository and sub repository.
+                    
+                    Currently you can only use one architecture at
+                    a time but that may change in the future.
 
 
-Usage:				lucid-build (Options) [-d] <location>
+Usage:              lucid-build (Options) [-d] <location>
 
-Options: 			
+Options:            
 
-	-h or --help 	You're reading it.
-					
-	-6				Compiles x86_64 packages.
-					
-	-3				Compiles i686 packages.
-					
-	-m				Compiles multilib packages.
-					
-	-d <directory>	Specifies the directory to start searching for
-					PKGBUILD files.
-					
-	-t <target>		This specifies the repository target. This location
-					is modified by this script to place things in a
-					proper repository location for the proper arch.
-					Default: /var/lucid/repo
-					
-	-r <repository>	This will select the final repository the packages 
-					are to be built in. 
-					eg. core, extra, community, multilib.
-					Default: core
-					
-	-b <branch>		Change the default branch. staging, testing, stable.
-					Default: staging
-					
-	-v				Verbose. Forces compiling to show in the command
-					line output. 
-					
-					This option is not a suggested option.
-					This option should really only be used if you are
-					doing compiles for single programs or a small scale
-					package set.
-					
-					This option removes the default of logging all
-					compile output to a file and in a multi-compile
-					senario will make debugging more difficult and also 
-					increases the time taken to debug the process by
-					requiring the user of lb to manually scroll through
-					all compile output per package build in the set. It
-					also increases the difficulty of sharing any compile
-					information with others.
-					
-					Outputting the data to the screen may actually
-					increase the amount of time it takes to perform your
-					compile if the output causes a bottleneck then 
-					writing to disk and keeping the log file for later 
-					reference is more efficient and makes sense.
-					
-					Parsing through the data to find the relevent 
-					information can be easier if using a integrated
-					development environment or another advanced editor.
-					
-					This is not possible if this flag is set.
-					
-					You have been warned.
-					
+    -h or --help    You're reading it.
+                    
+    -6              Compiles x86_64 packages.
+                    
+    -3              Compiles i686 packages.
+                    
+    -m              Compiles multilib packages.
+                    
+    -d <directory>  Specifies the directory to start searching for
+                    PKGBUILD files.
+                    
+    -t <target>     This specifies the repository target. This location
+                    is modified by this script to place things in a
+                    proper repository location for the proper arch.
+                    Default: /var/lucid/repo
+                    
+    -r <repository> This will select the final repository the packages 
+                    are to be built in. 
+                    eg. core, extra, community, multilib.
+                    Default: core
+                    
+    -b <branch>     Change the default branch. staging, testing, stable.
+                    Default: staging
+                    
+    -v              Verbose. Forces compiling to show in the command
+                    line output. 
+                    
+                    This option is not a suggested option.
+                    This option should really only be used if you are
+                    doing compiles for single programs or a small scale
+                    package set.
+                    
+                    This option removes the default of logging all
+                    compile output to a file and in a multi-compile
+                    senario will make debugging more difficult and also 
+                    increases the time taken to debug the process by
+                    requiring the user of lb to manually scroll through
+                    all compile output per package build in the set. It
+                    also increases the difficulty of sharing any compile
+                    information with others.
+                    
+                    Outputting the data to the screen may actually
+                    increase the amount of time it takes to perform your
+                    compile if the output causes a bottleneck then 
+                    writing to disk and keeping the log file for later 
+                    reference is more efficient and makes sense.
+                    
+                    Parsing through the data to find the relevent 
+                    information can be easier if using a integrated
+                    development environment or another advanced editor.
+                    
+                    This is not possible if this flag is set.
+                    
+                    You have been warned.
+                    
 Examples:
-	The following examples will compile packages for the appropriate 
-	architecture starting in the current working directory.
-	
-	To build packages under the respective architectures.
-	lb -6 ## x86_64 packages in /var/lucid/repo/unstable/x86_64/core
-	lb -3 ## i686 packages in /var/lucid/repo/unstable/i686/core
-	lb -m ## x86_64 packages in /var/lucid/repo/unstable/x86_64/core
-	
-	The following examples will compile packages for the appropriate
-	architecture at the location you point it at.
-	
-	To build a single package point lb to the PKGBUILD file.
-	lb -6d /var/abs/core/pacman -t /var/lucid/repo -r core
-	lb -3d /var/abs/core/pacman -t /var/lucid/repo -r core
-	lb -md /var/abs/multilib/zsnes -t /var/lucid/repo -r multilib
-	
-	The results of these commands would create a repository that has
-	three directories inside of it. A directory for packages, sources
-	and logs/debug information.
-	
-	The resulting location would be:
-	
-		-6 or (-m - replace core with multilib)
-			/var/lucid/repo/unstable/x86_64/core
-	
-		-3
-			/var/lucid/repo/unstable/i686/core
-	
-	Excluding the architecture field will default to x86_64 this can be
-	modified within this script at any time.
+    The following examples will compile packages for the appropriate 
+    architecture starting in the current working directory.
+    
+    To build packages under the respective architectures.
+    lb -6 ## x86_64 packages in /var/lucid/repo/unstable/x86_64/core
+    lb -3 ## i686 packages in /var/lucid/repo/unstable/i686/core
+    lb -m ## x86_64 packages in /var/lucid/repo/unstable/x86_64/core
+    
+    The following examples will compile packages for the appropriate
+    architecture at the location you point it at.
+    
+    To build a single package point lb to the PKGBUILD file.
+    lb -6d /var/abs/core/pacman -t /var/lucid/repo -r core
+    lb -3d /var/abs/core/pacman -t /var/lucid/repo -r core
+    lb -md /var/abs/multilib/zsnes -t /var/lucid/repo -r multilib
+    
+    The results of these commands would create a repository that has
+    three directories inside of it. A directory for packages, sources
+    and logs/debug information.
+    
+    The resulting location would be:
+    
+        -6 or (-m - replace core with multilib)
+            /var/lucid/repo/unstable/x86_64/core
+    
+        -3
+            /var/lucid/repo/unstable/i686/core
+    
+    Excluding the architecture field will default to x86_64 this can be
+    modified within this script at any time.
 
-	To build a package into the core repository:
+    To build a package into the core repository:
 
-		Inside the repo(core):
-			lb -r core -b unstable
+        Inside the repo(core):
+            lb -r core -b unstable
 
-		Outside of the repo directory:
-			lb -d /var/abs/core -r core -b unstable
-			
-	In both cases the results are the same:
-		You magically get a repository at:
-				/var/lucid/repo/unstable/x86_64/core"
+        Outside of the repo directory:
+            lb -d /var/abs/core -r core -b unstable
+            
+    In both cases the results are the same:
+        You magically get a repository at:
+                /var/lucid/repo/unstable/x86_64/core"
 
 
 ## The main stuff.
@@ -133,57 +133,57 @@ if [ "$EUID" != "0" ]; then
     exit 1
 else
 
-	OPTIND=1 ## make sure the optargs are reset for getopts
-	buildtype="" ## makes sure there is a default set for build.
-	dir=""	 ## makes sure there is a default set for dir.
-	build="lucid-build"
+    OPTIND=1 ## make sure the optargs are reset for getopts
+    buildtype="" ## makes sure there is a default set for build.
+    dir=""   ## makes sure there is a default set for dir.
+    build="lucid-build"
 
 ## This case statement sets the build parameters of the program for
 ## which architecture to use. 
-	while getopts "36d:hmt:r:b:o" opt; do
-		case "$opt" in
-			d)	dir=$OPTARG;;
-			6)	buildtype="lucid-x86_64-build"
-					archtype="x86_64"
-					printf "The build has been set to 64 bit.\n";;
-			3)	buildtype="lucid-i686-build"
-					archtype="i686"
-					printf "The build has been set to 32 bit.\n";;
-			m)	buildtype="lucid-multilib-build"
-					archtype="x86_64"
-					printf "The build has been set to multilib.\n";;
-			t)	repodir=$OPTARG;;
-			r)  	repo=$OPTARG;;
-			b)		branch=$OPTARG;;
-			o)		output="yes";;
-			h)		printf '%s\n' "$usage"; exit 0;;
-			\?)		printf '%s\n' "$usage" >&2; exit 1;;
-		esac
-	done
-	
+    while getopts "36d:hmt:r:b:o" opt; do
+        case "$opt" in
+            d)  dir=$OPTARG;;
+            6)  buildtype="lucid-x86_64-build"
+                    archtype="x86_64"
+                    printf "The build has been set to 64 bit.\n";;
+            3)  buildtype="lucid-i686-build"
+                    archtype="i686"
+                    printf "The build has been set to 32 bit.\n";;
+            m)  buildtype="lucid-multilib-build"
+                    archtype="x86_64"
+                    printf "The build has been set to multilib.\n";;
+            t)  repodir=$OPTARG;;
+            r)      repo=$OPTARG;;
+            b)      branch=$OPTARG;;
+            o)      output="yes";;
+            h)      printf '%s\n' "$usage"; exit 0;;
+            \?)     printf '%s\n' "$usage" >&2; exit 1;;
+        esac
+    done
+    
 ## Check and make sure the proper build parameters are set, if they are 
 ## not currently set then set the build options to reasonable 
 ## default options.
-	if [ "$buildtype" = "" ]; then ## if no arch is select set one.
-		buildtype="lucid-x86_64-build"
-		archtype="x86_64"
-	fi
-	if [ "$dir" = "" ]; then ## if no directory selected set one.
-		dir="./"
-		printf "Finding packagebuilds in $(pwd) directory.\n"
-	else 
-		printf "Finding packagebuilds in $dir directory.\n"
-	fi
-	if [ "$repodir" = "" ]; then ## if no repodir is selected set one.
-		repodir="/var/lucid/repo"
-	fi
-	if [ "$repo" = "" ]; then ## if no repo is set then set one.
-		repo="core"
-	fi
-	if [ "$branch" = "" ]; then
-		branch="staging" ## if no branch is set then set one.
-	fi
-	
-	## Finally find the pkgbuilds and build them!
-	find "$dir" -name PKGBUILD -type f -execdir "$build" "$buildtype" "$archtype" "$repodir/$branch/$archtype/$repo" "$output"\;
+    if [ "$buildtype" = "" ]; then ## if no arch is select set one.
+        buildtype="lucid-x86_64-build"
+        archtype="x86_64"
+    fi
+    if [ "$dir" = "" ]; then ## if no directory selected set one.
+        dir="./"
+        printf "Finding packagebuilds in $(pwd) directory.\n"
+    else 
+        printf "Finding packagebuilds in $dir directory.\n"
+    fi
+    if [ "$repodir" = "" ]; then ## if no repodir is selected set one.
+        repodir="/var/lucid/repo"
+    fi
+    if [ "$repo" = "" ]; then ## if no repo is set then set one.
+        repo="core"
+    fi
+    if [ "$branch" = "" ]; then
+        branch="staging" ## if no branch is set then set one.
+    fi
+    
+    ## Finally find the pkgbuilds and build them!
+    find "$dir" -name PKGBUILD -type f -execdir "$build" "$buildtype" "$archtype" "$repodir/$branch/$archtype/$repo" "$output"\;
 fi
