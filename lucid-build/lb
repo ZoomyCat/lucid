@@ -6,7 +6,7 @@ usage="
 Name: 					lucid-build
 
 
-Description:    			lucid-build compiles all PKGBUILD's recursively 
+Description:		lucid-build compiles all PKGBUILD's recursively 
 					within the working directory. It has options to
 					modify where it starts searching and what
 					architecture you would like to build within that
@@ -19,11 +19,11 @@ Description:    			lucid-build compiles all PKGBUILD's recursively
 					a time but that may change in the future.
 
 
-Usage:					lucid-build (Options) [-d] <location>
+Usage:				lucid-build (Options) [-d] <location>
 
 Options: 			
 
-	-h or --help 			You're reading it.
+	-h or --help 	You're reading it.
 					
 	-6				Compiles x86_64 packages.
 					
@@ -55,15 +55,28 @@ Options:
 					doing compiles for single programs or a small scale
 					package set.
 					
-					This option removes the default of logging all compile
-					output to a file and in a multi-compile	senario will 
-					make debugging more difficult and also increase the time
-					taken to debug the process.
+					This option removes the default of logging all
+					compile output to a file and in a multi-compile
+					senario will make debugging more difficult and also 
+					increases the time taken to debug the process by
+					requiring the user of lb to manually scroll through
+					all compile output per package build in the set. It
+					also increases the difficulty of sharing any compile
+					information with others.
 					
-					Outputting the data	to the screen may actually increase
-					the amount of time it takes to perform your compile if
-					the output causes a bottleneck then writing to disk and
-					keeping	the log file for later reference is more efficient.
+					Outputting the data to the screen may actually
+					increase the amount of time it takes to perform your
+					compile if the output causes a bottleneck then 
+					writing to disk and keeping the log file for later 
+					reference is more efficient and makes sense.
+					
+					Parsing through the data to find the relevent 
+					information can be easier if using a integrated
+					development environment or another advanced editor.
+					
+					This is not possible if this flag is set.
+					
+					You have been warned.
 					
 Examples:
 	The following examples will compile packages for the appropriate 
