@@ -19,17 +19,20 @@ Description:        lucid-build compiles all PKGBUILD's recursively
                     a time but that may change in the future.
 
 
-Usage:              lucid-build (Options) [-d] <location>
+Usage:              lucid-build (Options)
 
 Options:            
 
     -h or --help    You're reading it.
                     
-    -6              Compiles x86_64 packages.
+    -6              Compiles x86_64 packages. This cannot be combined
+                    with -3 or -m.
                     
-    -3              Compiles i686 packages.
+    -3              Compiles i686 packages. This cannot be combined
+                    with -6 or -m.
                     
-    -m              Compiles multilib packages.
+    -m              Compiles multilib packages. This cannot be combined
+                    with -6 or -3.
                     
     -d <directory>  Specifies the directory to start searching for
                     PKGBUILD files.
