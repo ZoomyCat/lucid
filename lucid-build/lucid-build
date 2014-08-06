@@ -17,7 +17,7 @@ output="$4" ## Flag to for output to terminal instead of using a logfile
 ## packages where they need to go.
 pkg=".pkg.tar.xz" ## This mixed with $archtype allows me to know the pkg.
 pkgname="$(basename $(pwd))" ## Grab the package name via the source build dir.
-pkgdir="$repo/packages/"	## The location of the compiled binary packages.
+pkgdir="$repo/packages/"    ## The location of the compiled binary packages.
 srcdir="$repo/sources/$pkgname/" ## The source tarbal location.
 logdir="$repo/logs/$pkgname/" ## The debug and log location.
 
@@ -29,9 +29,9 @@ printf "Building %s for the %s architecture.\n" "$pkgname" "$archtype"
 printf "The packages, sources and log directory for this build are: \n"
 printf "%s\n%s\n%s\n" "$pkgdir" "$srcdir" "$logdir"
 if [ "$output" = "yes" ]; then
-	"$build"
+    "$build"
 else
-	"$build" > "$logdir$build-$pkgname.log"
+    "$build" > "$logdir$build-$pkgname.log"
 fi
 
 ## Copy the Sources, Packages and logs to the appropriate directories.
@@ -49,7 +49,7 @@ mv *.tar.* "$srcdir" ## Copy all remaining tarballs into the src directory.
 
 printf "Moving build information from $build stage in case of failure.\n\n"
 if [ "$archtype" = "x86_64" ]; then
-	cp -R /var/lib/manjarobuild/unstable-x86_64/*/build "$logdir"
+    cp -R /var/lib/manjarobuild/unstable-x86_64/*/build "$logdir"
 elif [ "$archtype" = "i686" ]; then
-	cp -R /var/lib/manjarobuild/unstable-i686/*/build "$logdir"
+    cp -R /var/lib/manjarobuild/unstable-i686/*/build "$logdir"
 fi
