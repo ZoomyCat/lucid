@@ -141,7 +141,7 @@ else
 	fi
 	if [ "$dir" = "" ]; then ## if no directory selected set one.
 		dir="./"
-		printf "Finding packagebuilds in "`pwd`" directory.\n"
+		printf "Finding packagebuilds in $(pwd) directory.\n"
 	else 
 		printf "Finding packagebuilds in $dir directory.\n"
 	fi
