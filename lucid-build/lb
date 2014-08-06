@@ -44,11 +44,27 @@ Options:
 					eg. core, extra, community, multilib.
 					Default: core
 					
-	-b <branch>		Change the default branch. unstable/stable.
-					Default: unstable
+	-b <branch>		Change the default branch. staging, testing, stable.
+					Default: staging
 					
 	-v				Verbose. Forces compiling to show in the command
-					line output.
+					line output. 
+					
+					This option is not a suggested option.
+					This option should really only be used if you are
+					doing compiles for single programs or a small scale
+					package set.
+					
+					This option removes the default of logging all compile
+					output to a file and in a multi-compile	senario will 
+					make debugging more difficult and also increase the time
+					taken to debug the process.
+					
+					Outputting the data	to the screen may actually increase
+					the amount of time it takes to perform your compile if
+					the output causes a bottleneck then writing to disk and
+					keeping	the log file for later reference is more efficient.
+					
 Examples:
 	The following examples will compile packages for the appropriate 
 	architecture starting in the current working directory.
