@@ -47,6 +47,11 @@ mv *"multilib$pkg" "$pkgdir" ## Copy multilib packages into the repo, make sure 
 mv *"any$pkg" "$pkgdir" ## Copy any files for all architectures were compiled move them into the repo.
 mv *.tar.* "$srcdir" ## Copy all remaining tarballs into the src directory.
 
+## if a git build from a branch is used then make sure we clean up after it.
+if [ -d ./lucid ]; then
+	rm -rf lucid
+fi
+
 printf "Moving build information from $build stage in case of failure.\n\n"
 if [ "$archtype" = "x86_64" ]; then
     cp -R /var/lib/manjarobuild/unstable-x86_64/*/build "$logdir"
