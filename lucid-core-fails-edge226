@@ -1,19 +1,3 @@
-## created a keyboardctl branch to put the sources in and fix this issue.
-## Currently compiling so I cannot change branches to fix this or it will
-## toss the compile out the window. Edge226
-Building keyboardctl for the x86_64 architecture.
-The packages, sources and log directory for this build are: 
-/var/lucid/repo/staging/x86_64/core/packages/
-/var/lucid/repo/staging/x86_64/core/sources/keyboardctl/
-/var/lucid/repo/staging/x86_64/core/logs/keyboardctl/
-==> Building in chroot for [testing] (x86_64)...
-==> Creating clean working copy [edge]...done
-==> Making package: keyboardctl 0.1.5-2 (Mon Aug  4 16:48:46 MDT 2014)
-==> Retrieving sources...
-==> ERROR: /home/edge/github/lucid/lucid-core/keyboardctl/keyboardctl is not a clone of https://github.com/manjaro/keyboardctl.git
-    Aborting...
-==> ERROR: Could not download sources.
-
 ## Edit the grub-extras branch to contain only the needed git
 ## information to be able to compile git-extras. I need to be able to
 ## set this as a git repository which can be done as a branch.
