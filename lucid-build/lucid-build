@@ -29,9 +29,9 @@ printf "Building %s for the %s architecture.\n" "$pkgname" "$archtype"
 printf "The packages, sources and log directory for this build are: \n"
 printf "%s\n%s\n%s\n" "$pkgdir" "$srcdir" "$logdir"
 if [ "$output" = "yes" ]; then
-    "$build"
+    "$build" -c
 else
-    "$build" > "$logdir$build-$pkgname.log"
+    "$build" -c > "$logdir$build-$pkgname.log"
 fi
 
 ## Copy the Sources, Packages and logs to the appropriate directories.
@@ -49,7 +49,7 @@ mv *.tar.* "$srcdir" ## Copy all remaining tarballs into the src directory.
 
 ## if a git build from a branch is used then make sure we clean up after it.
 if [ -d ./lucid ]; then
-	rm -rf lucid
+    rm -rf lucid
 fi
 
 printf "Moving build information from $build stage in case of failure.\n\n"
