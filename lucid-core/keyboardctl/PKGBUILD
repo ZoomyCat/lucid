@@ -23,6 +23,6 @@ package() {
   replaces=('console-setup')
   provides=('console-setup')
   backup=('etc/keyboard.conf')
-  cd ${srcdir}/${pkgname}
+  cd ${srcdir}/lucid-${pkgname}/${pkgname}
   make DESTDIR="$pkgdir" install
 }
