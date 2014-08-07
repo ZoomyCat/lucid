@@ -1,3 +1,0 @@
-{
-      "name": "pkgbuilds", "files": [ { "directory": "", "filters": ["PKGBUILD", "-*.xz", "*.install", "*.md", "*.patch", "*.initd", "*.confd", "*.sh", "*.conf", ".kateproject"], "recursive": 1 } ]
-}

@@ -1,5 +1,0 @@
-# pack-refs with: peeled fully-peeled 
-7fba7e6d5030e28874a10ba4e963e81c8ed06653 refs/heads/lucid-build
-f74eedfb73b655b41821a219b2fe86e63aeb731d refs/heads/lucid-pacman-mirrors
-53128a1a621102ba168add29638e9984995e0e85 refs/heads/master
-02abdd96482284baf2e34cbe821b339e6d14c775 refs/heads/mhwd
