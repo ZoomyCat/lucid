@@ -18,15 +18,10 @@ replaces=('console-setup')
 provides=('console-setup')
 backup=('etc/keyboard.conf')
 install=keyboardctl.install
-   source=(https://github.com/edge226/lucid/archive/keyboardctl.zip)
+   source=(git+https://github.com/edge226/lucid.git#branch=keyboardctl)
    sha256sums=('SKIP')
 
-build() {
-  cd lucid-${pkgname}/${pkgname}
-  make PREFIX=/usr
-}
-
 package() {
-  cd lucid-${pkgname}/${pkgname}
-  make PREFIX=/usr DESTDIR=${pkgdir} install
+  cd "${srcdir}"/lucid/"${pkgname}"
+  make DESTDIR="${pkgdir}" install
 }
