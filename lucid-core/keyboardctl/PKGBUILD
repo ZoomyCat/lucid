@@ -1,5 +1,6 @@
 #
 # maintainer: Lane Wiscombe anex[at]dem0n[dot]com
+# Contributer: Edward "edge226" Tunnah
 
 pkgname=('keyboardctl')
 pkgver=0.1.5
@@ -12,7 +13,7 @@ depends=('kbd' 'xkeyboard-config')
 makedepends=('git')
 groups=('base')
 install=keyboardctl.install
-   source=(git+https://github.com/manjaro/keyboardctl.git)
+   source=(git+https://github.com/edge226/lucid/archive/keyboardctl.zip)
    sha256sums=('SKIP')
 
 package() {
