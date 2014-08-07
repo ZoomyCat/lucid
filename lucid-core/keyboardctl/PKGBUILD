@@ -5,6 +5,7 @@
 pkgname=('keyboardctl')
 pkgver=0.1.5
 pkgrel=2
+pkgdesc="Lucid OS keymap setup program"
 arch=('any')
 url="https://github.com/manjaro/keyboardctl"
 license=('GPL')
@@ -12,17 +13,20 @@ options=('emptydirs')
 depends=('kbd' 'xkeyboard-config')
 makedepends=('git')
 groups=('base')
+conflicts=('console-setup')
+replaces=('console-setup')
+provides=('console-setup')
+backup=('etc/keyboard.conf')
 install=keyboardctl.install
    source=(https://github.com/edge226/lucid/archive/keyboardctl.zip)
    sha256sums=('SKIP')
 
+build() {
+  cd lucid-${pkgname}/${pkgname}
+  make PREFIX=/usr
+}
+
 package() {
-  pkgdesc="Lucid OS keymap setup program"
-  depends=('kbd' 'xkeyboard-config')
-  conflicts=('console-setup')
-  replaces=('console-setup')
-  provides=('console-setup')
-  backup=('etc/keyboard.conf')
-  cd ${srcdir}/lucid-${pkgname}/${pkgname}
-  make DESTDIR="$pkgdir" install
+  cd lucid-${pkgname}/${pkgname}
+  make PREFIX=/usr DESTDIR=${pkgdir} install
 }
