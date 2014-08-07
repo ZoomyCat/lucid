@@ -1,33 +1,5 @@
-## Edit the grub-extras branch to contain only the needed git
-## information to be able to compile git-extras. I need to be able to
-## set this as a git repository which can be done as a branch.
-Building grub for the x86_64 architecture. Edge226
-The packages, sources and log directory for this build are: 
-/var/lucid/repo/staging/x86_64/core/packages/
-/var/lucid/repo/staging/x86_64/core/sources/grub/
-/var/lucid/repo/staging/x86_64/core/logs/grub/
-==> Building in chroot for [testing] (x86_64)...
-==> Creating clean working copy [edge]...done
-==> Making package: grub 2.02.beta2-6 (Mon Aug  4 20:25:03 MDT 2014)
-==> Retrieving sources...
-  -> Downloading grub-2.02-6.tar.gz...
-==> ERROR: /home/edge/github/lucid/lucid-core/grub/grub-extras is not a clone of git://git.sv.gnu.org/grub-extras.git
-    Aborting...
-==> ERROR: Could not download sources.
 
-## Gummiboot needs checked into. Possibly needs a new branch.
-Building gummiboot for the x86_64 architecture.
-The packages, sources and log directory for this build are: 
-/var/lucid/repo/staging/x86_64/core/packages/
-/var/lucid/repo/staging/x86_64/core/sources/gummiboot/
-/var/lucid/repo/staging/x86_64/core/logs/gummiboot/
-==> Building in chroot for [testing] (x86_64)...
-==> Creating clean working copy [edge]...done
-==> Making package: gummiboot 45-1 (Tue Aug  5 00:02:44 MDT 2014)
-==> Retrieving sources...
-  -> Cloning gummiboot git repo...
-Cloning into bare repository '/home/edge/github/lucid/lucid-core/isdn4k-utils/gummiboot/gummiboot'...
-==> ERROR: Build failed, check /var/lib/archbuild/testing-x86_64/edge/build
+
 
 ## Mirrors for ipw2100-fw, ipw2200-fw, xinetd are unreachable.
 Building ipw2100-fw for the x86_64 architecture.
