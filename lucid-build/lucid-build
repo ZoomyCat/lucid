@@ -30,8 +30,10 @@ printf "The packages, sources and log directory for this build are: \n"
 printf "%s\n%s\n%s\n" "$pkgdir" "$srcdir" "$logdir"
 printf "Did you do the verbose flag: %s\n" "$output"
 if [ "$output" = "yes" ]; then
+	rm -rf /var/lib/lucidbuild/lucid-x86_64/*/build
     "$build" -c -- -c -n -- -s --noconfirm -L --holdver
 elif [ "$output" = "no" ]; then
+	rm -rf /var/lib/lucidbuild/lucid-x86_64/*/build
     "$build" -c -- -c -n -- -s --noconfirm -L --holdver > "$logdir$build-$pkgname.log"
 fi
 
@@ -49,13 +51,13 @@ mv *"any$pkg" "$pkgdir" ## Copy any files for all architectures were compiled mo
 mv *.tar.* "$srcdir" ## Copy all remaining tarballs into the src directory.
 
 ## if a git build from a branch is used then make sure we clean up after it.
-if [ -d ./lucid ]; then
-    rm -rf lucid
+if [ -d ./*/ ]; then
+    rm -rf ./*/
 fi
 
 printf "Moving build information from $build stage in case of failure.\n\n"
 if [ "$archtype" = "x86_64" ]; then
-    cp -R /var/lib/manjarobuild/unstable-x86_64/*/build "$logdir"
+    cp -R /var/lib/lucidbuild/lucid-x86_64/*/build "$logdir"
 elif [ "$archtype" = "i686" ]; then
-    cp -R /var/lib/manjarobuild/unstable-i686/*/build "$logdir"
+    cp -R /var/lib/lucidbuild/lucid-i686/*/build "$logdir"
 fi
