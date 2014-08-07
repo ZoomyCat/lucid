@@ -140,6 +140,7 @@ else
     buildtype="" ## makes sure there is a default set for build.
     dir=""   ## makes sure there is a default set for dir.
     build="lucid-build"
+    output="no"
 
 ## This case statement sets the build parameters of the program for
 ## which architecture to use.
