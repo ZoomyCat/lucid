@@ -29,28 +29,6 @@ The packages, sources and log directory for this build are:
 Cloning into bare repository '/home/edge/github/lucid/lucid-core/isdn4k-utils/gummiboot/gummiboot'...
 ==> ERROR: Build failed, check /var/lib/archbuild/testing-x86_64/edge/build
 
-## check into how this git repository was merged and possibly fix it.
-Building pacman-mirrorlist for the x86_64 architecture.
-The packages, sources and log directory for this build are: 
-/var/lucid/repo/staging/x86_64/core/packages/
-/var/lucid/repo/staging/x86_64/core/sources/pacman-mirrorlist/
-/var/lucid/repo/staging/x86_64/core/logs/pacman-mirrorlist/
-==> Building in chroot for [testing] (x86_64)...
-==> Creating clean working copy [edge]...done
-==> Making package: pacman-mirrorlist 20140804-1 (Mon Aug  4 20:16:33 MDT 2014)
-==> Retrieving sources...
-  -> Updating lucid git repo...
-remote: Counting objects: 396, done.
-remote: Compressing objects: 100% (277/277), done.
-remote: Total 396 (delta 23), reused 0 (delta 0)
-Receiving objects: 100% (396/396), 245.82 KiB | 0 bytes/s, done.
-Resolving deltas: 100% (23/23), done.
-From https://github.com/edge226/lucid
-   6dd6e42..775656d  merged-repo -> origin/merged-repo
-==> Validating source files with sha256sums...
-    lucid ... Skipped
-==> ERROR: Build failed, check /var/lib/archbuild/testing-x86_64/edge/build
-
 ## Mirrors for ipw2100-fw, ipw2200-fw, xinetd are unreachable.
 Building ipw2100-fw for the x86_64 architecture.
 The packages, sources and log directory for this build are: 
@@ -116,6 +94,7 @@ The packages, sources and log directory for this build are:
 ## Need to look more into what pcre does, It may be a firmware that
 ## has been incorporated into the kernel and thus the sources were no
 ## longer relevent.
+## Definitely needed by util-linux.
 Building pcre for the x86_64 architecture.
 The packages, sources and log directory for this build are: 
 /var/lucid/repo/staging/x86_64/core/packages/
@@ -138,6 +117,7 @@ The packages, sources and log directory for this build are:
 ## check into what krb5 does and under what circumstances it is needed.
 ## look into why it failed to compiled and see if it can be pieced together
 ## why the pkgbuild is failing.
+## Definitely needed by util-linux.
 Building krb5 for the x86_64 architecture.
 The packages, sources and log directory for this build are: 
 /var/lucid/repo/staging/x86_64/core/packages/
