@@ -30,9 +30,9 @@ printf "The packages, sources and log directory for this build are: \n"
 printf "%s\n%s\n%s\n" "$pkgdir" "$srcdir" "$logdir"
 printf "Did you do the verbose flag: %s\n" "$output"
 if [ "$output" = "yes" ]; then
-    "$build" -c
+    "$build" -c -- -c -n -- -s --noconfirm -L --holdver
 elif [ "$output" = "no" ]; then
-    "$build" -c > "$logdir$build-$pkgname.log"
+    "$build" -c -- -c -n -- -s --noconfirm -L --holdver > "$logdir$build-$pkgname.log"
 fi
 
 ## Copy the Sources, Packages and logs to the appropriate directories.
