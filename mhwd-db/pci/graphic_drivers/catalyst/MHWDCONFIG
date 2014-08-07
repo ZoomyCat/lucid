@@ -1,4 +1,4 @@
-# mhwd Driver Config
+## mhwd Driver Config
 
 NAME="video-catalyst"
 INFO="Closed source catalyst drivers for linux."
