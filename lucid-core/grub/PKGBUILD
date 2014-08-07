@@ -41,17 +41,17 @@ optdepends=('freetype2: For grub-mkfont usage'
             'mtools: For grub-mkrescue FAT FS support')
 
 source=(#"grub-${_pkgver}::git+git://git.sv.gnu.org/grub.git#tag=${_GRUB_GIT_TAG}"
-        "grub-${_pkgver}-${pkgrel}.tar.gz::http://git.savannah.gnu.org/cgit/grub.git/snapshot/grub-${_SNAPSHOT}.tar.gz"
-        "grub-extras::git+http://git.savannah.gnu.org/r/grub-extras.git"
-        "http://ftp.gnu.org/gnu/unifont/unifont-${_UNIFONT_VER}/unifont-${_UNIFONT_VER}.bdf.gz"
-        "http://ftp.gnu.org/gnu/unifont/unifont-${_UNIFONT_VER}/unifont-${_UNIFONT_VER}.bdf.gz.sig"
-        'grub-add-GRUB_COLOR_variables.patch'
-        'grub-lucid-modifications.patch'
-        '60_memtest86+'
-        'background.png'
-        'grub.default'
-        'grub.cfg'
-        'update-grub')
+    "grub-${_pkgver}-${pkgrel}.tar.gz::http://git.savannah.gnu.org/cgit/grub.git/snapshot/grub-${_SNAPSHOT}.tar.gz"
+    "grub-extras::git+git://git.sv.gnu.org/grub-extras.git#branch=master"
+    "http://ftp.gnu.org/gnu/unifont/unifont-${_UNIFONT_VER}/unifont-${_UNIFONT_VER}.bdf.gz"
+    "http://ftp.gnu.org/gnu/unifont/unifont-${_UNIFONT_VER}/unifont-${_UNIFONT_VER}.bdf.gz.sig"
+    'grub-add-GRUB_COLOR_variables.patch'
+    'grub-lucid-modifications.patch'
+    '60_memtest86+'
+    'background.png'
+    'grub.default'
+    'grub.cfg'
+    'update-grub')
 
 sha256sums=('SKIP'
             'SKIP'
