@@ -1,0 +1,12 @@
+# pack-refs with: peeled fully-peeled 
+99e22d4f9b752352de74053ef57bc94e8bd5a54c refs/heads/clean-template
+73b9db14b18dd1b29b2b37e9b7d99489b21b5f82 refs/heads/devtools
+cea0c2eba9d4f8b3a007b10231ed2b0f3f4fcc68 refs/heads/grub-extras
+c48976478cfb93360e4a8e809d8e2606d2790c94 refs/heads/keyboardctl
+f0d0f14047e41b2ff37544c71269db0112af8199 refs/heads/lucid-build
+f0ab301a4550919b9f8e3baa90b7ef396f2dc20e refs/heads/lucid-repo-old-org
+99e22d4f9b752352de74053ef57bc94e8bd5a54c refs/heads/master
+8b8e5b72bc4ccd15ac07db333bbf673cd358a4f9 refs/heads/merged-repo
+5116f7dad44f44871b555c173c2486ec94e16f2c refs/heads/mhwd
+e91bf3701fd8f9ea9e857b0dd8ae473664d138cb refs/heads/mhwd-db
+816916c496c56d7030b741c230433352f89a56ca refs/heads/pacman-mirrors
