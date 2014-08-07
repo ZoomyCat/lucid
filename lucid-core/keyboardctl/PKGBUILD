@@ -22,6 +22,6 @@ install=keyboardctl.install
    sha256sums=('SKIP')
 
 package() {
-  cd "${srcdir}"/lucid/"${pkgname}"
+  cd "${srcdir}/lucid/${pkgname}"
   make DESTDIR="${pkgdir}" install
 }
