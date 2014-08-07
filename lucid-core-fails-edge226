@@ -143,18 +143,3 @@ The packages, sources and log directory for this build are:
     krb5-kpropd@.service ... Passed
     krb5-kpropd.socket ... Passed
 ==> ERROR: Build failed, check /var/lib/archbuild/testing-x86_64/edge/build
-
-
-## Seems to have successfully created the package in a second iteration.
-Building coreutils for the x86_64 architecture.
-The packages, sources and log directory for this build are: 
-/var/lucid/repo/staging/x86_64/core/packages/
-/var/lucid/repo/staging/x86_64/core/sources/coreutils/
-/var/lucid/repo/staging/x86_64/core/logs/coreutils/
-==> Building in chroot for [testing] (x86_64)...
-==> Creating clean working copy [edge]...done
-==> Making package: coreutils 8.23-1 (Tue Aug  5 00:05:53 MDT 2014)
-==> Retrieving sources...
-  -> Downloading coreutils-8.23.tar.xz...
-==> ERROR: Build failed, check /var/lib/archbuild/testing-x86_64/edge/build
-
