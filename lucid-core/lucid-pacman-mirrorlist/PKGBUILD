@@ -12,10 +12,10 @@ url="https://github.com/edge226/lucid.git"
 license=('GPL')
 install=pacman-mirrorlist.install
 backup=(etc/pacman-mirrors.conf)
-source=(git+https://github.com/edge226/lucid.git)
+source=(git+https://github.com/edge226/lucid.git#branch=pacman-mirrors)
 sha256sums=('SKIP')
 
 package() {
-  cd  lucid/lucid-core/lucid-pacman-mirrors/
+  cd  lucid/pacman-mirrors/
   make DESTDIR="${pkgdir}" install
 }
