@@ -189,5 +189,5 @@ else
     fi
 
     ## Finally find the pkgbuilds and build them!
-    find "$dir" -name PKGBUILD -type f -execdir "$build" "$buildtype" "$archtype" "$repodir/$branch/$archtype/$repo" "$output"\;
+    find "$dir" -name PKGBUILD -type f -execdir "$build" "$buildtype" "$archtype" "$repodir/$branch/$archtype/$repo" "$output" \;
 fi
