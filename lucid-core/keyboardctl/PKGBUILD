@@ -13,7 +13,7 @@ depends=('kbd' 'xkeyboard-config')
 makedepends=('git')
 groups=('base')
 install=keyboardctl.install
-   source=(git+https://github.com/edge226/lucid/archive/keyboardctl.zip)
+   source=(https://github.com/edge226/lucid/archive/keyboardctl.zip)
    sha256sums=('SKIP')
 
 package() {
