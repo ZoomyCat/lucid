@@ -18,7 +18,7 @@ replaces=('console-setup')
 provides=('console-setup')
 backup=('etc/keyboard.conf')
 install=keyboardctl.install
-   source=(git+https://github.com/edge226/lucid.git#branch=keyboardctl)
+   source=('git+https://github.com/edge226/lucid.git#branch=keyboardctl')
    sha256sums=('SKIP')
 
 package() {
