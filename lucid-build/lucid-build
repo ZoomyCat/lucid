@@ -28,7 +28,6 @@ mkdir -p "$pkgdir" "$logdir" "$srcdir"
 printf "Building %s for the %s architecture.\n" "$pkgname" "$archtype"
 printf "The packages, sources and log directory for this build are: \n"
 printf "%s\n%s\n%s\n" "$pkgdir" "$srcdir" "$logdir"
-printf "Did you do the verbose flag: %s\n" "$output"
 if [ "$output" = "yes" ]; then
 	rm -rf /var/lib/lucidbuild/lucid-x86_64/*/build
     "$build" -c -- -c -n -- -s --noconfirm -L --holdver
