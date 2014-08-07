@@ -23,7 +23,7 @@ logdir="$repo/logs/$pkgname/" ## The debug and log location.
 
 ## Create the appropriate repository directories.
 mkdir -p "$pkgdir" "$logdir" "$srcdir"
-rm -rf "$logdir"
+rm -rf "$logdir/*"
 
 ## Do the build.
 printf "Building %s for the %s architecture.\n" "$pkgname" "$archtype"
