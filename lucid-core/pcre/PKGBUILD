@@ -30,11 +30,6 @@ build() {
   make
 }
 
-check() {
-  cd $pkgname-$pkgver
-  make -j1 check
-}
-
 package() {
   cd $pkgname-$pkgver
   make DESTDIR="$pkgdir" install
