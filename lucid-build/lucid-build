@@ -31,7 +31,7 @@ printf "%s\n%s\n%s\n" "$pkgdir" "$srcdir" "$logdir"
 printf "Did you do the verbose flag: %s\n" "$output"
 if [ "$output" = "yes" ]; then
     "$build" -c
-elif [ "$output" = "no" ]
+elif [ "$output" = "no" ]; then
     "$build" -c > "$logdir$build-$pkgname.log"
 fi
 
