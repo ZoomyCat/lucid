@@ -13,7 +13,7 @@ groups=('base-devel')
 install=fakeroot.install
 depends=('glibc' 'filesystem' 'sed' 'util-linux' 'sh')
 source=(http://ftp.debian.org/debian/pool/main/f/${pkgname}/${pkgname}_${pkgver}.orig.tar.bz2)
-md5sums=('9777a81d4d1878422447a1d0030c1f9f')
+md5sums=('SKIP')
 
 build() {
   cd "${srcdir}/${pkgname}-${pkgver}"
