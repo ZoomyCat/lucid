@@ -3,21 +3,22 @@
 # Contributor: judd <jvinet@zeroflux.org>
 
 pkgname=e2fsprogs
-pkgver=1.42.10
+pkgver=1.42.11
 pkgrel=1
 pkgdesc="Ext2/3/4 filesystem utilities"
-arch=('i686' 'x86_64')
+arch=('any')
 license=('GPL' 'LGPL' 'MIT')
 url="http://e2fsprogs.sourceforge.net"
 groups=('base')
 depends=('sh' 'libutil-linux')
 makedepends=('bc' 'util-linux')
-source=("http://downloads.sourceforge.net/sourceforge/${pkgname}/${pkgname}-${pkgver}.tar.gz"
+source=("https://downloads.sourceforge.net/sourceforge/${pkgname}/${pkgname}/${pkgname}-${pkgver}.tar.gz"
+        #"https://downloads.sourceforge.net/project/e2fsprogs/e2fsprogs/v1.42.11/e2fsprogs-1.42.11.tar.gz?r=https%3A%2F%2Fsourceforge.net%2Fprojects%2Fe2fsprogs%2F%3Fsource%3Ddirectory&ts=1407508233&use_mirror=hivelocity"
         'MIT-LICENSE')
 backup=('etc/mke2fs.conf')
 options=('staticlibs')
 install=${pkgname}.install
-sha1sums=('06eba8a78ce1d5032fdcaf34f09025f01ceaca79'
+sha1sums=('3d30eb40f3ca69dcef373a505a061b582e1026c2'
           'f4a0d5b0cdb980e3fedd6f5e7dde0b0ffb7bbdfb')
 
 build() {
