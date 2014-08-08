@@ -29,10 +29,6 @@ sha1sums=('d59e8dc0fc9e1890e109cd033756539984e3d3fe'
 
 prepare() {
   tar -xf ${pkgname}-${pkgver}.tar.gz
-  # the signature and source are bundled together, so signature check needs to be done here
-  local statusfile=$(mktemp)
-  (( SKIPPGPCHECK )) || gpg --quiet --batch --status-file "$statusfile" --verify krb5-${pkgver}.tar.gz.asc krb5-${pkgver}.tar.gz 2> /dev/null
-  rm "$statusfile"
 
   cd ${pkgname}-${pkgver}/src
   # cf https://bugs.gentoo.org/show_bug.cgi?id=448778
