@@ -8,6 +8,9 @@ Git
 
 This is how our git workflow is currently. Everything that needs to be a branch is a branch and things that do not need to be a branch are not. A general overview is available as follows, later on we will touch with more detail the design descisions and why things are done the way they are done. Things could also change if the design is decided to be improved upon.
 
+-- undecided --
+We may want to create a template branch that has template files to be used and then modified within git our git structure.
+
 master
 =====
 
@@ -24,6 +27,8 @@ This may change in the future depending on design decisions based on the best me
 
 It has been discussed among the development members that we use staging, testing and stable repositories in which this documentation will be updated to reflect which direction we choose to go with.
 
+I would like to eventually update each directory that contains a PKGBUILD file with a readme file corresponding to that package so it is easier to find out information on each package. Potentially add better descriptions of a variety of sorts. (See template comment near the top)
+
 doc
 =====
 
@@ -39,6 +44,8 @@ Each branch should contain its own readme ideally describing what the program is
 Within this readme could also contain future plans to be implemented within the sources. A changelog is not needed if the pushes have clear comments on what is being pushed.
 
 Documenting these aspects of items at a mimimum should allow for others to quickly understand the state of each respective project.
+
+If the branch contains multiple scripts or files within a directory then there should be a readme file in that directory with a description of what each file does.
 
 What is contained within the repositories?
 =====
