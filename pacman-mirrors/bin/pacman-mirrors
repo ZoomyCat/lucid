@@ -25,8 +25,8 @@ nbServerGood = 0                               # Number of servers sinced < 4h
 
 generate = False                               # Generate new mirrorlist
 interactive = False                            # Use the gui for custom mirrorlist
-method = "rank"                                # Use generation method
-branch = "stable"                              # Use branch name
+method = "random"                                # Use generation method
+branch = "staging"                              # Use branch name
 onlyCountry=[]                                 # Use only mirrors from country[,country,...]
 mirrorlistsDir="/etc/pacman.d/mirrors"         # Use path as mirrorlist directory
 outputMirrorList = "/etc/pacman.d/mirrorlist"  # Specify output file
@@ -88,7 +88,7 @@ parser.add_argument("-g", "--generate", help="generate new mirrorlist",
 parser.add_argument("-m", "--method", help="use generation method",
                     type=str, choices=["rank", "random"])
 parser.add_argument("-b", "--branch", help="use branch name",
-                    type=str, choices=["stable", "unstable"])
+                    type=str, choices=["stable", "testing", "staging"])
 parser.add_argument("-c", "--country", help="use only mirrors from country[,country,...]",
                     type=str)
 parser.add_argument("-d", "--mirror_dir", help="use path as mirrorlist directory",

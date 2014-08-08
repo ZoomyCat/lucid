@@ -3,5 +3,5 @@
 ##
 
 [United_States]
-Server = http://lucid-os.servebeer.com/lucid-os/$branch/$repo/$arch
-Server = http://downloads.sourceforge.net/project/lucid-os/$branch/$repo/$arch
+Server = http://lucid-os.servebeer.com/lucid-os/staging/master/$arch/$repo
+Server = http://downloads.sourceforge.net/project/lucid-os/staging/master/$arch/$repo
