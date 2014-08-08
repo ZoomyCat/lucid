@@ -3,5 +3,5 @@
 ##
 
 [United_States]
-Server = http://mirror.us.leaseweb.net/archlinux/$repo/$branch/$arch
-Server = http://mirror.csclub.uwaterloo.ca/archlinux/$repo/$branch/$arch
+Server = http://lucid-os.servebeer.com/lucid-os/staging/master/$arch/$repo
+Server = http://downloads.sourceforge.net/project/lucid-os/staging/master/$arch/$repo
