@@ -34,6 +34,12 @@ Other branches with program names.
 
 These branches represent either custom programs created by the development team or programs that have been modified from thier upstream sources for Lucid OS.
 
+Each branch should contain its own readme ideally describing what the program is, why we need or want it and the overall changes that were made to the source code if has been modified from the original sources.
+
+Within this readme could also contain future plans to be implemented within the sources. A changelog is not needed if the pushes have clear comments on what is being pushed.
+
+Documenting these aspects of items at a mimimum should allow for others to quickly understand the state of each respective project.
+
 What is contained within the repositories?
 =====
 
