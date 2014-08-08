@@ -1,4 +1,4 @@
-Lucid Documentation
+Lucid Git Documentation
 =====
 
 I expect this document to require to be split into multiple other documents. For now this is just a mind dump to get everything clear then it will be sorted later.
