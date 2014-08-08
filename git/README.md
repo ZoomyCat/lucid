@@ -42,7 +42,7 @@ The repositories used in building Lucid OS contain a directory structure that co
 What is the directory structure used for the repositories?
 =====
 
-The directory structrure is layed out as follows. Within the branch you have a seperate directory for each repository that you intend to compile.
+The directory structrure is laid out as follows. Within the branch you have a seperate directory for each repository that you intend to compile.
 
 The only repository that is going to be placed within the hard and fast rule of this will probably never change is core, core will always be core in all instances and this just makes sense to me.
 
