@@ -1,17 +1,2 @@
 
-## This is just a malformed PKGBUILD that needs looking into and 
-## the bugs need to be squashed from it.
-Building lucid-system for the x86_64 architecture.
-The packages, sources and log directory for this build are: 
-/var/lucid/repo/staging/x86_64/core/packages/
-/var/lucid/repo/staging/x86_64/core/sources/lucid-system/
-/var/lucid/repo/staging/x86_64/core/logs/lucid-system/
-==> Building in chroot for [testing] (x86_64)...
-==> Creating clean working copy [edge]...done
-==> Making package: lucid-system 20140804-2 (Mon Aug  4 19:44:45 MDT 2014)
-==> WARNING: Using a PKGBUILD without a package() function is deprecated.
-==> Retrieving sources...
-==> ERROR: Build failed, check /var/lib/archbuild/testing-x86_64/edge/build
-
-
-
+isdn4k-utils   -   removed from core would not build
