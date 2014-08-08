@@ -13,7 +13,7 @@ url="http://www.archlinux.org/pacman/"
 license=('GPL')
 groups=('base' 'base-devel')
 depends=('bash>=4.2.042-2' 'glibc>=2.17-2' 'libarchive>=3.1.2' 'curl>=7.19.4'
-         'gpgme' 'pacman-mirrorlist>=20130418' 'archlinux-keyring')
+         'gpgme' 'archlinux-keyring')
 checkdepends=('python2' 'fakechroot')
 makedepends=('asciidoc')
 optdepends=('fakeroot: for makepkg usage as normal user'
