@@ -1,14 +1,8 @@
-lucid
+devtools
 =====
 
-Lucid OS Repository
+The Lucid devtools are a modified version of the arch devtools compared and mixed in what makes sense from the manjaro devtools.
 
---- We are currently in the early development stages. ---
+This version currently syncs up with the arch servers with no customization required. It also will work by default with lb.
 
-This is where all the PKGBUILDS and tools will reside for the Lucid OS Linux distribution.
-
-Lucid OS will be an independent Linux distribution that uses tools primarily from both Arch Linux and Manjaro.
-
-We follow the kiss principle from not only one but multiple perspectives. Having a system that is equally as easy for the developer as it is the user is an important aspect of the kiss principle and this is our goal.
-
-The official Lucid OS builds will be built with ease of use, functionality, productivity and quality in mind.
+It is highly recommended to use lb to interface with devtools.
