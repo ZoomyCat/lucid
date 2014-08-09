@@ -1,14 +1,30 @@
-lucid
+Lucid Build Tools
 =====
 
-Lucid OS Repository
+The Lucid Build toolset wraps the customized Arch Linux devtools to allow a much nicer interface to the build environment. It allows for recursive building and automatic staging of the build environment depending the parameters passed to the command.
 
---- We are currently in the early development stages. ---
+Future features (in no particular order):
 
-This is where all the PKGBUILDS and tools will reside for the Lucid OS Linux distribution.
+-A config file.
 
-Lucid OS will be an independent Linux distribution that uses tools primarily from both Arch Linux and Manjaro.
+-A multi purpose clean/create build root environment flag. If you try to create a new build root without cleaning it will error out. Whenever you clean the build root you need to recreate it so these two functions go hand in hand.
 
-We follow the kiss principle from not only one but multiple perspectives. Having a system that is equally as easy for the developer as it is the user is an important aspect of the kiss principle and this is our goal.
+-The ability to log which compiles succeed and fail.
 
-The official Lucid OS builds will be built with ease of use, functionality, productivity and quality in mind.
+-A variety of PKGBUILD scanning features:
+	
+	-Verify hyperlink states.
+	
+	-Check for upstream updates directly from the sources.
+	
+	-Potentially work in either interactive or automated update mode.
+	
+	-Check for errors and offer suggestions on how to fix the errors.
+	
+		-Potentially fix errors automatically.
+		
+-Scan the package repository to see if the program needs to be updated or not.
+
+-Dynamically build the different repositories instead of having to specify.
+
+-Make lb know which repository it is compiling in without having to be passed a flag.
