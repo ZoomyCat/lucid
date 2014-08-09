@@ -12,3 +12,5 @@ Lucid OS will be an independent Linux distribution that uses tools primarily fro
 We follow the kiss principle from not only one but multiple perspectives. Having a system that is equally as easy for the developer as it is the user is an important aspect of the kiss principle and this is our goal.
 
 The official Lucid OS builds will be built with ease of use, functionality, productivity and quality in mind.
+
+Only working repositories of PKGBUILDS get synced into master, If you're wondering about our current development then check out the merged-repo branch.
