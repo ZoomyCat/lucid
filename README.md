@@ -14,3 +14,5 @@ We follow the kiss principle from not only one but multiple perspectives. Having
 The official Lucid OS builds will be built with ease of use, functionality, productivity and quality in mind.
 
 Only working repositories of PKGBUILDS get synced into master, If you're wondering about our current development then check out the merged-repo branch.
+
+If you are wondering how our development team uses git then check out the doc branch. Which will eventually contain much more documentation on various aspects of the project.
