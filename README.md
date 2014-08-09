@@ -15,9 +15,11 @@ Future features (in no particular order):
 	
 	-Verify hyperlink states.
 	
+	-Check which architectures the packages can be built for and build for the appropriate ones.
+	
 	-Check for upstream updates directly from the sources.
 	
-	-Potentially work in either interactive or automated update mode.
+		-Potentially work in either interactive or automated update mode.
 	
 	-Check for errors and offer suggestions on how to fix the errors.
 	
@@ -27,4 +29,4 @@ Future features (in no particular order):
 
 -Dynamically build the different repositories instead of having to specify.
 
--Make lb know which repository it is compiling in without having to be passed a flag.
+	-Make lb know which repository it is compiling in without having to be passed a flag.
