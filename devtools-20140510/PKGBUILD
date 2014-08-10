@@ -9,16 +9,16 @@ arch=('any')
 license=('GPL')
 url='http://git.manjaro.org/core/devtools/'
 depends=('namcap' 'openssh' 'subversion' 'rsync' 'arch-install-scripts')
-conflicts=('devtools-openrc' 'devtools')
+conflicts=('devtools-openrc')
 source=('https://github.com/edge226/lucid/archive/devtools.zip')
 sha256sums=('SKIP')
 
 build() {
-	cd "lucid-devtools/devtools-20140510/"
-	make PREFIX=/usr
+    cd "lucid-devtools/devtools-20140510/"
+    make PREFIX=/usr
 }
 
 package() {
-	cd "lucid-devtools/devtools-20140510/"
-	make PREFIX=/usr DESTDIR=${pkgdir} install
+    cd "lucid-devtools/devtools-20140510/"
+    make PREFIX=/usr DESTDIR=${pkgdir} install
 }
