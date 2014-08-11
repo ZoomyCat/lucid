@@ -4,74 +4,85 @@ shopt -s extglob
 
 m4_include(lib/common.sh)
 
-# Source makepkg.conf; fail if it is not found
-if [[ -r '/etc/makepkg.conf' ]]; then
-	source '/etc/makepkg.conf'
-else
-	die '/etc/makepkg.conf not found!'
-fi
+## set parameters to where if the user sets a architecture to check it
+## interfaces with where lb would set the packages and works within
+## those parameters. If the parameters are not set then use the defaults.
 
-# Source user-specific makepkg.conf overrides
-if [[ -r ~/.makepkg.conf ]]; then
-	source ~/.makepkg.conf
+if [ ! "$1" = "" ]; then
+    if [ "$1" = "i686" -o "$1" = "x86_64" ]; then
+        pkgarch="$1"
+        source '/usr/share/devtools/makepkg-'"$pkgarch"'.conf'
+    fi
+else
+    # Source makepkg.conf; fail if it is not found
+    if [[ -r '/etc/makepkg.conf' ]]; then
+        source '/etc/makepkg.conf'
+    else
+        die '/etc/makepkg.conf not found!'
+    fi
+
+    # Source user-specific makepkg.conf overrides
+    if [[ -r ~/.makepkg.conf ]]; then
+        source ~/.makepkg.conf
+    fi
 fi
 
 if [[ ! -f PKGBUILD ]]; then
-	die 'This must be run in the directory of a built package.'
+    die 'This must be run in the directory of a built package.'
 fi
 
 . ./PKGBUILD
 if [[ $arch == 'any' ]]; then
-	CARCH='any'
+    CARCH='any'
 fi
 
 STARTDIR=$(pwd)
 TEMPDIR=$(mktemp -d --tmpdir checkpkg-script.XXXX)
 
 for _pkgname in "${pkgname[@]}"; do
-	target_pkgver=$(get_full_version "$_pkgname")
-	if ! pkgfile=$(find_cached_package "$_pkgname" "$target_pkgver" "$CARCH"); then
-		die 'tarball not found for package: %s' "${_pkgname}-$target_pkgver"
-	fi
+    target_pkgver=$(get_full_version "$_pkgname")
+    if ! pkgfile=$(find_cached_package "$_pkgname" "$target_pkgver" "$CARCH"); then
+        die 'tarball not found for package: %s' "${_pkgname}-$target_pkgver"
+    fi
 
-	ln -s "$pkgfile" "$TEMPDIR"
+    ln -s "$pkgfile" "$TEMPDIR"
 
-	pkgurl=$(pacman -Spdd --print-format '%l' --noconfirm "$_pkgname")
+    pkgurl=$(pacman -Spdd --print-format '%l' --noconfirm "$_pkgname")
 
-	if [[ $? -ne 0 ]]; then
-		die "Couldn't download previous package for %s." "$_pkgname"
-	fi
+    if [[ $? -ne 0 ]]; then
+        die "Couldn't download previous package for %s." "$_pkgname"
+    fi
 
-	oldpkg=${pkgurl##*://*/}
+    oldpkg=${pkgurl##*://*/}
 
-	if [[ ${oldpkg##*/} = ${pkgfile##*/} ]]; then
-		die "The built package (%s) is the one in the repo right now!" "$_pkgname"
-	fi
+    if [[ ${oldpkg##*/} = ${pkgfile##*/} ]]; then
+        die "The built package (%s) is the one in the repo right now!" "$_pkgname"
+    fi
 
-	if [[ $pkgurl = file://* ]]; then
-		ln -s "${pkgurl#file://}" "$TEMPDIR/$oldpkg"
-	elif [[ -f "$PKGDEST/$oldpkg" ]]; then
-		ln -s "$PKGDEST/$oldpkg" "$TEMPDIR/$oldpkg"
-	elif [[ -f "$STARTDIR/$oldpkg" ]]; then
-		ln -s "$STARTDIR/$oldpkg" "$TEMPDIR/$oldpkg"
-	else
-		curl -fsLC - --retry 3 --retry-delay 3 -o "$TEMPDIR/$oldpkg" "$pkgurl"
-	fi
+    if [[ $pkgurl = file://* ]]; then
+        ln -s "${pkgurl#file://}" "$TEMPDIR/$oldpkg"
+    elif [[ -f "$PKGDEST/$oldpkg" ]]; then
+        ln -s "$PKGDEST/$oldpkg" "$TEMPDIR/$oldpkg"
+    elif [[ -f "$STARTDIR/$oldpkg" ]]; then
+        ln -s "$STARTDIR/$oldpkg" "$TEMPDIR/$oldpkg"
+    else
+        curl -fsLC - --retry 3 --retry-delay 3 -o "$TEMPDIR/$oldpkg" "$pkgurl"
+    fi
 
-	bsdtar tf "$TEMPDIR/$oldpkg" | sort > "$TEMPDIR/filelist-$_pkgname-old"
-	bsdtar tf "$pkgfile" | sort > "$TEMPDIR/filelist-$_pkgname"
+    bsdtar tf "$TEMPDIR/$oldpkg" | sort > "$TEMPDIR/filelist-$_pkgname-old"
+    bsdtar tf "$pkgfile" | sort > "$TEMPDIR/filelist-$_pkgname"
 
-	sdiff -s "$TEMPDIR/filelist-$_pkgname-old" "$TEMPDIR/filelist-$_pkgname"
+    sdiff -s "$TEMPDIR/filelist-$_pkgname-old" "$TEMPDIR/filelist-$_pkgname"
 
-	if diff "$TEMPDIR/filelist-$_pkgname"{-old,} | grep '\.so' &>/dev/null; then
-		mkdir -p "$TEMPDIR/pkg"
-		bsdtar -x -C "$TEMPDIR" -f "$pkgfile" #> /dev/null
-		comm -13 <(sort "$TEMPDIR/filelist-$_pkgname-old") <(sort "$TEMPDIR/filelist-$_pkgname") | grep .so$ | while read i; do
-			echo "${i}: " "$(objdump -p "$TEMPDIR/$i" | grep SONAME)"
-		done
-	else
-		msg "No soname differences for $_pkgname."
-	fi
+    if diff "$TEMPDIR/filelist-$_pkgname"{-old,} | grep '\.so' &>/dev/null; then
+        mkdir -p "$TEMPDIR/pkg"
+        bsdtar -x -C "$TEMPDIR" -f "$pkgfile" #> /dev/null
+        comm -13 <(sort "$TEMPDIR/filelist-$_pkgname-old") <(sort "$TEMPDIR/filelist-$_pkgname") | grep .so$ | while read i; do
+            echo "${i}: " "$(objdump -p "$TEMPDIR/$i" | grep SONAME)"
+        done
+    else
+        msg "No soname differences for $_pkgname."
+    fi
 done
 
 msg "Files saved to $TEMPDIR"
