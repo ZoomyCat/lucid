@@ -86,7 +86,7 @@ parser = argparse.ArgumentParser()
 parser.add_argument("-g", "--generate", help="generate new mirrorlist",
                     action="store_true")
 parser.add_argument("-m", "--method", help="use generation method",
-                    type=str, choices=["rank", "random"])
+                    type=str, choices=["random"])
 parser.add_argument("-b", "--branch", help="use branch name",
                     type=str, choices=["stable", "testing", "staging"])
 parser.add_argument("-c", "--country", help="use only mirrors from country[,country,...]",
