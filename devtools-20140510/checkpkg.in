@@ -56,7 +56,7 @@ for _pkgname in "${pkgname[@]}"; do
     oldpkg=${pkgurl##*://*/}
 
     if [[ ${oldpkg##*/} = ${pkgfile##*/} ]]; then
-        die "The built package (%s) is the one in the repo right now!" "$_pkgname"
+        win "The built package (%s) is the one in the repo right now!" "$_pkgname"
     fi
 
     if [[ $pkgurl = file://* ]]; then
