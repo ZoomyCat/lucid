@@ -70,11 +70,39 @@ LocalFileSigLevel = Never
 SigLevel = Never
 Include = /etc/pacman.d/mirrorlist
 
+[core-devel]
+SigLevel = Never
+Include = /etc/pacman.d/mirrorlist
+
 [extra]
 SigLevel = Never
 Include = /etc/pacman.d/mirrorlist
 
 [community]
+SigLevel = Never
+Include = /etc/pacman.d/mirrorlist
+
+[gtk]
+SigLevel = Never
+Include = /etc/pacman.d/mirrorlist
+
+[qt]
+SigLevel = Never
+Include = /etc/pacman.d/mirrorlist
+
+[gnome]
+SigLevel = Never
+Include = /etc/pacman.d/mirrorlist
+
+[kde]
+SigLevel = Never
+Include = /etc/pacman.d/mirrorlist
+
+[mate]
+SigLevel = Never
+Include = /etc/pacman.d/mirrorlist
+
+[xfce]
 SigLevel = Never
 Include = /etc/pacman.d/mirrorlist
 

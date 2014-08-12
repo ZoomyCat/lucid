@@ -37,7 +37,7 @@ post_upgrade() {
            msg "Use \`pacman-mirrors\` to generate and update your pacman mirrorlist."
            mv /etc/pacman.d/mirrorlist /etc/pacman.d/mirrorlist-old-${PACMAN_OLD}
            echo '# file generated due pacman update' > /etc/pacman.d/mirrorlist
-           echo 'Server = http://downloads.sourceforge.net/project/lucid-os/staging/master/$arch/$repo' >> /etc/pacman.d/mirrorlist
+           echo 'Server = file:///lucid/staging/$arch/$repo/packages' >> /etc/pacman.d/mirrorlist
         fi
     fi
 }

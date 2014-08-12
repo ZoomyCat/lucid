@@ -4,7 +4,6 @@
 pkgname=quota-tools
 pkgver=4.01
 pkgrel=2
-epoch=1
 pkgdesc="Tools to manage kernel-level quotas in Linux"
 arch=('i686' 'x86_64')
 url="http://sourceforge.net/projects/linuxquota/"
