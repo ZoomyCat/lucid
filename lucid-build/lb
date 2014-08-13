@@ -138,7 +138,7 @@ else
 
     OPTIND=1 ## make sure the optargs are reset for getopts
     buildtype="" ## makes sure there is a default set for build.
-    dir=""   ## makes sure there is a default set for dir.
+    searchdir=""   ## makes sure there is a default set for searchdir.
     build="lucid-build"
     output="no"
 
@@ -146,7 +146,7 @@ else
 ## which architecture to use.
     while getopts "36d:hmt:r:b:v" opt; do
         case "$opt" in
-            d)  dir=$OPTARG;;
+            d)  searchdir=$OPTARG;;
             6)  buildtype="lucid-x86_64-build"
                     archtype="x86_64"
                     printf "The build has been set to 64 bit.\n";;
@@ -172,11 +172,11 @@ else
         buildtype="lucid-x86_64-build"
         archtype="x86_64"
     fi
-    if [ "$dir" = "" ]; then ## if no directory selected set one.
-        dir="./"
+    if [ "$searchdir" = "" ]; then ## if no directory selected set one.
+        searchdir="./"
         printf "Finding packagebuilds in $(pwd) directory.\n"
     else
-        printf "Finding packagebuilds in $dir directory.\n"
+        printf "Finding packagebuilds in $searchdir directory.\n"
     fi
     if [ "$repodir" = "" ]; then ## if no repodir is selected set one.
         repodir="/var/lucid/repo"
@@ -189,5 +189,5 @@ else
     fi
 
     ## Finally find the pkgbuilds and build them!
-    find "$dir" -name PKGBUILD -type f -execdir "$build" "$buildtype" "$archtype" "$repodir/$branch/$archtype/$repo" "$output" \;
+    find "$searchdir" -name PKGBUILD -type f -execdir "$build" "$buildtype" "$archtype" "$repodir/$branch/$archtype/$repo" "$output" \;
 fi
