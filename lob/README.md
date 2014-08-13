@@ -4,12 +4,18 @@ Lucid OS Bugtracker
 This is the documentation on the Lucid OS Bugtracker and how to
 effectively use the bugtracker.
 
-Warning: It is important to follow the workflow in this documentation
-    because I do not know how to fix if you put something in the wrong
-    place. I do however know how to delete what people did that screwed
-    up future workflow. Following the guidelines laid out here will
-    ensure work that you do on the bug tracker is not simply deleted,
-    I do not want anyones time wasted so please follow these guidelines.
+It is important to follow the workflow in this documentation because I
+do not know how to fix if you put something in the wrong place. I do
+however know how to delete items that conflict with future design
+workflow. Following the guidelines laid out here will ensure work that
+you do on the bug tracker is useful.
+
+Everything is done in a modular way. In how we do nearly everything
+even if we do not use modular packages yet. If branching something out
+makes the larger picture easier understand then that is how it should
+be done. We should create a new project if we are using a different git
+repository so that no matter where you go things are at the very least
+similar and understandable.
 
 Location
 =====
