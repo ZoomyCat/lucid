@@ -48,13 +48,13 @@ warning() {
 error() {
     local mesg=$1; shift
     printf "${RED}==> ERROR:${ALL_OFF}${BOLD} ${mesg}${ALL_OFF}\n" "$@" >&2
-    printf "==> ERROR: ${mesg}\n" "$@" > failed
+    printf "==> ERROR: ${mesg}\n" "$@" >> failed
 }
 
 successmsg() {
     local mesg=$1; shift
     printf "${GREEN}==>${ALL_OFF}${BOLD} ${mesg}${ALL_OFF}\n" "$@" >&2
-    printf "==> ${mesg}\n" "$@" > passed
+    printf "==> ${mesg}\n" "$@" >> passed
 }
 
 stat_busy() {
