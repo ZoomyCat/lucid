@@ -2,8 +2,8 @@
 ##Created by Edward "edge226" Tunnah.
 
 ## imports program usage from config files.
-source lb.usage
-source lb.conf
+source /etc/lb/lb.usage
+source /etc/lb/lb.conf
 
 ## The main stuff.
 
