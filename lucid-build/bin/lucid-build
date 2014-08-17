@@ -45,16 +45,16 @@ fi
 ## Next we move all packages that were created in the process.
 ## This leaves only source tarballs that we can move at the end.
 printf "Moving files into their appropriate places.\n"
-for files in "./*debug*"; do
+for files in "*debug*"; do
     mv "$files" "$logdir" ## Check and move all debug information.
 done
-for files in "./*.log"; do
+for files in "*.log"; do
     mv "$files" "$logdir" ## Check and move all log information.
 done
-for files in "./*$pkg"; do
+for files in "*$pkg"; do
     mv "$files" "$pkgdir" ## Check and move all packages.
 done
-for files in "./*.tar.*"; do
+for files in "*.tar.*"; do
     mv "$files" "$srcdir" ## Check and move all sources.
 done
 
