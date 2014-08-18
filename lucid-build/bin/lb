@@ -11,7 +11,7 @@ OPTIND=1 ## make sure the optargs are reset for getopts
 
 ## This case statement sets the build parameters of the program for
 ## which architecture to use.
-while getopts "36d:hmt:r:B:vClp" opt; do
+while getopts "36d:hmt:r:b:vClp" opt; do
     case "$opt" in
         d)  searchdir=$OPTARG;;
         6)  compilecmd="lucid-x86_64-build"
@@ -25,7 +25,7 @@ while getopts "36d:hmt:r:B:vClp" opt; do
                 printf "The build has been set to multilib.\n";;
         t)  repodir=$OPTARG;;
         r)      repo=$OPTARG;;
-        B)      branch=$OPTARG;;
+        b)      branch=$OPTARG;;
         p)      pretend="yes";;
         C)      cleanbuild="yes";;
         l)      checklinks="no";;
