@@ -150,9 +150,7 @@ Name:           cleanbuildroot
 Description:    cleanbuildroot can be used to both clean a build
                 root and create a new build root. This is required
                 if you are changing repositories in the devtools
-                pacman.conf. Currently the program is fairly dumb
-                in functionality and just creates or removes the
-                appropriate directory and initializes the chroot.
+                pacman.conf.
 
 Usage:          cleanbuildroot (options)
 
