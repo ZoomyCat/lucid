@@ -13,6 +13,8 @@ buildarch="$2" ## The architecture. ie x86_64 or i686.
 repo="$3" ## location for the repository to go. Packages go here.
 verbose="$4" ## Flag for output to terminal instead of using a logfile
 clean="$5" ## flag to clean the chroot before building.
+checklinks="$6" ## Tells the program whether to check for links or not.
+pretend="$7" ## Tells the program whether to pretend the build and not really run updates.
 
 ## Set parameters for the program to be able to move all the resulting
 ## packages where they need to go.
@@ -30,16 +32,22 @@ if [ "$clean" = "yes" ]; then
     cleanbuildroot  ## if the -C flag is passed to lb this will clean
 fi  ## the build root before the program continues to the build.
 
+if [ "$checklinks" = "yes" ]; then  ## This is default usage.
+    check-links  ## Runs the checklinks program to check if all the links
+fi ## in the PKGBUILD file are able to be downloaded.
+
 ## Do the build.
 printf "Building %s for the %s architecture.\n" "$pkgname" "$buildarch"
 printf "The packages, sources and log directory for this build are: \n"
 printf "%s\n%s\n%s\n" "$pkgdir" "$srcdir" "$logdir"
-if [ "$verbose" = "yes" ]; then
-    rm -rf /var/lib/lucidbuild/lucid-x86_64/*/build
-    "$compilecmd"
-elif [ "$verbose" = "no" ]; then
-    rm -rf /var/lib/lucidbuild/lucid-x86_64/*/build
-    "$compilecmd" > "$logdir$compilecmd-$pkgname.log"
+if [ "$pretend" = "no" ]; then
+    if [ "$verbose" = "yes" ]; then
+        rm -rf /var/lib/lucidbuild/lucid-x86_64/*/build
+        "$compilecmd"
+    elif [ "$verbose" = "no" ]; then
+        rm -rf /var/lib/lucidbuild/lucid-x86_64/*/build
+        "$compilecmd" > "$logdir$compilecmd-$pkgname.log"
+    fi
 fi
 
 ## Move the Sources, Packages and logs to the appropriate directories.
@@ -51,17 +59,18 @@ fi
 ## This leaves only source tarballs that we can move at the end.
 printf "Moving files into their appropriate places.\n"
 printf "Getting a few errors here is expected.\n"
-mv *debug* "$logdir" ## Copying this before $pkg makes sure all debug files have been moved to the correct place.
-mv *.log "$logdir" ## This does contain some tar files so I copy it before $pkg. This leaves only $pkg and $src info left
-mv *"$buildarch$pkg" "$pkgdir" ## Copy the pkg into the repo.
-mv *"multilib$pkg" "$pkgdir" ## Copy multilib packages into the repo, make sure to use -m through lb.
-mv *"any$pkg" "$pkgdir" ## Copy any files for all architectures were compiled move them into the repo.
-mv *.tar.* "$srcdir" ## Copy all remaining tarballs into the src directory.
-# If a git build from a branch is used then make sure we clean up after it.
-if [ -d ./*/ ]; then
-    rm -rf ./*/
+if [ "$pretend" = "no" ]; then
+    mv *debug* "$logdir" ## Copying this before $pkg makes sure all debug files have been moved to the correct place.
+    mv *.log "$logdir" ## This does contain some tar files so I copy it before $pkg. This leaves only $pkg and $src info left
+    mv *"$buildarch$pkg" "$pkgdir" ## Copy the pkg into the repo.
+    mv *"multilib$pkg" "$pkgdir" ## Copy multilib packages into the repo, make sure to use -m through lb.
+    mv *"any$pkg" "$pkgdir" ## Copy any files for all architectures were compiled move them into the repo.
+    mv *.tar.* "$srcdir" ## Copy all remaining tarballs into the src directory.
+    # If a git build from a branch is used then make sure we clean up after it.
+    if [ -d ./*/ ]; then
+        rm -rf ./*/
+    fi
 fi
-
 ## I was trying to fix the harmless errors here. Everything I seem to do fails at this though.
 ##for files in *debug*; do
     ##mv "$files" "$logdir" ## Check and move all debug information.
@@ -80,8 +89,10 @@ fi
 ##done ## directory incase PKGBUILD files change. This gives us a reference on updates.
 
 printf "Moving build information from $build stage in case of failure.\n\n"
-if [ "$buildarch" = "x86_64" ]; then
-    cp -R /var/lib/lucidbuild/lucid-x86_64/*/build "$logdir"
-elif [ "$buildarch" = "i686" ]; then
-    cp -R /var/lib/lucidbuild/lucid-i686/*/build "$logdir"
+if [ "$pretend" = "no" ]; then
+    if [ "$buildarch" = "x86_64" ]; then
+        cp -R /var/lib/lucidbuild/lucid-x86_64/*/build "$logdir"
+    elif [ "$buildarch" = "i686" ]; then
+        cp -R /var/lib/lucidbuild/lucid-i686/*/build "$logdir"
+    fi
 fi

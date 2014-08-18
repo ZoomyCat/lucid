@@ -45,6 +45,13 @@ Options:
     -C              Create a new or Clean a current build root.
                     This is needed if you change your pacman.conf file.
 
+    -p              Turns pretend mode on. This will not do any builds
+                    or attempt to move or copy any files. It will still
+                    scan if links exist. If this is combined with -C
+                    it will still clean the build root.
+
+    -l              Turns link verification off.
+
     -6              Compiles x86_64 packages. This cannot be combined
                     with -3 or -m.
 

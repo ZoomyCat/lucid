@@ -3,15 +3,14 @@
 
 ## Read the pkgbuild variables into the script to be able to work with
 ## them to gather needed information.
-source ./PKGBUILD
-source /etc/lb/lb.conf
+source ./PKGBUILD ## Read the PKGBUILD file.
 
-for url in "${source[@]}"; do
-    if [[ -f "$url" ]]; then
-        printf "%s exists!\n" "$url"
-    else
-        wget --spider -q "$url" &&
-        printf "%s exists!\n" "$url" ||
-        printf "%s does not exist\n" "$url"
+for url in "${source[@]}"; do ## $source is an array that comes from the PKGBUILD.
+    if [[ -f "$url" ]]; then ## If the entry in the sources is a file and exists.
+        printf "%s exists!\n" "$url" ## Print that it exists.
+    else ## Everything else should be a URL that is parsed through wget.
+        wget --spider -q "$url" && ## This will end up outputting to a log file in lucid-build.
+        printf "%s exists!\n" "$url" || ## Print if it exists!
+        printf "%s does not exist\n" "$url" ## Print if it does not exist!
     fi
 done
