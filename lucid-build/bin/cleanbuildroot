@@ -8,11 +8,22 @@
 ## into using a local repository to do the builds.
 
 source /etc/lb/lb.conf
+OPTIND=1 ## make sure the optargs are reset for getopts
+
+while getopts "c:m:b:h" opt; do
+    case "$opt" in
+        c) pacconf=$OPTARG;;
+        m) makeconf=$OPTARG;;
+        b) buildroot=$OPTARG;;
+        h)      printf '%s\n' "$cleanbuildroot_usage"; exit 0;;
+        \?)     printf '%s\n' "$cleanbuildroot_usage" >&2; exit 1;;
+    esac
+done
 
 if [ ! -d "$buildroot" ]; then ## If the build root directory does not
     mkdir -p "$buildroot"      ## exist then create it.
-elif [ -d "$buildroot/*/" ]; then ## Check if there is any directories
-    rm -rf "$buildroot/*" ## in the buildroot. If so remove them.
+else                      ## If you're running this script you wanted
+    rm -rf "$buildroot/*" ## to clean your build root. This will do that.
     rm -rf "$buildroot/*" ## Do it twice because once sometimes does not
 fi                        ## clear all required files.
 
