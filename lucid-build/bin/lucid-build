@@ -12,6 +12,7 @@ compilecmd="$1" ## The program that starts the actual build.
 buildarch="$2" ## The architecture. ie x86_64 or i686.
 repo="$3" ## location for the repository to go. Packages go here.
 verbose="$4" ## Flag for output to terminal instead of using a logfile
+clean="$5" ## flag to clean the chroot before building.
 
 ## Set parameters for the program to be able to move all the resulting
 ## packages where they need to go.
@@ -24,6 +25,10 @@ logdir="$repo/logs/$pkgname/" ## The debug and log location.
 ## Create the appropriate repository directories.
 mkdir -p "$pkgdir" "$logdir" "$srcdir"
 rm -rf "$logdir/*"
+
+if [ "$clean" = "yes" ]; then
+    cleanbuildroot  ## if the -C flag is passed to lb this will clean
+fi  ## the build root before the program continues to the build.
 
 ## Do the build.
 printf "Building %s for the %s architecture.\n" "$pkgname" "$buildarch"
