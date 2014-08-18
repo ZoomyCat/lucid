@@ -1,0 +1,13 @@
+#!/usr/bin/env bash
+##Created by Edward "edge226" Tunnah.
+
+## Read the pkgbuild variables into the script to be able to work with
+## them to gather needed information.
+source ./PKGBUILD
+source /etc/lb/lb.conf
+
+for url in $source; do
+    wget --spider -q "$url" &&
+    printf "%s exists!\n" "$url" ||
+    printf "%s does not exist\n" "$url"
+done
