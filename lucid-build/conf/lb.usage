@@ -20,23 +20,23 @@ Examples:
 
 ## defines the usage of lb.
 lb_usage="
-Name:               lb
+Name:           lb
 
 
-Description:        lucid-build compiles all PKGBUILD's recursively
-                    within the working directory. It has options to
-                    modify where it starts searching and what
-                    architecture you would like to build within that
-                    working directory.
+Description:    lucid-build compiles all PKGBUILD's recursively
+                within the working directory. It has options to
+                modify where it starts searching and what
+                architecture you would like to build within that
+                working directory.
 
-                    It also allows the user to choose the location
-                    of their repository and sub repository.
+                It also allows the user to choose the location
+                of their repository and sub repository.
 
-                    Currently you can only use one architecture at
-                    a time but that may change in the future.
+                Currently you can only use one architecture at
+                a time but that may change in the future.
 
 
-Usage:              lb (Options)
+Usage:          lb (Options)
 
 Options:
 
@@ -145,14 +145,40 @@ Examples:
 
 ## How to use cleanbuildroot.
 cleanbuildroot_usage="
-Name:               cleanbuildroot
+Name:           cleanbuildroot
 
-Description:
+Description:    cleanbuildroot can be used to both clean a build
+                root and create a new build root. This is required
+                if you are changing repositories in the devtools
+                pacman.conf. Currently the program is fairly dumb
+                in functionality and just creates or removes the
+                appropriate directory and initializes the chroot.
 
-Usage:              cleanbuildroot (Options)
+Usage:          cleanbuildroot (options)
 
 Options:
 
-Examples:
+    -c          Sets a pacman.conf file to use.
+                Default: /usr/share/devtools/pacman-default.conf
 
+    -m          sets a makepkg.conf file to use.
+                Default: /usr/share/devtools/makepkg-\$buildarch.conf
+                \$buildarch refers to the architecture set in lb.conf.
+
+    -b          sets a custom build root directory.
+                Default: /var/lib/lucidbuild/lucid-$buildarch
+                See -m for \$buildarch information.
+
+Examples:       Normally you should just be able to execute
+                cleanbuildroot on its own with default settings. If for
+                whatever reason you need to modify these settings
+                manually you can do so with the flags above and examples
+                below.
+
+        cleanbuildroot -c /etc/pacman.conf -m /etc/makepkg.conf
+
+                This would use the pacman.conf and makepkg.conf file
+                from the local system if someone wanted to compile for
+                the architecture and repositories their host system is
+                using.
 "
