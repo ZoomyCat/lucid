@@ -27,8 +27,8 @@ while getopts "36d:hmt:r:b:v" opt; do
         r)      repo=$OPTARG;;
         b)      branch=$OPTARG;;
         v)      verbose="yes";;
-        h)      printf '%s\n' "$usage"; exit 0;;
-        \?)     printf '%s\n' "$usage" >&2; exit 1;;
+        h)      printf '%s\n' "$lb_usage"; exit 0;;
+        \?)     printf '%s\n' "$lb_usage" >&2; exit 1;;
     esac
 done
 

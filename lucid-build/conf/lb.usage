@@ -1,9 +1,26 @@
 #!/usr/bin/env bash
 ##Created by Edward "edge226" Tunnah.
 
-## defines the usage of the program.
-usage="
-Name:               lucid-build
+## Here is a basic template to make creating new entries easier.
+## This is the minimum amount of information that a help usage should
+## have.
+clean_template_usage="
+Name:
+
+Description:
+
+Usage:
+
+Options:
+
+Examples:
+
+"
+
+
+## defines the usage of lb.
+lb_usage="
+Name:               lb
 
 
 Description:        lucid-build compiles all PKGBUILD's recursively
@@ -19,7 +36,7 @@ Description:        lucid-build compiles all PKGBUILD's recursively
                     a time but that may change in the future.
 
 
-Usage:              lucid-build (Options)
+Usage:              lb (Options)
 
 Options:
 
@@ -124,3 +141,18 @@ Examples:
     In both cases the results are the same:
         You magically get a repository at:
                 /var/lucid/repo/unstable/x86_64/core"
+
+
+## How to use cleanbuildroot.
+cleanbuildroot_usage="
+Name:               cleanbuildroot
+
+Description:
+
+Usage:              cleanbuildroot (Options)
+
+Options:
+
+Examples:
+
+"

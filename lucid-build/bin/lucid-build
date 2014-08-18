@@ -45,39 +45,34 @@ fi
 ## Next we move all packages that were created in the process.
 ## This leaves only source tarballs that we can move at the end.
 printf "Moving files into their appropriate places.\n"
-for files in "*debug*"; do
-    mv "$files" "$logdir" ## Check and move all debug information.
-done
-for files in "*.log"; do
-    mv "$files" "$logdir" ## Check and move all log information.
-done
-for files in "*$pkg"; do
-    mv "$files" "$pkgdir" ## Check and move all packages.
-done
-for files in "*.tar.*"; do
-    mv "$files" "$srcdir" ## Check and move all sources.
-done
-
-## If a git build from a branch is used then make sure we clean up after it.
-## This should be done before we copy the rest of the files into the
-## Sources directory so we do not end up with a muddled source directory.
+printf "Getting a few errors here is expected.\n"
+mv *debug* "$logdir" ## Copying this before $pkg makes sure all debug files have been moved to the correct place.
+mv *.log "$logdir" ## This does contain some tar files so I copy it before $pkg. This leaves only $pkg and $src info left
+mv *"$buildarch$pkg" "$pkgdir" ## Copy the pkg into the repo.
+mv *"multilib$pkg" "$pkgdir" ## Copy multilib packages into the repo, make sure to use -m through lb.
+mv *"any$pkg" "$pkgdir" ## Copy any files for all architectures were compiled move them into the repo.
+mv *.tar.* "$srcdir" ## Copy all remaining tarballs into the src directory.
+# If a git build from a branch is used then make sure we clean up after it.
 if [ -d ./*/ ]; then
     rm -rf ./*/
 fi
 
-for files in "./*"; do
-    cp "$files" "$srcdir" ## Copy the rest of the files into the sources
-done ## directory incase PKGBUILD files change. This gives us a reference on updates.
-
-
-##printf "Getting a few errors here is expected.\n"
-##mv *debug* "$logdir" ## Copying this before $pkg makes sure all debug files have been moved to the correct place.
-##mv *.log "$logdir" ## This does contain some tar files so I copy it before $pkg. This leaves only $pkg and $src info left
-##mv *"$buildarch$pkg" "$pkgdir" ## Copy the pkg into the repo.
-##mv *"multilib$pkg" "$pkgdir" ## Copy multilib packages into the repo, make sure to use -m through lb.
-##mv *"any$pkg" "$pkgdir" ## Copy any files for all architectures were compiled move them into the repo.
-##mv *.tar.* "$srcdir" ## Copy all remaining tarballs into the src directory.
-
+## I was trying to fix the harmless errors here. Everything I seem to do fails at this though.
+##for files in *debug*; do
+    ##mv "$files" "$logdir" ## Check and move all debug information.
+##done
+##for files in *.log; do
+    ##mv "$files" "$logdir" ## Check and move all log information.
+##done
+##for files in *"$pkg"; do
+    ##mv "$files" "$pkgdir" ## Check and move all packages.
+##done
+##for files in *.tar.*; do
+    ##mv "$files" "$srcdir" ## Check and move all sources.
+##done
+##for files in ./*; do
+    ##cp "$files" "$srcdir" ## Copy the rest of the files into the sources
+##done ## directory incase PKGBUILD files change. This gives us a reference on updates.
 
 printf "Moving build information from $build stage in case of failure.\n\n"
 if [ "$buildarch" = "x86_64" ]; then

@@ -1,0 +1,20 @@
+#!/usr/bin/env bash
+##Created by Edward "edge226" Tunnah.
+
+## cleanbuildroot will create or clean the build root. It interfaces with
+## parts of devtools in order to remove and recreate a fresh build
+## root. Normally this is not needed but is neccessary if we point to a
+## different repository. For instance switching from arch repositories
+## into using a local repository to do the builds.
+
+source /etc/lb/lb.conf
+
+if [ ! -d "$buildroot" ]; then ## If the build root directory does not
+    mkdir -p "$buildroot"      ## exist then create it.
+elif [ -d "$buildroot/*/" ]; then ## Check if there is any directories
+    rm -rf "$buildroot/*" ## in the buildroot. If so remove them.
+    rm -rf "$buildroot/*" ## Do it twice because once sometimes does not
+fi                        ## clear all required files.
+
+## Create a new root structure to be used in building.
+mklucidroot -C "$pacconf" -M "$makeconf" "$buildroot/root" "base-devel"
