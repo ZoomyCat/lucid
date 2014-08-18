@@ -7,7 +7,11 @@ source ./PKGBUILD
 source /etc/lb/lb.conf
 
 for url in "${source[@]}"; do
-    wget --spider -q "$url" &&
-    printf "%s exists!\n" "$url" ||
-    printf "%s does not exist\n" "$url"
+    if [[ -f "$url" ]]; then
+        printf "%s exists!\n" "$url"
+    else
+        wget --spider -q "$url" &&
+        printf "%s exists!\n" "$url" ||
+        printf "%s does not exist\n" "$url"
+    fi
 done
