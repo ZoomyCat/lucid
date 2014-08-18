@@ -4,12 +4,14 @@ Lucid Build Tools
 The Lucid Build toolset wraps the customized Arch Linux devtools to allow a much nicer interface to the build environment. It allows for recursive building and automatic staging of the build environment depending the parameters passed to the command.
 
 Completed Features:
+=====
 
 -A config file.
 
 -A multi purpose clean/create build root environment flag. If you try to create a new build root without cleaning it will error out. Whenever you clean the build root you need to recreate it so these two functions go hand in hand.
 
 Future features (in no particular order):
+=====
 
 -The ability to log which compiles succeed and fail.
 
