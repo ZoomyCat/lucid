@@ -1,0 +1,28 @@
+# Maintainer: Edge226 <edge226[at]dem0n[dot]com>
+
+pkgname=lucid-build
+pkgver=0.1
+pkgrel=1
+pkgdesc="Lucid OS devtools interface"
+arch=('any')
+url="https://github.com/edge226/lucid.git"
+license=('LGPL3')
+depends=('devtools' 'findutils' 'wget')
+makedepends=('git')
+source=(git+https://github.com/edge226/lucid.git#branch=lucid-build)
+sha256sums=('SKIP')
+
+package() {
+  # install lucid-build
+  cd  "$srcdir/lucid/lucid-build/bin"
+  install -Dm755 check-links "$pkgdir/usr/bin/check-links"
+  install -Dm755 cleanbuildroot "$pkgdir/usr/bin/cleanbuildroot"
+  install -Dm755 lb "$pkgdir/usr/bin/lb"
+
+  cd  "$srcdir/lucid/lucid-build/conf"
+  install -Dm755 lb.conf "$pkgdir/etc/lb/lb.conf"
+  install -Dm755 lb.usage "$pkgdir/etc/lb/lb.usage"
+
+  cd  "$srcdir/lucid/lucid-build/lib"
+  install -Dm755 lucid-build "$pkgdir/var/lib/lucid/lucid-build"
+}
