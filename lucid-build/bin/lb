@@ -2,8 +2,8 @@
 ##Created by Edward "edge226" Tunnah.
 
 ## imports program usage from config files.
-source /etc/lb/lb.usage
 source /etc/lb/lb.conf
+source /etc/lb/lb.usage
 
 ## The main stuff.
 
@@ -14,14 +14,17 @@ OPTIND=1 ## make sure the optargs are reset for getopts
 while getopts "36d:hmt:r:b:vClp" opt; do
     case "$opt" in
         d)  searchdir=$OPTARG;;
-        6)  compilecmd="lucid-x86_64-build"
-                buildarch="x86_64"
+        6)  buildarch="x86_64"
+                compilecmd="lucid-$buildarch-build"
+                buildroot="/var/lib/lucidbuild/lucid-$buildarch"
                 printf "The build has been set to 64 bit.\n";;
-        3)  compilecmd="lucid-i686-build"
-                buildarch="i686"
+        3)  buildarch="i686"
+                compilecmd="lucid-$buildarch-build"
+                buildroot="/var/lib/lucidbuild/lucid-$buildarch"
                 printf "The build has been set to 32 bit.\n";;
         m)  compilecmd="lucid-multilib-build"
                 buildarch="x86_64"
+                buildroot="/var/lib/lucidbuild/lucid-$buildarch"
                 printf "The build has been set to multilib.\n";;
         t)  repodir=$OPTARG;;
         r)      repo=$OPTARG;;
@@ -41,7 +44,12 @@ done
 if [ "$EUID" != "0" ]; then
     printf "error: This script must be run as root.\n"
     exit 1
-else
-    ## Finally find the pkgbuilds and build them!
-    find "$searchdir" -name PKGBUILD -type f -execdir "$buildcmd" "$compilecmd" "$buildarch" "$repodir/$branch/$buildarch/$repo" "$verbose" "$cleanbuild" "$checklinks" "$pretend" \;
 fi
+
+if [ "$cleanbuild" = "yes" ]; then
+    cleanbuildroot -b "$buildroot" ## if the -C flag is passed to lb this will clean
+fi  ## the build root before the program continues find PKGBUILDs.
+
+    ## Finally find the pkgbuilds and build them!
+    find "$searchdir" -name PKGBUILD -type f -execdir "$buildcmd" "$compilecmd" "$buildarch" "$repodir/$branch/$buildarch/$repo" "$verbose" "$checklinks" "$pretend" "$buildroot" \;
+

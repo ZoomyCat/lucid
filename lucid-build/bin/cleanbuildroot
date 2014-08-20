@@ -20,12 +20,12 @@ while getopts "c:m:b:h" opt; do
     esac
 done
 
-if [ ! -d "$buildroot" ]; then ## If the build root directory does not
-    mkdir -p "$buildroot"      ## exist then create it.
-else                      ## If you're running this script you wanted
-    rm -rf "$buildroot/*" ## to clean your build root. This will do that.
-    rm -rf "$buildroot/*" ## Do it twice because once sometimes does not
-fi                        ## clear all required files.
+                        ## If you're running this script you wanted
+    rm -rf "$buildroot" ## to clean your build root. This will do that.
+    rm -rf "$buildroot" ## Do it twice because once sometimes does not
+                        ## clear all required files.
+
+    mkdir -p "$buildroot" ## Recreate the entire buildroot.
 
 ## Create a new root structure to be used in building.
 mklucidroot -C "$pacconf" -M "$makeconf" "$buildroot/root" "base-devel"

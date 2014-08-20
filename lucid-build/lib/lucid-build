@@ -12,9 +12,9 @@ compilecmd="$1" ## The program that starts the actual build.
 buildarch="$2" ## The architecture. ie x86_64 or i686.
 repo="$3" ## location for the repository to go. Packages go here.
 verbose="$4" ## Flag for output to terminal instead of using a logfile
-clean="$5" ## flag to clean the chroot before building.
-checklinks="$6" ## Tells the program whether to check for links or not.
-pretend="$7" ## Tells the program whether to pretend the build and not really run updates.
+checklinks="$5" ## Tells the program whether to check for links or not.
+pretend="$6" ## Tells the program whether to pretend the build and not really run updates.
+buildroot="$7" ## This is where the buildroot is located so we can check if it exists and created it if it does not.
 
 ## Set parameters for the program to be able to move all the resulting
 ## packages where they need to go.
@@ -28,9 +28,9 @@ logdir="$repo/logs/$pkgname/" ## The debug and log location.
 mkdir -p "$pkgdir" "$logdir" "$srcdir"
 rm -rf "$logdir/*"
 
-if [ "$clean" = "yes" ]; then
-    cleanbuildroot  ## if the -C flag is passed to lb this will clean
-fi  ## the build root before the program continues to the build.
+if [ ! -d "$buildroot" ]; then ## If the build root directory does not exist then create it.
+    cleanbuildroot -b "$buildroot"  ## Since cleanbuildroot builds a new build root this will create a new one if it doesnt exist.
+fi
 
 if [ "$checklinks" = "yes" ]; then  ## This is default usage.
     check-links  ## Runs the checklinks program to check if all the links
