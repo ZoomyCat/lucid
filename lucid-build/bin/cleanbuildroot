@@ -8,6 +8,7 @@
 ## into using a local repository to do the builds.
 
 source /etc/lb/lb.conf
+source /etc/lb/lb.usage
 OPTIND=1 ## make sure the optargs are reset for getopts
 
 while getopts "c:m:b:h" opt; do
