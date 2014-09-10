@@ -29,7 +29,7 @@ It has been discussed among the development members that we use staging, testing
 
 I would like to eventually update each directory that contains a PKGBUILD file with a readme file corresponding to that package so it is easier to find out information on each package. Potentially add better descriptions of a variety of sorts. (See template comment near the top)
 
-[doc](/)
+[doc](/README.md)
 =====
 
 This is where the documentation resides for our development process. It will most likely be categorized via a directory structure that makes sense.
