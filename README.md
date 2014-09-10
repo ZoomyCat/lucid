@@ -9,6 +9,5 @@ This Branch will provide documentation on how the Lucid OS github repository is 
 =====
 [Git Repository Information](git/README.md)
 
-Lob. The Lucid OS Bugtracker!
+[Lob. The Lucid OS Bugtracker!](lob/README.md
 =====
-[
