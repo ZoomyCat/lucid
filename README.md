@@ -3,11 +3,21 @@ Lucid Documentation
 
 Lucid OS Repository Documentation Branch
 
-This Branch will provide documentation on how the Lucid OS github repository is configured, how we use it and how you can use it.
+This is designed to give you information on the Lucid OS project.
 
 [Git Repository Information](git/README.md)
 =====
-[Git Repository Information](git/README.md)
+This section pertains to how we use github for Lucid.
 
-[Lob. The Lucid OS Bugtracker!](lob/README.md
+
+[The Lucid OS Bugtracker!](lob/README.md)
 =====
+This section contains information about the Lucid OS Bugtracker.
+
+[lucid-build](lb/README.md)
+=====
+This section relates to the deprecated lucid-build toolset.
+
+[lbf](lbf/README.md)
+=====
+This section relates to the functionality within the Lucid build framework.
