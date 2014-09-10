@@ -1,4 +1,4 @@
-Lucid OS Bugtracker
+[Lucid OS Bugtracker](http://lob.celps.org)
 =====
 
 This is the documentation on the Lucid OS Bugtracker and how to
@@ -17,12 +17,7 @@ be done. We should create a new project if we are using a different git
 repository so that no matter where you go things are at the very least
 similar and understandable.
 
-Location
-=====
-
-The location of the bugtracker is http://lob.celps.org
-
-Structure
+Structure of LOB
 =====
 
 Lucid OS

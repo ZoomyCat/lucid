@@ -11,7 +11,7 @@ This is how our git workflow is currently. Everything that needs to be a branch 
 -- undecided --
 We may want to create a template branch that has template files to be used and then modified within git our git structure.
 
-master
+[master](https://github.com/edge226/lucid)
 =====
 
 This branch contains the content that we have verified works and is up to an appropriate quality standard. You can trust this branch to be able to build something that works.
@@ -21,7 +21,7 @@ This branch contains the content that we have verified works and is up to an app
 
 This could be a variety of repositories that could be testing repositories for new content, be nearing a push into master or be completely unstable and being worked.
 
-We do our best to make repository branches with names that would make sense to other people as well as ourselves. An example of a branch fitting this description that may or may not exist at this point in time is the merged-repo branch. Which is the first branch that really started representing Lucid OS.
+We do our best to make repository branches with names that would make sense to other people as well as ourselves. An example of a branch fitting this description that may or may not exist at this point in time is the [merged-repo](https://github.com/edge226/lucid/tree/merged-repo) branch. Which is the first branch that really started representing Lucid OS.
 
 This may change in the future depending on design decisions based on the best method to proceed beyond merged-repo.
 
@@ -29,7 +29,7 @@ It has been discussed among the development members that we use staging, testing
 
 I would like to eventually update each directory that contains a PKGBUILD file with a readme file corresponding to that package so it is easier to find out information on each package. Potentially add better descriptions of a variety of sorts. (See template comment near the top)
 
-doc
+[doc](/)
 =====
 
 This is where the documentation resides for our development process. It will most likely be categorized via a directory structure that makes sense.
