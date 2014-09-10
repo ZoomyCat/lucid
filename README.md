@@ -14,10 +14,14 @@ This section pertains to how we use github for Lucid.
 =====
 This section contains information about the Lucid OS Bugtracker.
 
-[lucid-build](lb/README.md)
+[lucid-build](lucid-build/README.md)
 =====
 This section relates to the deprecated lucid-build toolset.
 
 [lbf](lbf/README.md)
 =====
 This section relates to the functionality within the Lucid build framework.
+
+[Lucid-Themes](Lucid-Themes/README.md)
+=====
+[Lucid Themes Repository](https://github.com/edge226/lucid-themes)
