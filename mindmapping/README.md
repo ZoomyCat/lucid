@@ -1,4 +1,4 @@
-Mindmapping Documentation
+Mind Mapping Documentation
 =====
 
 Who is mindmapping for?

@@ -22,10 +22,18 @@ This section relates to the deprecated [lucid-build](https://github.com/edge226/
 =====
 This section relates to the functionality within the [Lucid build framework](https://github.com/edge226/lucid/tree/lbf).
 
-[Lucid-Themes](Lucid-Themes/README.md)
+[Mind Mapping](mindmapping/README.md)
+=====
+Information about mind mapping and how to view the mindmaps created for the Lucid OS project.
+
+[Lucid-Themes](lucid-themes/README.md)
 =====
 [Lucid Themes Repository](https://github.com/edge226/lucid-themes)
 
-[Lucid-Backgrounds](Lucid-Backgrounds/README.md)
+[Lucid-Backgrounds](lucid-backgrounds/README.md)
 =====
-Information about the backgrounds used within Lucid OS.
+Information about the [backgrounds](https://github.com/edge226/lucid-backgrounds) used within Lucid OS.
+
+[Lucid-Icons](lucid-icons/README.md)
+=====
+Information about the icons used within Lucid OS.
