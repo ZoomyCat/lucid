@@ -15,4 +15,4 @@ The official Lucid OS builds will be built with ease of use, functionality, prod
 
 Only working repositories of PKGBUILDS get synced into master, If you're wondering about our current development then check out the merged-repo branch.
 
-If you are wondering how our development team uses git then check out the doc branch. Which will eventually contain much more documentation on various aspects of the project.
+If you are wondering how our development team uses git then check out the [doc branch](https://github.com/edge226/lucid/tree/doc). Which will eventually contain much more documentation on various aspects of the project.
