@@ -19,7 +19,7 @@ Examples:
 
 
 ## defines the usage of lb.
-lbf_usage="
+lb_usage="
 Name:           lb
 
 

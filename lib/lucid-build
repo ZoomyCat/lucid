@@ -15,13 +15,16 @@ checklinks="$5" ## Tells the program whether to check for links or not.
 ## packages where they need to go.
 pkgext=".pkg.tar.xz" ## This mixed with $buildarch allows me to know the pkg.
 pkgname="$(basename $(pwd))" ## Grab the package name via the source build dir.
+
+## Set parameters for the program to be able to move all the resulting
+## packages where they need to go.
 repopkgdir="$repo/packages/"    ## The location of the compiled binary packages.
 reposrcdir="$repo/sources/$pkgname/" ## The source tarbal location.
 repologdir="$repo/logs/$pkgname/" ## The debug and log location.
 
 ## Create the appropriate repository directories.
 mkdir -p "$repopkgdir" "$repologdir" "$reposrcdir"
-rm -rf "$repologdir/*"
+#rm -rf "$repologdir/*"
 
 if [ ! -d "$buildroot" ]; then ## If the build root directory does not exist then create it.
     cleanbuildroot -b "$buildroot"  ## Since cleanbuildroot builds a new build root this will create a new one if it doesnt exist.
@@ -52,6 +55,8 @@ fi
 ## categories of files may contain files ending in $pkg.
 ## Next we move all packages that were created in the process.
 ## This leaves only source tarballs that we can move at the end.
+## I have found instances where this will leave the build directory with more files than it started with.
+## I will have to write an algorithm to deal with this. 
 printf "Moving files into their appropriate places.\n"
 printf "Getting a few errors here is expected.\n"
 if [ "$pretend" = "no" ]; then

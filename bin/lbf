@@ -1,9 +1,24 @@
 #!/usr/bin/env bash
 ##Created by Edward "edge226" Tunnah.
 
+## Clean all variables used within the lucid build framework.
+clearvars() {
+	## grab the list of variables used within the entire functionality
+	## this prevents over riding any variable on the command line that
+	## would skip or allow different functionality than desired by
+	## the developer for security reasons.
+	source /etc/lbf/lbf.vars
+	
+	for entry in "${lbf_vars[@]}" ; do
+		printf '%s%s%s\n' "Clearing the variable ""$entry"" now."
+		"$entry"=""
+	done
+}
+clearvars
+
 ## imports program usage from config files.
-source /etc/lb/lb.conf
-source /etc/lb/lb.usage
+source /etc/lbf/lbf.conf
+source /etc/lbf/lbf.usage
 
 ## The main stuff.
 
