@@ -13,6 +13,7 @@ clearvars() {
 		printf '%s%s%s\n' "Clearing the variable ""$entry"" now."
 		"$entry"=""
 	done
+	lbf_vars=""
 }
 clearvars
 
