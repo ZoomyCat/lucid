@@ -11,9 +11,8 @@ clearvars() {
 	
 	for entry in "${lbf_vars[@]}" ; do
 		printf '%s%s%s\n' "Clearing the variable ""$entry"" now."
-		"$entry"=""
+		unset "$entry"
 	done
-	lbf_vars=""
 }
 clearvars
 
@@ -87,12 +86,12 @@ done
     ## Finally find the pkgbuilds and build them!
     ##find "$searchdir" -name PKGBUILD -type f -execdir "$buildcmd" "$compilecmd" "$buildarch" "$repodir/$branch/$buildarch/$repo" "$verbose" "$checklinks" "$pretend" "$buildroot" \;
 
-if [ "$cbr_run" = "yes" ]; then
-	cbr+=("${lbf_vars[@]}")
-	cleanbuildroot "${cbr[@]}"
-fi
+#if [ "$cbr_run" = "yes" ]; then
+	#cbr+=("${lbf_vars[@]}")
+	#cleanbuildroot "${cbr[@]}"
+#fi
 
-if [ "$cl_run" = "yes" ]; then
-	cl+=("${lbf_vars[@]}")
-	check-links "${cl[@]}"
-fi
+#if [ "$cl_run" = "yes" ]; then
+	#cl+=("${lbf_vars[@]}")
+	#check-links "${cl[@]}"
+#fi
