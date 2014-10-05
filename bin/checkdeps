@@ -1,0 +1,78 @@
+#!/usr/bin/env bash
+##Created by Edward "edge226" Tunnah.
+
+## Checks the depends of a program and writes it to /tmp/lbf/
+
+unset pkgname depends makedepends optdepends
+
+source PKGBUILD
+unset origin
+
+OPTIND=1 ## make sure the optargs are reset for getopts
+
+while getopts "o:vph" opt; do
+	case "$opt" in
+		v)  verbose="yes";;
+		p)  pretend="yes"
+			verbose="yes";;
+		o)  origin=$OPTARG;;
+		h)  printf '%s\n' "$checkdeps_usage"; exit 0;;
+		\?) printf '%s\n' "$checkdeps_usage" >&2; exit 1;;
+	esac
+done
+
+for dep in "${depends[@]}"; do
+	# lose the version comparator, if any
+	depname=${dep%%[<>=]*}
+	deps+=( "$depname" )
+done
+
+for dep in "${makedepends[@]}"; do
+	# lose the version comparator, if any
+	depname=${dep%%[<>=]*}
+	makedeps+=( "$depname" )
+done
+
+for dep in "${checkdepends[@]/:*}"; do
+	# lose the version comaparator, if any
+	depname=${dep%%[<>=]*}
+	checkdeps+=( "$depname" )
+done
+
+if [ "$verbose" = "yes" ]; then
+	printf '\n%s depends are: \n' "$pkgname"
+	printf '%s\n' "${deps[@]}"
+	printf '\n\n'
+	printf "\nmakedeps: \n"
+	printf '%s\n' "${makedeps[@]}"
+	printf '\n\n'
+	printf "\ncheckdeps: \n"
+	printf '%s\n' "${checkdeps[@]}"
+	printf '\n\n'
+fi
+
+if [ ! "$pretend" = "yes" ]; then
+	if [ "$origin" = "" ]; then
+		origin="$pkgname"
+		tmploc="/tmp/lbf/$origin"
+		mkdir -p "$tmploc"
+		pwd > "$tmploc/pb-loc"
+		printf '%s\n' "$origin" > "$tmploc/origin"
+		printf '%s\n' "${deps[@]}" > "$tmploc/deps"
+		printf '%s\n' "${makedeps[@]}" > "$tmploc/makedeps"
+		printf '%s\n' "${checkdeps[@]}" > "$tmploc/checkdeps"
+		exit 0
+	elif [ ! "$origin" = "" ]; then
+		origin="$origin/$pkgname"
+		tmploc="/tmp/lbf/$origin"
+		mkdir -p "$tmploc"
+		pwd > "$tmploc/pb-loc"
+		printf '%s\n' "$origin" > "$tmploc/origin"
+		printf '%s\n' "${deps[@]}" > "$tmploc/deps"
+		printf '%s\n' "${makedeps[@]}" > "$tmploc/makedeps"
+		printf '%s\n' "${checkdeps[@]}" > "$tmploc/checkdeps"
+		exit 0
+	fi
+else
+	exit 0
+fi
