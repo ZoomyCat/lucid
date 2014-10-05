@@ -33,14 +33,27 @@ for dep in "${makedepends[@]}"; do
 	makedeps+=( "$depname" )
 done
 
-for dep in "${checkdepends[@]/:*}"; do
+for dep in "${checkdepends[@]}"; do
 	# lose the version comaparator, if any
 	depname=${dep%%[<>=]*}
 	checkdeps+=( "$depname" )
 done
 
+for dep in "${optdepends[@]}"; do
+	# lose the version comaparator, if any
+	depname=${dep%%[<>=]*}
+	optdeps+=( "$depname" )
+done
+
 if [ "$verbose" = "yes" ]; then
-	printf '\n%s depends are: \n' "$pkgname"
+	printf "\nDirectory of the PKGBUILD file that originated the scan\n"
+	printf "of the program.\n"
+	pwd
+	printf '\n\n'
+	printf "\norigin is: \n"
+	printf '%s\n' "$origin"
+	printf '\n\n'
+	printf "\ndepends are: \n"
 	printf '%s\n' "${deps[@]}"
 	printf '\n\n'
 	printf "\nmakedeps: \n"
@@ -49,30 +62,23 @@ if [ "$verbose" = "yes" ]; then
 	printf "\ncheckdeps: \n"
 	printf '%s\n' "${checkdeps[@]}"
 	printf '\n\n'
-fi
+	printf "\noptdeps: \n"
+	printf '%s\n' "${optdeps[@]}"
+	printf '\n\n'
 
-if [ ! "$pretend" = "yes" ]; then
-	if [ "$origin" = "" ]; then
+elif [ ! "$pretend" = "yes" ]; then
+	if [ "$origin" = "" ] || [ "$origin" = "$pkgname" ]; then
 		origin="$pkgname"
-		tmploc="/tmp/lbf/$origin"
-		mkdir -p "$tmploc"
-		pwd > "$tmploc/pb-loc"
-		printf '%s\n' "$origin" > "$tmploc/origin"
-		printf '%s\n' "${deps[@]}" > "$tmploc/deps"
-		printf '%s\n' "${makedeps[@]}" > "$tmploc/makedeps"
-		printf '%s\n' "${checkdeps[@]}" > "$tmploc/checkdeps"
-		exit 0
 	elif [ ! "$origin" = "" ]; then
 		origin="$origin/$pkgname"
-		tmploc="/tmp/lbf/$origin"
-		mkdir -p "$tmploc"
-		pwd > "$tmploc/pb-loc"
-		printf '%s\n' "$origin" > "$tmploc/origin"
-		printf '%s\n' "${deps[@]}" > "$tmploc/deps"
-		printf '%s\n' "${makedeps[@]}" > "$tmploc/makedeps"
-		printf '%s\n' "${checkdeps[@]}" > "$tmploc/checkdeps"
-		exit 0
 	fi
-else
+	tmploc="/tmp/lbf/$origin"
+	mkdir -p "$tmploc"
+	pwd > "$tmploc/pb-loc"
+	printf '%s\n' "$origin" > "$tmploc/origin"
+	printf '%s\n' "${optdeps[@]}" > "$tmploc/optdeps"
+	printf '%s\n' "${deps[@]}" > "$tmploc/deps"
+	printf '%s\n' "${makedeps[@]}" > "$tmploc/makedeps"
+	printf '%s\n' "${checkdeps[@]}" > "$tmploc/checkdeps"
 	exit 0
 fi
