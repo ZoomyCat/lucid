@@ -6,6 +6,8 @@
 unset pkgname depends makedepends optdepends
 
 source PKGBUILD
+source /home/edge226/github/lucid/conf/lbf.vars ## This allows for the
+	## usage of scanning an array of parameters to track in lbf.vars
 unset origin
 
 OPTIND=1 ## make sure the optargs are reset for getopts
@@ -45,7 +47,18 @@ for dep in "${optdepends[@]}"; do
 	optdeps+=( "$depname" )
 done
 
+arraytodir() {
+	for depbase in "${checkdeps_arr[@]}"; do		
+		typeset -n ref="$depbase"
+		for entry in "${ref[@]}"; do
+			mkdir -p "$tmploc/$depbase/$entry"
+		done
+	done
+}
+
 if [ "$verbose" = "yes" ]; then
+	printf "$pkgname information:"
+	printf '\n\n'
 	printf "\nDirectory of the PKGBUILD file that originated the scan\n"
 	printf "of the program.\n"
 	pwd
@@ -53,7 +66,7 @@ if [ "$verbose" = "yes" ]; then
 	printf "\norigin is: \n"
 	printf '%s\n' "$origin"
 	printf '\n\n'
-	printf "\ndepends are: \n"
+	printf "\ndeps are: \n"
 	printf '%s\n' "${deps[@]}"
 	printf '\n\n'
 	printf "\nmakedeps: \n"
@@ -65,7 +78,6 @@ if [ "$verbose" = "yes" ]; then
 	printf "\noptdeps: \n"
 	printf '%s\n' "${optdeps[@]}"
 	printf '\n\n'
-
 elif [ ! "$pretend" = "yes" ]; then
 	if [ "$origin" = "" ] || [ "$origin" = "$pkgname" ]; then
 		origin="$pkgname"
@@ -73,12 +85,9 @@ elif [ ! "$pretend" = "yes" ]; then
 		origin="$origin/$pkgname"
 	fi
 	tmploc="/tmp/lbf/$origin"
-	mkdir -p "$tmploc"
-	pwd > "$tmploc/pb-loc"
+	mkdir -p "$tmploc" #"$tmploc/deps" "$tmploc/makedeps" "$tmploc/checkdeps" "$tmploc/optdeps"
+	pwd > "$tmploc/pkgb-loc"
 	printf '%s\n' "$origin" > "$tmploc/origin"
-	printf '%s\n' "${optdeps[@]}" > "$tmploc/optdeps"
-	printf '%s\n' "${deps[@]}" > "$tmploc/deps"
-	printf '%s\n' "${makedeps[@]}" > "$tmploc/makedeps"
-	printf '%s\n' "${checkdeps[@]}" > "$tmploc/checkdeps"
-	exit 0
+	arraytodir
 fi
+exit 0
