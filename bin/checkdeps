@@ -5,7 +5,7 @@
 ## directory structure.
 
 ## unset possibly use variables.
-unset pkgname depends makedepends checkdepends optdepends origin
+unset pkgname depends makedepends checkdepends optdepends origin searchdir
 
 source PKGBUILD ## Gather information into the system about the current
 				## PKGBUILD file being scanned by this program.
@@ -14,17 +14,22 @@ source /home/edge226/github/lucid/conf/lbf.vars ## This allows for the
 
 OPTIND=1 ## make sure the optargs are reset for getopts
 
-while getopts "o:vph" opt; do  ## Standard getopts while loops for
+while getopts "o:s:vph" opt; do  ## Standard getopts while loops for
 							   ## dealing with options.
 	case "$opt" in
 		v)  verbose="yes";;
 		p)  pretend="yes"
 			verbose="yes";;
 		o)  origin=$OPTARG;;
+		s)	searchdir=$OPTARG;;
 		h)  printf '%s\n' "$checkdeps_usage"; exit 0;;
 		\?) printf '%s\n' "$checkdeps_usage" >&2; exit 1;;
 	esac
 done
+
+if [ ! "$searchdir" = "" ]; then ## only move into the directory if specified.
+	cd "$searchdir"
+fi
 
 ## Sets the origin name. This is important for dealing with nested
 ## iterations of this program.
