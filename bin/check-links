@@ -3,7 +3,7 @@
 
 ## Read the pkgbuild variables into the script to be able to work with
 ## them to gather needed information.
-unset searchdir
+unset searchdir fail
 source /etc/lbf/lbf.conf ## Read the config file for lbf to get basic parameters if needed.
 source /etc/lbf/lbf.usage ## Read the usage file to be able to output help for this program.
 
@@ -19,15 +19,16 @@ while getopts "s:pvh" opt; do
     esac
 done
 
-if [ "$searchdir" = "" ]; then
+if [ "$searchdir" = "" ]; then ## only move into the directory if specified.
 	cd "$searchdir"
 fi
 
 source PKGBUILD ## Read the PKGBUILD file.
 
-if [ ! "$pretend" = "yes" ]; then
+if [ ! "$pretend" = "yes" ]; then ## Only check if they do not want pretend mode. For this program it is practically useless.
 
-	fail="0"
+	fail="0" ## Set an appropriate default fail parameter. 
+	## set locations of other log files.
 	slog="./$pkgname-$pkgver-$pkgrel-link-verify-success.log"
 	flog="./$pkgname-$pkgver-$pkgrel-link-verify-fail.log"
 	printf "Checking sources for %s version %s\n" "$pkgname" "$pkgver-$pkgrel"
@@ -47,7 +48,7 @@ if [ ! "$pretend" = "yes" ]; then
 				else
 					printf "%s does not exist\n" "$url" >> "$flog" ## Print if it does not exist!
 				fi
-				fail="1"
+				fail="1" ## sets fail.
 			fi
 		fi
 	done
@@ -55,7 +56,7 @@ if [ ! "$pretend" = "yes" ]; then
 fi
 
 if [ "$fail" = "1" ]; then
-	exit 1
+	exit 1 ## reports back that all links did not work properly.
 else
 	exit 0
 fi
