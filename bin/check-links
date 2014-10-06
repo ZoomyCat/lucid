@@ -3,7 +3,7 @@
 
 ## Read the pkgbuild variables into the script to be able to work with
 ## them to gather needed information.
-
+unset searchdir
 source /etc/lbf/lbf.conf ## Read the config file for lbf to get basic parameters if needed.
 source /etc/lbf/lbf.usage ## Read the usage file to be able to output help for this program.
 
@@ -19,7 +19,10 @@ while getopts "s:pvh" opt; do
     esac
 done
 
-cd "$searchdir"
+if [ "$searchdir" = "" ]; then
+	cd "$searchdir"
+fi
+
 source PKGBUILD ## Read the PKGBUILD file.
 
 if [ ! "$pretend" = "yes" ]; then
