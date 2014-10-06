@@ -5,14 +5,27 @@
 
 unset pkgname depends makedepends optdepends
 
-source PKGBUILD
+source PKGBUILD ## Gather information into the system about the current
+				## PKGBUILD file being scanned by this program.
 source /home/edge226/github/lucid/conf/lbf.vars ## This allows for the
 	## usage of scanning an array of parameters to track in lbf.vars
+
+## unset the origin to ensure it is not overflowed.
 unset origin
+
+## Sets the origin name.
+if [ "$origin" = "" ] || [ "$origin" = "$pkgname" ]; then
+	origin="$pkgname"
+elif [ ! "$origin" = "" ]; then
+	origin="$origin/$pkgname"
+fi
+## make sure tmploc is set appropriately before it ever may be used.
+tmploc="/tmp/lbf/$origin"
 
 OPTIND=1 ## make sure the optargs are reset for getopts
 
-while getopts "o:vph" opt; do
+while getopts "o:vph" opt; do  ## Standard getopts while loops for
+							   ## dealing with options.
 	case "$opt" in
 		v)  verbose="yes";;
 		p)  pretend="yes"
@@ -23,71 +36,61 @@ while getopts "o:vph" opt; do
 	esac
 done
 
-for dep in "${depends[@]}"; do
-	# lose the version comparator, if any
-	depname=${dep%%[<>=]*}
-	deps+=( "$depname" )
-done
+scan_deps() {  ## Scan the dependencies of the given PKGBUILD.
+	unset i
+	for depbase in "${checkdeps_pkgbuild_array[@]}"; do
+		if [ "$i" = "" ]; then
+			i=0
+		fi
+		typeset -n ref="$depbase" ## this allows the proceeding for loop
+								## to activate correctly.
+		for dep in "${ref[@]}"; do
+			# lose the version comaparator, if any
+			depname=${dep%%[<>=]*}
+			eval "${checkdeps_array[$i]}+=( '$depname' )"
+		done
+		i="$i"+1
+	done
+}
 
-for dep in "${makedepends[@]}"; do
-	# lose the version comparator, if any
-	depname=${dep%%[<>=]*}
-	makedeps+=( "$depname" )
-done
-
-for dep in "${checkdepends[@]}"; do
-	# lose the version comaparator, if any
-	depname=${dep%%[<>=]*}
-	checkdeps+=( "$depname" )
-done
-
-for dep in "${optdepends[@]}"; do
-	# lose the version comaparator, if any
-	depname=${dep%%[<>=]*}
-	optdeps+=( "$depname" )
-done
-
-arraytodir() {
-	for depbase in "${checkdeps_arr[@]}"; do		
-		typeset -n ref="$depbase"
+arraystodir() {
+	for depbase in "${checkdeps_array[@]}"; do		
+		typeset -n ref="$depbase" ## this allows the proceeding for loop
+								## to activate correctly.
 		for entry in "${ref[@]}"; do
 			mkdir -p "$tmploc/$depbase/$entry"
 		done
 	done
 }
 
+list_arrays(){
+	for depbase in "${checkdeps_array[@]}"; do
+		unset print_this
+		printf '\n%s %s\n' "In category: " "$depbase"
+		typeset -n ref="$depbase" ## this allows the proceeding for loop
+								## to activate correctly.
+		for entry in "${ref[@]}"; do
+			print_this+=( "$entry" )
+		done
+		printf '%s\n' "${print_this[@]}"
+	done
+}
+
+scan_deps
+
+## If verbose print the sets out. Otherwise 
 if [ "$verbose" = "yes" ]; then
-	printf "$pkgname information:"
-	printf '\n\n'
+	printf "$pkgname information: \n"
 	printf "\nDirectory of the PKGBUILD file that originated the scan\n"
 	printf "of the program.\n"
 	pwd
-	printf '\n\n'
 	printf "\norigin is: \n"
 	printf '%s\n' "$origin"
-	printf '\n\n'
-	printf "\ndeps are: \n"
-	printf '%s\n' "${deps[@]}"
-	printf '\n\n'
-	printf "\nmakedeps: \n"
-	printf '%s\n' "${makedeps[@]}"
-	printf '\n\n'
-	printf "\ncheckdeps: \n"
-	printf '%s\n' "${checkdeps[@]}"
-	printf '\n\n'
-	printf "\noptdeps: \n"
-	printf '%s\n' "${optdeps[@]}"
-	printf '\n\n'
+	list_arrays
 elif [ ! "$pretend" = "yes" ]; then
-	if [ "$origin" = "" ] || [ "$origin" = "$pkgname" ]; then
-		origin="$pkgname"
-	elif [ ! "$origin" = "" ]; then
-		origin="$origin/$pkgname"
-	fi
-	tmploc="/tmp/lbf/$origin"
 	mkdir -p "$tmploc"
 	pwd > "$tmploc/pkgb-loc"
 	printf '%s\n' "$origin" > "$tmploc/origin"
-	arraytodir
+	arraystodir
 fi
 exit 0
