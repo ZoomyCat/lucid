@@ -85,7 +85,7 @@ elif [ ! "$pretend" = "yes" ]; then
 		origin="$origin/$pkgname"
 	fi
 	tmploc="/tmp/lbf/$origin"
-	mkdir -p "$tmploc" #"$tmploc/deps" "$tmploc/makedeps" "$tmploc/checkdeps" "$tmploc/optdeps"
+	mkdir -p "$tmploc"
 	pwd > "$tmploc/pkgb-loc"
 	printf '%s\n' "$origin" > "$tmploc/origin"
 	arraytodir
