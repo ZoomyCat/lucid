@@ -1,26 +1,16 @@
 #!/usr/bin/env bash
 ##Created by Edward "edge226" Tunnah.
 
-## Checks the depends of a program and writes it to /tmp/lbf/
+## Checks the depends of a program and writes it to /tmp/lbf/ in a
+## directory structure.
 
-unset pkgname depends makedepends optdepends
+## unset possibly use variables.
+unset pkgname depends makedepends checkdepends optdepends origin
 
 source PKGBUILD ## Gather information into the system about the current
 				## PKGBUILD file being scanned by this program.
 source /home/edge226/github/lucid/conf/lbf.vars ## This allows for the
 	## usage of scanning an array of parameters to track in lbf.vars
-
-## unset the origin to ensure it is not overflowed.
-unset origin
-
-## Sets the origin name.
-if [ "$origin" = "" ] || [ "$origin" = "$pkgname" ]; then
-	origin="$pkgname"
-elif [ ! "$origin" = "" ]; then
-	origin="$origin/$pkgname"
-fi
-## make sure tmploc is set appropriately before it ever may be used.
-tmploc="/tmp/lbf/$origin"
 
 OPTIND=1 ## make sure the optargs are reset for getopts
 
@@ -36,11 +26,21 @@ while getopts "o:vph" opt; do  ## Standard getopts while loops for
 	esac
 done
 
+## Sets the origin name. This is important for dealing with nested
+## iterations of this program.
+if [ "$origin" = "" ] || [ "$origin" = "$pkgname" ]; then
+	origin="$pkgname"
+elif [ ! "$origin" = "" ]; then
+	origin="$origin/$pkgname"
+fi
+## make sure tmploc is set appropriately before it ever may be used.
+tmploc="/tmp/lbf/$origin"
+
 scan_deps() {  ## Scan the dependencies of the given PKGBUILD.
 	unset i
 	for depbase in "${checkdeps_pkgbuild_array[@]}"; do
-		if [ "$i" = "" ]; then
-			i=0
+		if [ "$i" = "" ]; then ## keep a loop tracker for use in
+			i=0				   ## converting ${checkdeps_array[$i]}
 		fi
 		typeset -n ref="$depbase" ## this allows the proceeding for loop
 								## to activate correctly.
@@ -53,7 +53,8 @@ scan_deps() {  ## Scan the dependencies of the given PKGBUILD.
 	done
 }
 
-arraystodir() {
+arraystodir() { ## takes the information from the arrays and creates
+				## the appropriate directory structure.
 	for depbase in "${checkdeps_array[@]}"; do		
 		typeset -n ref="$depbase" ## this allows the proceeding for loop
 								## to activate correctly.
