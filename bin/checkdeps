@@ -58,9 +58,9 @@ set_params() {
 
 	if [ ! "$searchdir" = "" ]; then
 		printf '\n%s %s\n' "Going into searchdir:" "$searchdir"
-		cd "$searchdir"
+		cd "$searchdir" || exit
 		printf '\ntmpdir is %s\n' "$tmpdir"
-		source PKGBUILD
+		source ./PKGBUILD
 		if [ "$origin" = "" ]; then
 			origin="$pkgname"
 		fi
@@ -69,13 +69,13 @@ set_params() {
 		fi
 		if [ "$origin_list_file" = "" ]; then
 			origin_list_file="$tmpdir/origin_list"
-			origin_list_file_old="$tmpdir/origin_list_old"
+			origin_list_old="$tmpdir/origin_list_old"
 		fi
 		if [ "$suborigin_file" = "" ]; then
 			suborigin_file="$tmpdir/suborigin"
 		fi
 		if [ "$origin_lists" = "" ]; then
-			origin_lists="$tmpdir/origin_lists" 
+			origin_lists="$tmpdir/origin_lists"
 		fi
 	fi
 }
@@ -150,7 +150,8 @@ recurse() {
 						"$run_again" "${run_again_opts[@]}"
 					fi
 				done
-				mv "$origin_list_file" "$origin_list_file_old"
+				mv_opts=( "$origin_list_file" "$origin_list_old" )
+				mv "${mv_opts[@]}"
 			fi
 		done
 		while_done=$( find_origin_lists )
