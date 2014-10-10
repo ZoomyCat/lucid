@@ -69,6 +69,7 @@ set_params() {
 		fi
 		if [ "$origin_list_file" = "" ]; then
 			origin_list_file="$tmpdir/origin_list"
+			origin_list_file_old="$tmpdir/origin_list_old"
 		fi
 		if [ "$suborigin_file" = "" ]; then
 			suborigin_file="$tmpdir/suborigin"
@@ -110,7 +111,7 @@ create_origins() { ## creates an origin set that gathers data used in nesting.
 	if [ ! -f "$suborigin_file" ]; then
 		printf '%s\n' "$origin" > "$suborigin_file"
 	fi
-	if [ ! -f "$origin_list_file" ]; then
+	if [ ! -f "$origin_list_file" ] && [ ! -f "$origin_list_file_old" ]; then
 		for depbase in "${checkdeps_array[@]}"; do	## allows us a start with all the dependency base names as defined in lbf.vars
 			typeset -n ref="$depbase" ## this allows the proceeding for loop
 									## to activate correctly.
@@ -133,26 +134,33 @@ create_origins() { ## creates an origin set that gathers data used in nesting.
 }
 
 find_origin_lists() {
-	find "$origin_tmpdir" -name origin_list -type f -fprint0
+	find "$origin_tmpdir" -name origin_list -type f -print
 }
 
 recurse() {
-	unset -n depname
-	if [ -f "$origin_list_file" ]; then
-		for dep in $( cat "$origin_list_file" ); do
-			check_todo "$dep" "$origin_file"
-			if [ "$match" = "0" ]; then
-				tmpdir=$( find "$origin_tmpdir" -name "$dep" -type d -print0 )
-				printf '\n sending tmpdir as searched from origin_tmpdir: \n%s\n%s\n' "$tmpdir" "$origin_tmpdir"
-				run_again_opts=( "-n" "$dep" "-t" "$tmpdir" "-f" "$origin_file" "-o" "$origin_tmpdir" "-s" "$suborigin_file" )
-				"$run_again" "${run_again_opts[@]}"
+	while find_origin_lists; do
+		for origin_list_file in $( find_origin_lists ); do
+			if [ -f "$origin_list_file" ]; then
+				for dep in $( cat "$origin_list_file" ); do
+					check_todo "$dep" "$origin_file"
+					if [ "$match" = "0" ]; then
+						tmpdir=$( find "$origin_tmpdir" -name "$dep" -type d -print0 )
+						printf '\n sending tmpdir as searched from origin_tmpdir: \n%s\n%s\n' "$tmpdir" "$origin_tmpdir"
+						run_again_opts=( "-n" "$dep" "-t" "$tmpdir" "-f" "$origin_file" "-o" "$origin_tmpdir" "-s" "$suborigin_file" )
+						"$run_again" "${run_again_opts[@]}"
+					fi
+				done
+				mv "$origin_list_file" "$origin_list_file_old"
 			fi
 		done
-	fi
+		while_done=$( find_origin_lists )
+		if [ "$while_done" = "" ]; then
+			break
+		fi
+	done
 }
 
 set_params
-find_origin_lists
 create_origins
 
 if [ "$recursive" = "yes" ]; then
