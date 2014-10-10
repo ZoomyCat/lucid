@@ -151,21 +151,12 @@ recurse() {
 	fi
 }
 
-#recurse_origin_list() {
-	#printf '\n%s %s\n' "origin is" "$origin"
-	#for dep in $( cat "$tmpdir/origin_list" ); do
-		#unset next_pkgbuild
-		###"$run_again" -rv -o "$origin_pass" -t "/tmp/lbf/$origin_pass"
-		##"$run_again" -v -t "$next_path" -s "$next_pkgbuild"
-	#done
-#}
-
 set_params
 find_origin_lists
-#create_origins
+create_origins
 
-#if [ "$recursive" = "yes" ]; then
-#	recurse
-#fi
+if [ "$recursive" = "yes" ]; then
+	recurse
+fi
 
 exit 0
