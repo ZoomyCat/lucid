@@ -38,7 +38,30 @@ while getopts "t:f:n:o:s:rvph" opt; do  ## Standard getopts while loops for
 	esac
 done
 
+check_name_set() {
+	empty_name="1"
+	for var in "${checkdeps_vars[@]}"; do
+		typeset -n local ref="$var"
+		if [ ! "$ref" = "no" ] && [ ! "$ref" = "yes" ]; then 
+			#printf '\n%s %s\n' "Calculating variables:" "$ref"
+			if [ "$ref" = "" ] && [ ! "$empty_name" = "0" ]; then
+				#printf "Setting empty_name to 1\n"
+				empty_name="1"
+			elif [ ! "$ref" = "" ] && [ "$ref" = "$name" ]; then
+				#printf "Setting empty_name to 0\n"
+				empty_name="0"
+			fi
+		fi
+	done
+}
+
 set_params() {
+	check_name_set
+	if [ "$empty_name" = "1" ]; then
+		printf "Please enter a name to start the search: "
+		read name
+	fi
+	
 	if [ ! "$name" = "" ]; then
 		if [ "$tmpdir" = "/tmp/lbf" ]; then
 			tmpdir="$tmpdir/$name"
@@ -60,16 +83,34 @@ set_params() {
 		printf '\n%s %s\n' "Going into searchdir:" "$searchdir"
 		cd "$searchdir" || exit
 		printf '\ntmpdir is %s\n' "$tmpdir"
-		source ./PKGBUILD
+		if [ -f ./PKGBUILD ]; then
+			source ./PKGBUILD
+		elif [ ! -f ./PKGBUILD ]; then 
+			printf '%s\n' "This PKGBUILD file does not exist."
+			printf '%s\n' "$checkdeps_usage" >&2; exit 1
+		fi
 		if [ "$origin" = "" ]; then
-			origin="$pkgname"
+			for pkg in "${pkgname[@]}"; do
+				if [ "$pkg" = "$name" ]; then
+					origin="$pkg"
+					provides+=( "$pkg" )
+				elif [ "$pkg" = "$name" ] || [ ! "$pkg" = "$name" ]; then
+					provides+=( "$pkg" )
+				fi
+			done
+			printf '\n%s\n' "privides is set to:"
+			printf '%s\n' "${provides[@]}"
 		fi
 		if [ "$origin_file" = "" ]; then
 			origin_file="$tmpdir/origin"
 		fi
 		if [ "$origin_list_file" = "" ]; then
 			origin_list_file="$tmpdir/origin_list"
+			printf '\n%s %s\n' "origin_list_file set to:" "$origin_list_file"
+		fi
+		if [ ! "$origin_list_file" = "" ]; then
 			origin_list_old="$tmpdir/origin_list_old"
+			printf '\n%s %s\n' "origin_list_old set to:" "$origin_list_old"
 		fi
 		if [ "$suborigin_file" = "" ]; then
 			suborigin_file="$tmpdir/suborigin"
@@ -77,6 +118,11 @@ set_params() {
 		if [ "$origin_lists" = "" ]; then
 			origin_lists="$tmpdir/origin_lists"
 		fi
+		if [ "$provides_file" = "" ]; then
+			provides_file="$tmpdir/provides"
+		fi
+	elif [ "$searchdir" = "" ]; then
+		exit 1
 	fi
 }
 
@@ -97,28 +143,55 @@ check_todo(){ ## checks if the file has already been scanned or not.
 	#read
 }
 
+write_provides(){
+	for pkg in "${provides[@]}"; do
+		if [ ! "$pkg" = "" ]; then
+			printf '%s\n' "$pkg" >> "$provides_file"
+			printf '%s\n' "$pkg" >> "$origin_file"
+		fi
+	done
+}
+
 ## Sets the origin name. This is important for dealing with nested
 ## iterations of this program.
 create_origins() { ## creates an origin set that gathers data used in nesting.
 	printf '\n%s\n' "Running create_origins: "
 	unset depbase depname
 	if [ ! -f "$origin_file" ]; then
-		touch "$origin_file"
-		printf '%s\n' "$origin" > "$origin_file"
+		if [ ! "$origin" = "" ]; then
+			touch "$origin_file"
+			write_provides
+		fi
 	elif [ -f "$origin_file" ]; then
+		check_todo "$origin" "$origin_file"
+		if [ "$match" = "0" ] && [ ! "$origin" = "" ]; then
 			printf '%s\n' "$origin" >> "$origin_file"
+			for pkg in "${provides[@]}"; do
+			if [ ! "$pkg" = "" ]; then
+				printf '%s\n' "$pkg" >> "$provides_file"
+				printf '%s\n' "$pkg" >> "$origin_file"
+			fi
+		done
+		fi
 	fi
+	if [ ! -f "$provides_file" ]; then
+		printf '\n%s\n' "privides is set to before usage:"
+		printf '%s\n' "${provides[@]}"
+	fi
+	
 	if [ ! -f "$suborigin_file" ]; then
+		printf '\n%s %s\n' "suborigin_file is set to:" "$suborigin_file"
 		printf '%s\n' "$origin" > "$suborigin_file"
 	fi
 	if [ ! -f "$origin_list_file" ] && [ ! -f "$origin_list_file_old" ]; then
 		for depbase in "${checkdeps_array[@]}"; do	## allows us a start with all the dependency base names as defined in lbf.vars
-			typeset -n ref="$depbase" ## this allows the proceeding for loop
+			typeset -n local ref="$depbase" ## this allows the proceeding for loop
 									## to activate correctly.
 			
 			for dep in "${ref[@]}"; do ## sets origin_set.
-				depname=${dep%%[<>=]*}
-				if [ ! "$depname" = "" ]; then
+				local depname=${dep%%[<>=]*}
+				find_nextsearchdir "$depname"
+				if [ ! "$depname" = "" ] && [ "$nosearchdir" = "0" ]; then
 					check_todo "$depname" "$suborigin_file"
 					if [ "$match" = "0" ]; then
 						printf '%s\n' "$depname" >> "$origin_list_file"
@@ -136,20 +209,33 @@ create_origins() { ## creates an origin set that gathers data used in nesting.
 find_origin_lists() {
 	find "$origin_tmpdir" -name origin_list -type f -print
 }
+find_nextsearchdir() {
+	name="$1"
+	local nextsearchdir=$( find "$gitrepodir" -name "$name" -type d -print0 )
+	nosearchdir="0"
+	if [ "$nextsearchdir" = "" ]; then
+		nosearchdir="1"
+	fi
+}
 
 recurse() {
 	while find_origin_lists; do
 		for origin_list_file in $( find_origin_lists ); do
+			local origin_list_old="$origin_list_file""_old"
 			if [ -f "$origin_list_file" ]; then
 				for dep in $( cat "$origin_list_file" ); do
-					check_todo "$dep" "$origin_file"
-					if [ "$match" = "0" ]; then
-						tmpdir=$( find "$origin_tmpdir" -name "$dep" -type d -print0 )
-						printf '\n sending tmpdir as searched from origin_tmpdir: \n%s\n%s\n' "$tmpdir" "$origin_tmpdir"
-						run_again_opts=( "-n" "$dep" "-t" "$tmpdir" "-f" "$origin_file" "-o" "$origin_tmpdir" "-s" "$suborigin_file" )
-						"$run_again" "${run_again_opts[@]}"
-					fi
+					if [ ! "$dep" = "" ]; then
+						check_todo "$dep" "$origin_file"
+						if [ "$match" = "0" ]; then
+							tmpdir=$( find "$origin_tmpdir" -name "$dep" -type d -print0 )
+							printf '\n sending tmpdir as searched from origin_tmpdir as searched from %s: \n%s\n%s\n' "$dep" "$tmpdir" "$origin_tmpdir"
+							run_again_opts=( "-n" "$dep" "-t" "$tmpdir" "-f" "$origin_file" "-o" "$origin_tmpdir" "-s" "$suborigin_file" )
+							"$run_again" "${run_again_opts[@]}"
+						fi
+					fi				
 				done
+				printf '\n%s %s %s %s\n' "Moving origin_list:" "$origin_list_file" "to" "$origin_list_old"
+				##read
 				mv_opts=( "$origin_list_file" "$origin_list_old" )
 				mv "${mv_opts[@]}"
 			fi

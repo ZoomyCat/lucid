@@ -9,9 +9,9 @@ source /etc/lbf/lbf.usage ## Read the usage file to be able to output help for t
 
 OPTIND=1 ## make sure the optargs are reset for getopts
 
-while getopts "s:pvh" opt; do
+while getopts "n:pvh" opt; do
     case "$opt" in
-        s)		searchdir=$OPTARG;;
+        n)		name=$OPTARG;;
         p)		pretend="yes";;
         v)		verbose="yes";;
         h)      printf '%s\n' "$checklinks_usage"; exit 0;;
@@ -19,12 +19,22 @@ while getopts "s:pvh" opt; do
     esac
 done
 
-if [ ! "$searchdir" = "" ]; then ## only move into the directory if specified.
-	cd "$searchdir"
+if [ ! "$name" = "" ]; then
+	if [ "$searchdir" = "" ]
+		searchdir=$( find "$gitrepodir" -name "$name" -type d -print0 )
+		printf '\n%s %s\n' "searchdir has been set to:" "$searchdir"
+	fi
 fi
 
-if [ -d PKGBUILD ]; then
-	source PKGBUILD ## Read the PKGBUILD file.
+if [ ! "$searchdir" = "" ]; then ## only move into the directory if specified.
+	cd "$searchdir" || exit
+fi
+
+if [ ! -f ./PKGBUILD ]; then
+	printf '%s\n' "This PKGBUILD file does not exist."
+	printf '%s\n' "$checklinks_usage" >&2; exit 1
+elif [ -f ./PKGBUILD ]; then
+	source ./PKGBUILD ## Read the PKGBUILD file.
 else
 	printf '%s\n' "$checklinks_usage" >&2; exit 1
 fi
@@ -33,8 +43,8 @@ if [ ! "$pretend" = "yes" ]; then ## Only check if they do not want pretend mode
 
 	fail="0" ## Set an appropriate default fail parameter. 
 	## set locations of other log files.
-	slog="./$pkgname-$pkgver-$pkgrel-link-verify-success.log"
-	flog="./$pkgname-$pkgver-$pkgrel-link-verify-fail.log"
+	local slog="./$pkgname-$pkgver-$pkgrel-link-verify-success.log"
+	local flog="./$pkgname-$pkgver-$pkgrel-link-verify-fail.log"
 	printf "Checking sources for %s version %s\n" "$pkgname" "$pkgver-$pkgrel"
 	for url in "${source[@]}"; do ## $source is an array that comes from the PKGBUILD.
 		if [[ -f "$url" ]]; then ## If the entry in the sources is a file and exists.
