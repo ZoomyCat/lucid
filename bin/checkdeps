@@ -73,16 +73,17 @@ set_params() {
 	fi
 	
 	if [ ! "$name" = "" ]; then
-		if [ "$tmpdir" = "/tmp/lbf" ]; then
+		if [ "$tmpdir" = "" ]; then
+			lbftmpdir="$tmpdir"
 			if [[ "$info" != "yes" ]] ; then
-			if [ "$origin_file" = "" ]; then
-			origin_file="$tmpdir/origin"
-			fi
-			if [ "$suborigin_file" = "" ]; then
-				suborigin_file="$tmpdir/suborigin"
-			fi
-			tmpdir="$tmpdir/$name"
-			origin_tmpdir="$tmpdir"
+				if [ "$origin_file" = "" ]; then
+					origin_file="$lbftmpdir/origin"
+				fi
+				if [ "$suborigin_file" = "" ]; then
+					suborigin_file="$lbftmpdir/suborigin"
+				fi
+				tmpdir="$tmpdir/$name"
+				origin_tmpdir="$tmpdir"
 			fi
 		fi
 		if [ "$searchdir" = "" ]; then
@@ -117,12 +118,13 @@ set_params() {
 		fi
 		if [ "$origin_list_file" = "" ]; then
 			origin_list_file="$tmpdir/origin_list"
-			#printf '\n%s %s\n' "origin_list_file set to:" "$origin_list_file"
+			printf '\n%s %s\n' "origin_list_file set to:" "$origin_list_file"
 		fi
-		if [ ! "$origin_list_file" = "" ]; then
-			origin_list_old="$tmpdir/origin_list_old"
-			#printf '\n%s %s\n' "origin_list_old set to:" "$origin_list_old"
+		if [ "$origin_list_old" = "" ]; then
+			origin_list_old="$tmpdir/$origin_list_old"
+			printf '\n%s %s\n' "origin_list_old set to:" "$origin_list_old"
 		fi
+		#read
 		if [ "$provides_file" = "" ]; then
 			provides_file="$tmpdir/provides"
 		fi
@@ -138,15 +140,17 @@ check_todo(){ ## checks if the file has already been scanned or not.
 	check_match="$1"
 	check_file="$2"
 	match="0"
-	for line in $( cat "$check_file" ); do
-		if [ "$line" = "$check_match" ]; then
-			match="1"
-		elif [ ! "$line" = "$check_match" ]; then
-			if [ ! "$match" = "1" ]; then
-				match="0"
+	if [[ -f "$check_file" ]] ; then
+		for line in $( cat "$check_file" ); do
+			if [ "$line" = "$check_match" ]; then
+				match="1"
+			elif [ ! "$line" = "$check_match" ]; then
+				if [ ! "$match" = "1" ]; then
+					match="0"
+				fi
 			fi
-		fi
-	done
+		done
+	fi
 	#printf '\n%s %s%s %s\n' "This is the check done status for" "$check_match" ":" "$match"
 	#read
 }
@@ -155,6 +159,7 @@ write_provides(){
 	for pkg in "${provides[@]}"; do
 		if [ ! "$pkg" = "" ]; then
 			printf '%s\n' "$pkg" >> "$provides_file"
+			printf '\n%s %s\n' "$origin_file"
 			printf '%s\n' "$pkg" >> "$origin_file"
 		fi
 	done
@@ -164,6 +169,12 @@ get_repo() {
 	repo="$searchdir"
 	repo=${repo%%"/$origin"}
 	repo=${repo##*/}
+}
+
+check_repo() {
+	repo_check="$1"
+	
+	
 }
 
 ## Sets the origin name. This is important for dealing with nested
@@ -185,6 +196,7 @@ create_origins() { ## creates an origin set that gathers data used in nesting.
 			if [ ! "$origin" = "" ]; then
 				touch "$origin_file"
 				write_provides
+				read
 			fi
 		elif [ -f "$origin_file" ]; then
 			if [ "$match" = "0" ] && [ ! "$origin" = "" ]; then
@@ -206,7 +218,7 @@ create_origins() { ## creates an origin set that gathers data used in nesting.
 			#printf '\n%s %s\n' "suborigin_file is set to:" "$suborigin_file"
 			printf '%s\n' "$origin" > "$suborigin_file"
 		fi
-		if [ ! -f "$origin_list_file" ] && [ ! -f "$origin_list_file_old" ]; then
+		if [ ! -f "$origin_list_file" ] && [ ! -f "$origin_list_old" ]; then
 			for depbase in "${checkdeps_pkgbuild_array[@]}"; do	## allows us a start with all the dependency base names as defined in lbf.vars
 				if [[ "$i" = "" ]] ; then
 					local i=0
@@ -235,7 +247,11 @@ create_origins() { ## creates an origin set that gathers data used in nesting.
 }
 
 find_origin_lists() {
-	origin_lists=( $( find "$origin_tmpdir" -name origin_list -type f -print ) )
+	origin_lists=( $( find "$base_tmpdir" -name origin_list -type f -print ) )
+}
+
+find_repo_files() {
+	origin_lists=( $( find "$base_tmpdir" -name repo -type f -print ) )
 }
 
 find_nextsearchdir() {
@@ -262,13 +278,13 @@ recurse() {
 						if [ "$match" = "0" ]; then
 							tmpdir=$( find "$origin_tmpdir" -name "$dep" -type d -print0 )
 							#printf '\n sending tmpdir as searched from origin_tmpdir as searched from %s: \n%s\n%s\n' "$dep" "$tmpdir" "$origin_tmpdir"
-							run_again_opts=( "-n" "$dep" "-t" "$tmpdir" "-f" "$origin_file" "-o" "$origin_tmpdir" "-s" "$suborigin_file" )
+							run_again_opts=( "-n" "$dep" "-t" "$tmpdir" "-f" "$origin_file" "-o" "$lbf_tmpdir" "-s" "$suborigin_file" )
 							"$run_again" "${run_again_opts[@]}"
 						fi
 					fi				
 				done
-				#printf '\n%s %s %s %s\n' "Moving origin_list:" "$origin_list_file" "to" "$origin_list_old"
-				##read
+				printf '\n%s %s %s %s\n' "Moving origin_list:" "$origin_list_file" "to" "$origin_list_old"
+				read
 				mv_opts=( "$origin_list_file" "$origin_list_old" )
 				mv "${mv_opts[@]}"
 			fi
@@ -277,13 +293,10 @@ recurse() {
 }
 
 set_params
-check_todo "$origin" "$origin_file"
-if [ "$match" = "0" ]; then
-	if [[ "$info" != "yes" ]] ; then
-		create_origins
-		if [ "$recursive" = "yes" ] ; then
-			recurse
-		fi
+if [[ "$info" != "yes" ]] ; then
+	create_origins
+	if [ "$recursive" = "yes" ] ; then
+		recurse
 	fi
 fi
 if [[ "$info" = "yes" ]] ; then
