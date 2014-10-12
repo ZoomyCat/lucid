@@ -60,6 +60,15 @@ set_params() {
 	if [ "$empty_name" = "1" ]; then
 		printf "Please enter a name to start the search: "
 		read name
+		if [ "$recursive" = "" ]; then
+			while [[ "$recursive" = "" ]] || [[ ! "$recursive" = "yes" ]] || [[ ! "$recursive" = "no" ]]; do
+				printf "Would you like to run recursively? (yes/no) "
+				read recursive
+				if [ "$recursive" = "no" ] || [ "$recursive" = "yes" ]; then
+					break
+				fi
+			done
+		fi
 	fi
 	
 	if [ ! "$name" = "" ]; then
@@ -209,6 +218,7 @@ create_origins() { ## creates an origin set that gathers data used in nesting.
 find_origin_lists() {
 	find "$origin_tmpdir" -name origin_list -type f -print
 }
+
 find_nextsearchdir() {
 	name="$1"
 	local nextsearchdir=$( find "$gitrepodir" -name "$name" -type d -print0 )
