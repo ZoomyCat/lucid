@@ -75,14 +75,14 @@ set_params() {
 	if [ ! "$name" = "" ]; then
 		if [ "$tmpdir" = "/tmp/lbf" ]; then
 			if [[ "$info" != "yes" ]] ; then
+			if [ "$origin_file" = "" ]; then
+			origin_file="$tmpdir/origin"
+			fi
+			if [ "$suborigin_file" = "" ]; then
+				suborigin_file="$tmpdir/suborigin"
+			fi
 			tmpdir="$tmpdir/$name"
 			origin_tmpdir="$tmpdir"
-			#printf '\n%s %s\n' "tmpdir set to:" "$tmpdir"
-			if [ ! -d "$tmpdir" ]; then
-				#printf '\n%s %s\n' "creating tmpdir directory:" "$tmpdir"
-				mkdir -p "$tmpdir"
-				#read
-			fi
 			fi
 		fi
 		if [ "$searchdir" = "" ]; then
@@ -115,9 +115,6 @@ set_params() {
 			#printf '\n%s\n' "privides is set to:"
 			#printf '%s\n' "${provides[@]}"
 		fi
-		if [ "$origin_file" = "" ]; then
-			origin_file="$tmpdir/origin"
-		fi
 		if [ "$origin_list_file" = "" ]; then
 			origin_list_file="$tmpdir/origin_list"
 			#printf '\n%s %s\n' "origin_list_file set to:" "$origin_list_file"
@@ -125,9 +122,6 @@ set_params() {
 		if [ ! "$origin_list_file" = "" ]; then
 			origin_list_old="$tmpdir/origin_list_old"
 			#printf '\n%s %s\n' "origin_list_old set to:" "$origin_list_old"
-		fi
-		if [ "$suborigin_file" = "" ]; then
-			suborigin_file="$tmpdir/suborigin"
 		fi
 		if [ "$provides_file" = "" ]; then
 			provides_file="$tmpdir/provides"
@@ -177,62 +171,67 @@ get_repo() {
 create_origins() { ## creates an origin set that gathers data used in nesting.
 	#printf '\n%s\n' "Running create_origins: "
 	unset depbase depname
-	get_repo
-	if [ ! -f "$repo_file" ]; then
-		printf '%s\n' "$repo" > "$repo_file"
-	fi
-	if [ ! -f "$origin_file" ]; then
-		if [ ! "$origin" = "" ]; then
-			touch "$origin_file"
-			write_provides
+	#printf '\n%s %s\n' "tmpdir set to:" "$tmpdir"
+		if [ ! -d "$tmpdir" ]; then
+			#printf '\n%s %s\n' "creating tmpdir directory:" "$tmpdir"
+			mkdir -p "$tmpdir"
+			#read
 		fi
-	elif [ -f "$origin_file" ]; then
-		check_todo "$origin" "$origin_file"
-		if [ "$match" = "0" ] && [ ! "$origin" = "" ]; then
-			printf '%s\n' "$origin" >> "$origin_file"
-			for pkg in "${provides[@]}"; do
-			if [ ! "$pkg" = "" ]; then
-				printf '%s\n' "$pkg" >> "$provides_file"
-				printf '%s\n' "$pkg" >> "$origin_file"
-			fi
-		done
+		get_repo
+		if [ ! -f "$repo_file" ]; then
+			printf '%s\n' "$repo" > "$repo_file"
 		fi
-	fi
-	#if [ ! -f "$provides_file" ]; then
-		##printf '\n%s\n' "privides is set to before usage:"
-		##printf '%s\n' "${provides[@]}"
-	#fi
-	
-	if [ ! -f "$suborigin_file" ]; then
-		#printf '\n%s %s\n' "suborigin_file is set to:" "$suborigin_file"
-		printf '%s\n' "$origin" > "$suborigin_file"
-	fi
-	if [ ! -f "$origin_list_file" ] && [ ! -f "$origin_list_file_old" ]; then
-		for depbase in "${checkdeps_pkgbuild_array[@]}"; do	## allows us a start with all the dependency base names as defined in lbf.vars
-			if [[ "$i" = "" ]] ; then
-				local i=0
+		if [ ! -f "$origin_file" ]; then
+			if [ ! "$origin" = "" ]; then
+				touch "$origin_file"
+				write_provides
 			fi
-			typeset -n local ref="$depbase" ## this allows the proceeding for loop
-									## to activate correctly.
-			
-			for dep in "${ref[@]}"; do ## sets origin_set.
-				local depname=${dep%%[<>=]*}
-				find_nextsearchdir "$depname"
-				if [ ! "$depname" = "" ] && [ "$nosearchdir" = "0" ]; then
-					check_todo "$depname" "$suborigin_file"
-					if [ "$match" = "0" ]; then
-						printf '%s\n' "$depname" >> "$origin_list_file"
-						printf '%s\n' "$depname" >> "$suborigin_file"
-						printf '%s\n' "$depname" >> "$tmpdir/${checkdeps_array[$i]}"
-						#printf '\n%s %s\n' "Creating directory:" "$tmpdir/$depbase/$depname"
-						mkdir -p "$tmpdir/$depbase/$depname"
-						#read
-					fi
+		elif [ -f "$origin_file" ]; then
+			if [ "$match" = "0" ] && [ ! "$origin" = "" ]; then
+				printf '%s\n' "$origin" >> "$origin_file"
+				for pkg in "${provides[@]}"; do
+				if [ ! "$pkg" = "" ]; then
+					printf '%s\n' "$pkg" >> "$provides_file"
+					printf '%s\n' "$pkg" >> "$origin_file"
 				fi
 			done
-			i="$i"+1
-		done
-	fi
+			fi
+		fi
+		#if [ ! -f "$provides_file" ]; then
+			##printf '\n%s\n' "privides is set to before usage:"
+			##printf '%s\n' "${provides[@]}"
+		#fi
+
+		if [ ! -f "$suborigin_file" ]; then
+			#printf '\n%s %s\n' "suborigin_file is set to:" "$suborigin_file"
+			printf '%s\n' "$origin" > "$suborigin_file"
+		fi
+		if [ ! -f "$origin_list_file" ] && [ ! -f "$origin_list_file_old" ]; then
+			for depbase in "${checkdeps_pkgbuild_array[@]}"; do	## allows us a start with all the dependency base names as defined in lbf.vars
+				if [[ "$i" = "" ]] ; then
+					local i=0
+				fi
+				typeset -n local ref="$depbase" ## this allows the proceeding for loop
+										## to activate correctly.
+				
+				for dep in "${ref[@]}"; do ## sets origin_set.
+					local depname=${dep%%[<>=]*}
+					find_nextsearchdir "$depname"
+					if [ ! "$depname" = "" ] && [ "$nosearchdir" = "0" ]; then
+						check_todo "$depname" "$suborigin_file"
+						if [ "$match" = "0" ]; then
+							printf '%s\n' "$depname" >> "$origin_list_file"
+							printf '%s\n' "$depname" >> "$suborigin_file"
+							printf '%s\n' "$depname" >> "$tmpdir/${checkdeps_array[$i]}"
+							#printf '\n%s %s\n' "Creating directory:" "$tmpdir/$depbase/$depname"
+							mkdir -p "$tmpdir/$depbase/$depname"
+							#read
+						fi
+					fi
+				done
+				i="$i"+1
+			done
+		fi
 }
 
 find_origin_lists() {
@@ -278,11 +277,13 @@ recurse() {
 }
 
 set_params
-
-if [[ "$info" != "yes" ]] ; then
-	create_origins
-	if [ "$recursive" = "yes" ] ; then
-		recurse
+check_todo "$origin" "$origin_file"
+if [ "$match" = "0" ]; then
+	if [[ "$info" != "yes" ]] ; then
+		create_origins
+		if [ "$recursive" = "yes" ] ; then
+			recurse
+		fi
 	fi
 fi
 if [[ "$info" = "yes" ]] ; then
