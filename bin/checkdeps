@@ -119,10 +119,6 @@ set_params() {
 			origin_list_file="$tmpdir/origin_list"
 			#printf '\n%s %s\n' "origin_list_file set to:" "$origin_list_file"
 		fi
-		if [ ! "$origin_list_file" = "" ]; then
-			origin_list_old="$tmpdir/origin_list_old"
-			#printf '\n%s %s\n' "origin_list_old set to:" "$origin_list_old"
-		fi
 		if [ "$provides_file" = "" ]; then
 			provides_file="$tmpdir/provides"
 		fi
@@ -273,8 +269,9 @@ recurse() {
 						fi
 					fi				
 				done
-				#printf '\n%s %s %s %s\n' "Moving origin_list:" "$origin_list_file" "to" "$origin_list_old"
-				##read
+				origin_list_old="$origin_list_file""_old"
+				printf '\n%s %s %s %s\n' "Moving origin_list:" "$origin_list_file" "to" "$origin_list_old"
+				read
 				mv_opts=( "$origin_list_file" "$origin_list_old" )
 				mv "${mv_opts[@]}"
 			fi
