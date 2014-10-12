@@ -21,7 +21,7 @@ unset searchdir
 origin=""
 OPTIND=1 ## make sure the optargs are reset for getopts
 
-while getopts "t:f:n:o:s:rvph" opt; do  ## Standard getopts while loops for
+while getopts "t:f:n:o:s:idrvph" opt; do  ## Standard getopts while loops for
 							   ## dealing with options.
 	case "$opt" in
 		v)  verbose="yes";;
@@ -32,6 +32,8 @@ while getopts "t:f:n:o:s:rvph" opt; do  ## Standard getopts while loops for
 		o)  origin_tmpdir=$OPTARG;;
 		f)  origin_file=$OPTARG;;
 		s)  suborigin_file=$OPTARG;;
+		i) 	info="yes";;
+		d)  debug="yes";;
 		r)  recursive="yes";;
 		h)  printf '%s\n' "$checkdeps_usage"; exit 0;;
 		\?) printf '%s\n' "$checkdeps_usage" >&2; exit 1;;
@@ -62,9 +64,9 @@ set_params() {
 		read name
 		if [ "$recursive" = "" ]; then
 			while [[ "$recursive" = "" ]] || [[ ! "$recursive" = "yes" ]] || [[ ! "$recursive" = "no" ]]; do
-				printf "Would you like to run recursively? (yes/no) "
+				printf "Would you like to run recursively? (yes/No) "
 				read recursive
-				if [ "$recursive" = "no" ] || [ "$recursive" = "yes" ]; then
+				if [ "$recursive" = "yes" ] || [ "$recursive" = "" ]; then
 					break
 				fi
 			done
@@ -73,25 +75,37 @@ set_params() {
 	
 	if [ ! "$name" = "" ]; then
 		if [ "$tmpdir" = "/tmp/lbf" ]; then
-			tmpdir="$tmpdir/$name"
-			origin_tmpdir="$tmpdir"
-			printf '\n%s %s\n' "tmpdir set to:" "$tmpdir"
-			if [ ! -d "$tmpdir" ]; then
-				printf '\n%s %s\n' "creating tmpdir directory:" "$tmpdir"
-				mkdir -p "$tmpdir"
-				#read
+			if [ ! "$info" = "yes" ]; then
+				tmpdir="$tmpdir/$name"
+				origin_tmpdir="$tmpdir"
+				if [[ "$debug" = "yes" ]]; then
+					printf '\n%s %s\n' "tmpdir set to:" "$tmpdir"
+				fi
+				if [ ! -d "$tmpdir" ]; then
+					if [[ "$debug" = "yes" ]]; then
+						printf '\n%s %s\n' "creating tmpdir directory:" "$tmpdir"
+					fi
+					mkdir -p "$tmpdir"
+					#read
+				fi
 			fi
 		fi
 		if [ "$searchdir" = "" ]; then
 			searchdir=$( find "$gitrepodir" -name "$name" -type d -print0 )
-			printf '\n%s %s\n' "Setting searchdir to:" "$searchdir"
+			if [[ "$debug" = "yes" ]]; then
+				printf '\n%s %s\n' "Setting searchdir to:" "$searchdir"
+			fi
 		fi	
 	fi
 
 	if [ ! "$searchdir" = "" ]; then
-		printf '\n%s %s\n' "Going into searchdir:" "$searchdir"
+		if [[ "$debug" = "yes" ]]; then
+			printf '\n%s %s\n' "Going into searchdir:" "$searchdir"
+		fi
 		cd "$searchdir" || exit
-		printf '\ntmpdir is %s\n' "$tmpdir"
+		if [[ "$debug" = "yes" ]]; then
+			printf '\ntmpdir is %s\n' "$tmpdir"
+		fi
 		if [ -f ./PKGBUILD ]; then
 			source ./PKGBUILD
 		elif [ ! -f ./PKGBUILD ]; then 
@@ -107,19 +121,25 @@ set_params() {
 					provides+=( "$pkg" )
 				fi
 			done
-			printf '\n%s\n' "privides is set to:"
-			printf '%s\n' "${provides[@]}"
+			if [[ "$debug" = "yes" ]]; then
+				printf '\n%s\n' "privides is set to:"
+				printf '%s\n' "${provides[@]}"
+			fi
 		fi
 		if [ "$origin_file" = "" ]; then
 			origin_file="$tmpdir/origin"
 		fi
 		if [ "$origin_list_file" = "" ]; then
 			origin_list_file="$tmpdir/origin_list"
-			printf '\n%s %s\n' "origin_list_file set to:" "$origin_list_file"
+			if [[ "$debug" = "yes" ]]; then
+				printf '\n%s %s\n' "origin_list_file set to:" "$origin_list_file"
+			fi
 		fi
 		if [ ! "$origin_list_file" = "" ]; then
 			origin_list_old="$tmpdir/origin_list_old"
-			printf '\n%s %s\n' "origin_list_old set to:" "$origin_list_old"
+			if [[ "$debug" = "yes" ]]; then
+				printf '\n%s %s\n' "origin_list_old set to:" "$origin_list_old"
+			fi
 		fi
 		if [ "$suborigin_file" = "" ]; then
 			suborigin_file="$tmpdir/suborigin"
@@ -129,6 +149,9 @@ set_params() {
 		fi
 		if [ "$provides_file" = "" ]; then
 			provides_file="$tmpdir/provides"
+		fi
+		if [ "$repo_file" = "" ]; then
+			repo_file="$tmpdir/repo"			
 		fi
 	elif [ "$searchdir" = "" ]; then
 		exit 1
@@ -148,7 +171,9 @@ check_todo(){ ## checks if the file has already been scanned or not.
 			fi
 		fi
 	done
-	printf '\n%s %s%s %s\n' "This is the check done status for" "$check_match" ":" "$match"
+	if [[ "$debug" = "yes" ]]; then
+		printf '\n%s %s%s %s\n' "This is the check done status for" "$check_match" ":" "$match"
+	fi
 	#read
 }
 
@@ -161,11 +186,23 @@ write_provides(){
 	done
 }
 
+get_repo() {
+	repo="$searchdir"
+	repo=${repo%%"/$origin"}
+	repo=${repo##*/}
+}
+
 ## Sets the origin name. This is important for dealing with nested
 ## iterations of this program.
 create_origins() { ## creates an origin set that gathers data used in nesting.
-	printf '\n%s\n' "Running create_origins: "
+	if [[ "$debug" = "yes" ]]; then
+		printf '\n%s\n' "Running create_origins: "
+	fi
 	unset depbase depname
+	get_repo
+	if [ ! -f "$repo_file" ]; then
+		printf '%s\n' "$repo" > "$repo_file"
+	fi
 	if [ ! -f "$origin_file" ]; then
 		if [ ! "$origin" = "" ]; then
 			touch "$origin_file"
@@ -174,7 +211,6 @@ create_origins() { ## creates an origin set that gathers data used in nesting.
 	elif [ -f "$origin_file" ]; then
 		check_todo "$origin" "$origin_file"
 		if [ "$match" = "0" ] && [ ! "$origin" = "" ]; then
-			printf '%s\n' "$origin" >> "$origin_file"
 			for pkg in "${provides[@]}"; do
 			if [ ! "$pkg" = "" ]; then
 				printf '%s\n' "$pkg" >> "$provides_file"
@@ -183,13 +219,11 @@ create_origins() { ## creates an origin set that gathers data used in nesting.
 		done
 		fi
 	fi
-	if [ ! -f "$provides_file" ]; then
-		printf '\n%s\n' "privides is set to before usage:"
-		printf '%s\n' "${provides[@]}"
-	fi
 	
 	if [ ! -f "$suborigin_file" ]; then
-		printf '\n%s %s\n' "suborigin_file is set to:" "$suborigin_file"
+		if [[ "$debug" = "yes" ]]; then
+			printf '\n%s %s\n' "suborigin_file is set to:" "$suborigin_file"
+		fi
 		printf '%s\n' "$origin" > "$suborigin_file"
 	fi
 	if [ ! -f "$origin_list_file" ] && [ ! -f "$origin_list_file_old" ]; then
@@ -205,7 +239,9 @@ create_origins() { ## creates an origin set that gathers data used in nesting.
 					if [ "$match" = "0" ]; then
 						printf '%s\n' "$depname" >> "$origin_list_file"
 						printf '%s\n' "$depname" >> "$suborigin_file"
-						printf '\n%s %s\n' "Creating directory:" "$tmpdir/$depbase/$depname"
+						if [[ "$debug" = "yes" ]]; then
+							printf '\n%s %s\n' "Creating directory:" "$tmpdir/$depbase/$depname"
+						fi
 						mkdir -p "$tmpdir/$depbase/$depname"
 						#read
 					fi
@@ -238,13 +274,17 @@ recurse() {
 						check_todo "$dep" "$origin_file"
 						if [ "$match" = "0" ]; then
 							tmpdir=$( find "$origin_tmpdir" -name "$dep" -type d -print0 )
-							printf '\n sending tmpdir as searched from origin_tmpdir as searched from %s: \n%s\n%s\n' "$dep" "$tmpdir" "$origin_tmpdir"
+							if [[ "$debug" = "yes" ]]; then
+								printf '\n sending tmpdir as searched from origin_tmpdir as searched from %s: \n%s\n%s\n' "$dep" "$tmpdir" "$origin_tmpdir"
+							fi
 							run_again_opts=( "-n" "$dep" "-t" "$tmpdir" "-f" "$origin_file" "-o" "$origin_tmpdir" "-s" "$suborigin_file" )
 							"$run_again" "${run_again_opts[@]}"
 						fi
 					fi				
 				done
-				printf '\n%s %s %s %s\n' "Moving origin_list:" "$origin_list_file" "to" "$origin_list_old"
+				if [[ "$debug" = "yes" ]]; then
+					printf '\n%s %s %s %s\n' "Moving origin_list:" "$origin_list_file" "to" "$origin_list_old"
+				fi
 				##read
 				mv_opts=( "$origin_list_file" "$origin_list_old" )
 				mv "${mv_opts[@]}"
@@ -258,10 +298,26 @@ recurse() {
 }
 
 set_params
-create_origins
 
-if [ "$recursive" = "yes" ]; then
-	recurse
+if [[ ! -f "$origin_file" ]] && [[ "$info" != "yes" ]] ; then
+	create_origins
+	if [ "$recursive" = "yes" ]; then
+		recurse
+	fi
 fi
-
+if [[ "$info" = "yes" ]]; then
+	info_dir=$( find "$tmpdir" -name "$name" -type d -print0 )
+	if [[ "$debug" = "yes" ]]; then
+		printf '\n%s %s\n' "info_dir equals" "$info_dir"
+	fi
+	cd "$info_dir" || exit
+	for file in *; do
+		if [[ ! -d "$file" ]]; then
+			if [[ "$file" != "origin_list_old" ]]; then
+				printf '\n%s: %s\n' "Printing out information for" "$file"
+				cat "$file"
+			fi
+		fi
+	done
+fi
 exit 0
