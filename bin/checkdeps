@@ -135,7 +135,7 @@ check_todo(){ ## checks if the file has already been scanned or not.
 	check_file="$2"
 	match="0"
 	if [[ -f "$check_file" ]] ; then
-		for line in $( cat "$check_file" ); do
+		while IFS= read -r line; do
 			if [[ "$line" = "$check_match" ]]; then
 				match="1"
 			elif [[ ! "$line" = "$check_match" ]]; then
@@ -143,13 +143,13 @@ check_todo(){ ## checks if the file has already been scanned or not.
 					match="0"
 				fi
 			fi
-		done
+		done < "$check_file"
 	fi
 	#printf '\n%s %s%s %s\n' "This is the check done status for" "$check_match" ":" "$match"
 	#read
 }
 
-write_provides(){
+write_provides(){ ## writes the package names that the pkgbuild compile will provide. 
 	for pkg in "${provides[@]}"; do
 		if [[ ! "$pkg" = "" ]]; then
 			printf '%s\n' "$pkg" >> "$provides_file"
@@ -158,7 +158,7 @@ write_provides(){
 	done
 }
 
-get_repo() {
+get_repo() { ## removes the program name, forward slashes and prefix of the repository name.
 	repo="$searchdir"
 	repo=${repo%%"/$origin"}
 	repo=${repo##*/}
@@ -190,20 +190,9 @@ create_origins() { ## creates an origin set that gathers data used in nesting.
 			fi
 		elif [[ -f "$origin_file" ]]; then
 			if [[ "$match" = "0" ]] && [[ ! "$origin" = "" ]]; then
-				printf '%s\n' "$origin" >> "$origin_file"
-				for pkg in "${provides[@]}"; do
-				if [[ ! "$pkg" = "" ]]; then
-					printf '%s\n' "$pkg" >> "$provides_file"
-					printf '%s\n' "$pkg" >> "$origin_file"
-				fi
-			done
+				write_provides
 			fi
 		fi
-		#if [ ! -f "$provides_file" ]; then
-			##printf '\n%s\n' "privides is set to before usage:"
-			##printf '%s\n' "${provides[@]}"
-		#fi
-
 		if [[ ! -f "$suborigin_file" ]]; then
 			#printf '\n%s %s\n' "suborigin_file is set to:" "$suborigin_file"
 			printf '%s\n' "$origin" > "$suborigin_file"
@@ -258,7 +247,7 @@ recurse() {
 		for origin_list_file in "${origin_lists[@]}"; do
 			#local origin_list_old="$origin_list_file""_old"
 			if [[ -f "$origin_list_file" ]]; then
-				for dep in $( cat "$origin_list_file" ); do
+				while IFS= read -r dep; do
 					if [[ ! "$dep" = "" ]]; then
 						check_todo "$dep" "$origin_file"
 						if [[ "$match" = "0" ]]; then
@@ -268,7 +257,7 @@ recurse() {
 							"$run_again" "${run_again_opts[@]}"
 						fi
 					fi				
-				done
+				done < "$origin_list_file"
 				origin_list_old="$origin_list_file""_old"
 				#printf '\n%s %s %s %s\n' "Moving origin_list:" "$origin_list_file" "to" "$origin_list_old"
 				#read
