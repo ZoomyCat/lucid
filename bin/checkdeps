@@ -21,7 +21,7 @@ unset searchdir
 origin=""
 OPTIND=1 ## make sure the optargs are reset for getopts
 
-while getopts "t:f:n:o:s:G:rgivph" opt; do  ## Standard getopts while loops for
+while getopts "t:f:n:o:s:G:r:Rgivph" opt; do  ## Standard getopts while loops for
 							   ## dealing with options.
 	case "$opt" in
 		v)  verbose="yes";;
@@ -34,9 +34,10 @@ while getopts "t:f:n:o:s:G:rgivph" opt; do  ## Standard getopts while loops for
 		s)  suborigin_file=$OPTARG;;
 		g)  create_group="yes"
 			recursive="yes";;
-		G)  group_file=$OPTARG;;
+		G)  group_file=$OPTARG;;		
 		i)	info="yes";;
-		r)  recursive="yes";;
+		r)  create_repo="yes";;
+		R)  recursive="yes";;
 		h)  printf '%s\n' "$checkdeps_usage"; exit 0;;
 		\?) printf '%s\n' "$checkdeps_usage" >&2; exit 1;;
 	esac
@@ -65,21 +66,26 @@ check_name_set() {
 create_group_origin() {
 	
 	local groupname=( $( pacman -Ssgq "$name" ) )
-	printf '\n%s %s\n' "This will recursively find everything in group" "$name"
-	printf '%s\n' "${groupname[@]}"
-	for depname in "${groupname[@]}"; do
-		if [[ ! -d "$tmpdir/$name/$depname" ]]
-		then
-			mkdir -p "$tmpdir/$name/$depname"
-		fi
-		printf '%s\n' "$depname" >> "$tmpdir/origin_list"
-		printf '%s\n' "$depname" >> "$tmpdir/suborigin"
-	done
+	printf '\n%s %s\n' "This will scan everything in group" "$name"
+	#printf '%s\n' "${groupname[@]}"
 	
 	origin_file="$tmpdir/origin"
 	suborigin_file="$tmpdir/suborigin"
 	origin_tmpdir="$tmpdir"
 	group_file="$tmpdir/origin_$name"
+	
+	for depname in "${groupname[@]}"; do
+		check_todo "$depname" "$suborigin_file"
+		if [[ "$match" = "0" ]]
+		then
+			if [[ ! -d "$tmpdir/$name/$depname" ]]
+			then
+				mkdir -p "$tmpdir/$name/$depname"
+			fi
+			printf '%s\n' "$depname" >> "$tmpdir/origin_list"
+			printf '%s\n' "$depname" >> "$tmpdir/suborigin"
+		fi
+	done
 }
 
 set_params() {
@@ -123,6 +129,10 @@ set_params() {
 				origin_tmpdir="$tmpdir"
 				tmpdir="$tmpdir/$name"
 			fi
+		fi
+		if [[ "$treeloc_file" = "" ]]
+		then
+			treeloc_file="$tmpdir/treeloc"
 		fi
 		if [[ "$searchdir" = "" ]]
 		then
@@ -221,7 +231,12 @@ get_repo() { ## removes the program name, forward slashes and prefix of the repo
 	repo="$searchdir"
 	repo=${repo%%"/$origin"}
 	repo=${repo##*/}
-	
+}
+
+write_treeloc() {
+	local treeloc="$tmpdir"
+	treeloc=${treeloc##/tmp/lbf/}
+	printf '%s\n' "$treeloc" > "$treeloc_file"
 }
 
 ## Sets the origin name. This is important for dealing with nested
@@ -253,12 +268,14 @@ create_origins() { ## creates an origin set that gathers data used in nesting.
 			then
 				touch "$origin_file"
 				write_provides
+				write_treeloc
 			fi
 		elif [[ -f "$origin_file" ]]
 		then
 			if [[ "$match" = "0" ]] && [[ ! "$origin" = "" ]]
 			then
 				write_provides
+				write_treeloc
 			fi
 		fi
 		if [[ ! -f "$suborigin_file" ]]
@@ -269,7 +286,9 @@ create_origins() { ## creates an origin set that gathers data used in nesting.
 		if [[ ! -f "$group_file" ]]
 		then
 			#printf '\n%s %s %s %s\n' "Printing" "$origin" "to" "$group_file"
-			printf '%s\n' "$origin" > "$group_file"
+			
+			printf '%s %s\n' "$origin" "$repo" > "$group_file"
+			
 		fi
 		if [[ ! -f "$origin_list_file" ]] && [[ ! -f "$origin_list_file_old" ]]
 		then
@@ -291,7 +310,7 @@ create_origins() { ## creates an origin set that gathers data used in nesting.
 						then
 							printf '%s\n' "$depname" >> "$origin_list_file"
 							printf '%s\n' "$depname" >> "$suborigin_file"
-							printf '%s\n' "$depname" >> "$group_file"
+							printf '%s %s\n' "$depname" "$repo" >> "$group_file"
 							#printf '\n%s %s\n' "Creating directory:" "$tmpdir/$depbase/$depname"
 							mkdir -p "$tmpdir/$depbase/$depname"
 							#read
@@ -381,6 +400,7 @@ give_info() {
 			fi
 		fi
 	done
+	printf '\n'
 }
 
 setup(){
