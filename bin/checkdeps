@@ -67,7 +67,8 @@ set_params() {
 		read name
 		if [[ "$recursive" = "" ]]
 		then
-			while [[ "$recursive" = "" ]] || [[ ! "$recursive" = "yes" ]] || [[ ! "$recursive" = "no" ]]; do
+			while [[ "$recursive" = "" ]] || [[ ! "$recursive" = "yes" ]] || [[ ! "$recursive" = "no" ]]
+			do
 				printf "Would you like to run recursively? (yes/No) "
 				read recursive
 				if [[ "$recursive" = "" ]]
@@ -111,7 +112,7 @@ set_params() {
 	then
 		#printf '\n%s %s\n' "Going into searchdir:" "$searchdir"
 		if [[ -d "$searchdir" ]]
-	then
+		then
 			cd "$searchdir" || exit
 		fi
 		#printf '\ntmpdir is %s\n' "$tmpdir"
