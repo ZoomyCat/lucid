@@ -65,7 +65,10 @@ set_params() {
 			while [[ "$recursive" = "" ]] || [[ ! "$recursive" = "yes" ]] || [[ ! "$recursive" = "no" ]]; do
 				printf "Would you like to run recursively? (yes/No) "
 				read recursive
-				if [[ "$recursive" = "yes" ]] || [[ "$recursive" = "" ]] ; then
+				if [[ "$recursive" = "" ]] ; then
+					recursive="no"
+				fi
+				if [[ "$recursive" = "yes" ]] || [[ "$recursive" = "no" ]] ; then
 					break
 				fi
 			done
@@ -75,14 +78,14 @@ set_params() {
 	if [[ ! "$name" = "" ]]; then
 		if [[ "$tmpdir" = "/tmp/lbf" ]]; then
 			if [[ "$info" != "yes" ]] ; then
-			if [[ "$origin_file" = "" ]]; then
-			origin_file="$tmpdir/origin"
-			fi
-			if [[ "$suborigin_file" = "" ]]; then
-				suborigin_file="$tmpdir/suborigin"
-			fi
-			tmpdir="$tmpdir/$name"
-			origin_tmpdir="$tmpdir"
+				if [[ "$origin_file" = "" ]]; then
+					origin_file="$tmpdir/origin"
+				fi
+				if [[ "$suborigin_file" = "" ]]; then
+					suborigin_file="$tmpdir/suborigin"
+				fi
+				tmpdir="$tmpdir/$name"
+				origin_tmpdir="$tmpdir"
 			fi
 		fi
 		if [[ "$searchdir" = "" ]]; then
@@ -131,8 +134,8 @@ set_params() {
 }
 
 check_todo(){ ## checks if the file has already been scanned or not.
-	check_match="$1"
-	check_file="$2"
+	local check_match="$1"
+	local check_file="$2"
 	match="0"
 	if [[ -f "$check_file" ]] ; then
 		while IFS= read -r line; do
@@ -245,7 +248,6 @@ recurse() {
 			break
 		fi
 		for origin_list_file in "${origin_lists[@]}"; do
-			#local origin_list_old="$origin_list_file""_old"
 			if [[ -f "$origin_list_file" ]]; then
 				while IFS= read -r dep; do
 					if [[ ! "$dep" = "" ]]; then
@@ -258,26 +260,21 @@ recurse() {
 						fi
 					fi				
 				done < "$origin_list_file"
-				origin_list_old="$origin_list_file""_old"
+				if [[ "$origin_list_old" = "" ]] ; then
+					printf '\n%s\n' "Doing a recursive scan ... This may take a while."
+				fi
+				local origin_list_old="$origin_list_file""_old"
 				#printf '\n%s %s %s %s\n' "Moving origin_list:" "$origin_list_file" "to" "$origin_list_old"
 				#read
-				mv_opts=( "$origin_list_file" "$origin_list_old" )
-				mv "${mv_opts[@]}"
+				mv_opts=( "$origin_list_file" "$origin_list_old" ) ## Moving the origin_list to another file allows to check
+				mv "${mv_opts[@]}" ## whether the check has been done before or not.
 			fi
 		done
 	done
 }
 
-set_params
-
-if [[ "$info" != "yes" ]] ; then
-	create_origins
-	if [[ "$recursive" = "yes" ]] ; then
-		recurse
-	fi
-fi
-if [[ "$info" = "yes" ]] ; then
-	info_dir=$( find "$tmpdir" -name "$name" -type d -print0 )
+give_info() {
+	local info_dir=$( find "$tmpdir" -name "$name" -type d -print0 )
 	#if [[ "$debug" = "yes" ]] ; then
 		##printf '\n%s %s\n' "info_dir equals" "$info_dir"
 	#fi
@@ -294,5 +291,17 @@ if [[ "$info" = "yes" ]] ; then
 			fi
 		fi
 	done
+}
+
+set_params
+
+if [[ "$info" != "yes" ]] ; then
+	create_origins
+	if [[ "$recursive" = "yes" ]] ; then
+		recurse
+	fi
+fi
+if [[ "$info" = "yes" ]] ; then
+	give_info
 fi
 exit 0
