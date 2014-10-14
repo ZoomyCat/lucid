@@ -43,12 +43,12 @@ check_name_set() {
 	empty_name="1"
 	for var in "${checkdeps_vars[@]}"; do
 		typeset -n local ref="$var"
-		if [[ ! "$ref" = "no" ]] && [[ ! "$ref" = "yes" ]]; then 
+		if [[ ! "$ref" = "no" ]] && [[ ! "$ref" = "yes" ]] ; then 
 			#printf '\n%s %s\n' "Calculating variables:" "$ref"
-			if [[ "$ref" = "" ]] && [[ ! "$empty_name" = "0" ]]; then
+			if [[ "$ref" = "" ]] && [[ ! "$empty_name" = "0" ]] ; then
 				#printf "Setting empty_name to 1\n"
 				empty_name="1"
-			elif [[ ! "$ref" = "" ]] && [[ "$ref" = "$name" ]]; then
+			elif [[ ! "$ref" = "" ]] && [[ "$ref" = "$name" ]] ; then
 				#printf "Setting empty_name to 0\n"
 				empty_name="0"
 			fi
@@ -75,40 +75,40 @@ set_params() {
 		fi
 	fi
 	
-	if [[ ! "$name" = "" ]]; then
-		if [[ "$tmpdir" = "/tmp/lbf" ]]; then
+	if [[ ! "$name" = "" ]] ; then
+		if [[ "$tmpdir" = "/tmp/lbf" ]] ; then
 			if [[ "$info" != "yes" ]] ; then
-				if [[ "$origin_file" = "" ]]; then
+				if [[ "$origin_file" = "" ]] ; then
 					origin_file="$tmpdir/origin"
 				fi
-				if [[ "$suborigin_file" = "" ]]; then
+				if [[ "$suborigin_file" = "" ]] ; then
 					suborigin_file="$tmpdir/suborigin"
 				fi
 				tmpdir="$tmpdir/$name"
 				origin_tmpdir="$tmpdir"
 			fi
 		fi
-		if [[ "$searchdir" = "" ]]; then
+		if [[ "$searchdir" = "" ]] ; then
 			searchdir=$( find "$gitrepodir" -name "$name" -type d -print0 )
 			#printf '\n%s %s\n' "Setting searchdir to:" "$searchdir"
 		fi	
 	fi
 
-	if [[ ! "$searchdir" = "" ]]; then
+	if [[ ! "$searchdir" = "" ]] ; then
 		#printf '\n%s %s\n' "Going into searchdir:" "$searchdir"
-		if [[ -d "$searchdir" ]]; then
+		if [[ -d "$searchdir" ]] ; then
 			cd "$searchdir" || exit
 		fi
 		#printf '\ntmpdir is %s\n' "$tmpdir"
-		if [[ -f ./PKGBUILD ]]; then
+		if [[ -f ./PKGBUILD ]] ; then
 			source ./PKGBUILD
-		elif [[ ! -f ./PKGBUILD ]]; then 
+		elif [[ ! -f ./PKGBUILD ]] ; then 
 			printf '%s\n' "This PKGBUILD file does not exist."
 			printf '%s\n' "$checkdeps_usage" >&2; exit 1
 		fi
-		if [[ "$origin" = "" ]]; then
+		if [[ "$origin" = "" ]] ; then
 			for pkg in "${pkgname[@]}"; do
-				if [[ "$pkg" = "$name" ]]; then
+				if [[ "$pkg" = "$name" ]] ; then
 					origin="$pkg"
 					provides+=( "$pkg" )
 				elif [[ "$pkg" = "$name" ]] || [[ ! "$pkg" = "$name" ]] ; then
@@ -139,10 +139,10 @@ check_todo(){ ## checks if the file has already been scanned or not.
 	match="0"
 	if [[ -f "$check_file" ]] ; then
 		while IFS= read -r line; do
-			if [[ "$line" = "$check_match" ]]; then
+			if [[ "$line" = "$check_match" ]] ; then
 				match="1"
-			elif [[ ! "$line" = "$check_match" ]]; then
-				if [[ ! "$match" = "1" ]]; then
+			elif [[ ! "$line" = "$check_match" ]] ; then
+				if [[ ! "$match" = "1" ]] ; then
 					match="0"
 				fi
 			fi
@@ -154,7 +154,7 @@ check_todo(){ ## checks if the file has already been scanned or not.
 
 write_provides(){ ## writes the package names that the pkgbuild compile will provide. 
 	for pkg in "${provides[@]}"; do
-		if [[ ! "$pkg" = "" ]]; then
+		if [[ ! "$pkg" = "" ]] ; then
 			printf '%s\n' "$pkg" >> "$provides_file"
 			printf '%s\n' "$pkg" >> "$origin_file"
 		fi
@@ -176,31 +176,31 @@ create_origins() { ## creates an origin set that gathers data used in nesting.
 		
 		check_todo "$origin" "$origin_file"
 		if [[ "$match" = "0" ]] ; then
-			if [[ ! -d "$tmpdir" ]]; then
+			if [[ ! -d "$tmpdir" ]] ; then
 				#printf '\n%s %s\n' "creating tmpdir directory:" "$tmpdir"
 				mkdir -p "$tmpdir"
 				#read
 			fi
 		fi
 		get_repo
-		if [[ ! -f "$repo_file" ]]; then
+		if [[ ! -f "$repo_file" ]] ; then
 			printf '%s\n' "$repo" > "$repo_file"
 		fi
-		if [[ ! -f "$origin_file" ]]; then
-			if [[ ! "$origin" = "" ]]; then
+		if [[ ! -f "$origin_file" ]] ; then
+			if [[ ! "$origin" = "" ]] ; then
 				touch "$origin_file"
 				write_provides
 			fi
-		elif [[ -f "$origin_file" ]]; then
-			if [[ "$match" = "0" ]] && [[ ! "$origin" = "" ]]; then
+		elif [[ -f "$origin_file" ]] ; then
+			if [[ "$match" = "0" ]] && [[ ! "$origin" = "" ]] ; then
 				write_provides
 			fi
 		fi
-		if [[ ! -f "$suborigin_file" ]]; then
+		if [[ ! -f "$suborigin_file" ]] ; then
 			#printf '\n%s %s\n' "suborigin_file is set to:" "$suborigin_file"
 			printf '%s\n' "$origin" > "$suborigin_file"
 		fi
-		if [[ ! -f "$origin_list_file" ]] && [[ ! -f "$origin_list_file_old" ]]; then
+		if [[ ! -f "$origin_list_file" ]] && [[ ! -f "$origin_list_file_old" ]] ; then
 			for depbase in "${checkdeps_pkgbuild_array[@]}"; do	## allows us a start with all the dependency base names as defined in lbf.vars
 				if [[ "$i" = "" ]] ; then
 					local i=0
@@ -211,9 +211,9 @@ create_origins() { ## creates an origin set that gathers data used in nesting.
 				for dep in "${ref[@]}"; do ## sets origin_set.
 					local depname=${dep%%[<>=]*}
 					find_nextsearchdir "$depname"
-					if [[ ! "$depname" = "" ]] && [[ "$nosearchdir" = "0" ]]; then
+					if [[ ! "$depname" = "" ]] && [[ "$nosearchdir" = "0" ]] ; then
 						check_todo "$depname" "$suborigin_file"
-						if [[ "$match" = "0" ]]; then
+						if [[ "$match" = "0" ]] ; then
 							printf '%s\n' "$depname" >> "$origin_list_file"
 							printf '%s\n' "$depname" >> "$suborigin_file"
 							#printf '\n%s %s\n' "Creating directory:" "$tmpdir/$depbase/$depname"
@@ -236,7 +236,7 @@ find_nextsearchdir() {
 	name="$1"
 	local nextsearchdir=$( find "$gitrepodir" -name "$name" -type d -print0 )
 	nosearchdir="0"
-	if [[ "$nextsearchdir" = "" ]]; then
+	if [[ "$nextsearchdir" = "" ]] ; then
 		nosearchdir="1"
 	fi
 }
@@ -244,15 +244,15 @@ find_nextsearchdir() {
 recurse() {
 	while find_origin_lists; do
 		find_origin_lists
-		if [[ "$origin_lists" = "" ]]; then
+		if [[ "$origin_lists" = "" ]] ; then
 			break
 		fi
 		for origin_list_file in "${origin_lists[@]}"; do
-			if [[ -f "$origin_list_file" ]]; then
+			if [[ -f "$origin_list_file" ]] ; then
 				while IFS= read -r dep; do
-					if [[ ! "$dep" = "" ]]; then
+					if [[ ! "$dep" = "" ]] ; then
 						check_todo "$dep" "$origin_file"
-						if [[ "$match" = "0" ]]; then
+						if [[ "$match" = "0" ]] ; then
 							tmpdir=$( find "$origin_tmpdir" -name "$dep" -type d -print0 )
 							#printf '\n sending tmpdir as searched from origin_tmpdir as searched from %s: \n%s\n%s\n' "$dep" "$tmpdir" "$origin_tmpdir"
 							run_again_opts=( "-n" "$dep" "-t" "$tmpdir" "-f" "$origin_file" "-o" "$origin_tmpdir" "-s" "$suborigin_file" )
@@ -283,7 +283,7 @@ give_info() {
 		if [[ ! -d "$file" ]] ; then
 			if [[ "$file" != "origin_list_old" ]] ; then
 				if [[ "$file" != "origin" ]] ; then
-					if [[ "$file" != "suborigin" ]]; then
+					if [[ "$file" != "suborigin" ]] ; then
 						printf '\n%s: %s\n' "Printing out information for" "$file"
 						cat "$file"
 					fi
