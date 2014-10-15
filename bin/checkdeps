@@ -37,6 +37,7 @@ while getopts "t:f:n:o:s:G:r:Rgivph" opt; do  ## Standard getopts while loops fo
 		G)  group_file=$OPTARG;;		
 		i)	info="yes";;
 		r)  create_repo="yes";;
+		L)  layer=$OPTARG;;
 		R)  recursive="yes";;
 		h)  printf '%s\n' "$checkdeps_usage"; exit 0;;
 		\?) printf '%s\n' "$checkdeps_usage" >&2; exit 1;;
@@ -64,11 +65,12 @@ check_name_set() {
 }
 
 create_group_origin() {
-	
-	local groupname=( $( pacman -Ssgq "$name" ) )
-	printf '\n%s %s\n' "This will scan everything in group" "$name"
-	#printf '%s\n' "${groupname[@]}"
-	
+	if [[ "$groupname" != "" ]]
+	then
+		local groupname=( $( pacman -Ssgq "$name" ) )
+		printf '\n%s %s\n' "This will scan everything in group" "$name"
+		#printf '%s\n' "${groupname[@]}"
+	fi
 	origin_file="$tmpdir/origin"
 	suborigin_file="$tmpdir/suborigin"
 	origin_tmpdir="$tmpdir"
@@ -140,7 +142,7 @@ set_params() {
 			#printf '\n%s %s\n' "Setting searchdir to:" "$searchdir"
 		fi	
 	fi
-
+	
 	if [[ ! "$searchdir" = "" ]]
 	then
 		#printf '\n%s %s\n' "Going into searchdir:" "$searchdir"
@@ -228,15 +230,57 @@ write_provides(){ ## writes the package names that the pkgbuild compile will pro
 }
 
 get_repo() { ## removes the program name, forward slashes and prefix of the repository name.
-	repo="$searchdir"
+    repo="$searchdir"
+	#printf '\n%s %s\n' "repo is" "$repo"
 	repo=${repo%%"/$origin"}
+	#printf '\n%s %s\n' "repo is" "$repo"
 	repo=${repo##*/}
+	#printf '\n%s %s\n' "repo is" "$repo"
+	#read < /dev/tty
 }
 
 write_treeloc() {
 	local treeloc="$tmpdir"
 	treeloc=${treeloc##/tmp/lbf/}
 	printf '%s\n' "$treeloc" > "$treeloc_file"
+}
+
+get_spawned_from() {
+	## tmpdir will equal whatever directory is currently being worked on within the metadata scan.
+	spawned_from="$tmpdir"
+	#printf '\n%s %s\n' "spawned_from origininates from" "$spawned_from"
+	spawned_from=${spawned_from##/tmp/lbf/}
+	#printf '\n%s %s\n' "spawned_from has some stripped off the start" "$spawned_from"
+	while [[ "$spawned_from" = */* ]] && [[ "$spawned_from" = */*/*/* ]]  ## this if never triggers
+	do
+		spawned_from=${spawned_from%/*}
+		#printf '%s %s %s\n' "spawned_from has been changed to" "$spawned_from" "by removing all except three limiters."
+	done
+}
+
+write_spawned_from() {
+	get_spawned_from
+	if [[ "$spawned_from" != "" ]]
+	then
+		if [[ "$spawned_from_file" = "" ]] && [[ "$tmpdir" != "" ]]
+		then
+			spawned_from_file="$tmpdir/spawned_from"
+		fi
+		#if [[ ! -f "$spawned_from_file" ]]
+		#then
+			##printf '\n%s %s\n' "This is the spawned from file:" "$spawned_from_file"
+			#touch "$spawned_from_file"
+		#fi
+		printf '%s\n' "$spawned_from" >> "$spawned_from_file"
+	fi
+}
+
+write_group_file() {
+	get_repo
+	get_spawned_from
+	#printf '%s %s %s %s\n' "Writing these entries to the group file:" "$origin" "$spawned_from" "$repo"
+	printf '%s %s %s\n' "$origin" "$spawned_from" "$repo" >> "$group_file"
+	#read < /dev/tty
 }
 
 ## Sets the origin name. This is important for dealing with nested
@@ -269,6 +313,8 @@ create_origins() { ## creates an origin set that gathers data used in nesting.
 				touch "$origin_file"
 				write_provides
 				write_treeloc
+				write_group_file "$origin"
+				write_spawned_from
 			fi
 		elif [[ -f "$origin_file" ]]
 		then
@@ -276,6 +322,8 @@ create_origins() { ## creates an origin set that gathers data used in nesting.
 			then
 				write_provides
 				write_treeloc
+				write_group_file "$origin"
+				write_spawned_from
 			fi
 		fi
 		if [[ ! -f "$suborigin_file" ]]
@@ -310,7 +358,6 @@ create_origins() { ## creates an origin set that gathers data used in nesting.
 						then
 							printf '%s\n' "$depname" >> "$origin_list_file"
 							printf '%s\n' "$depname" >> "$suborigin_file"
-							printf '%s %s\n' "$depname" "$repo" >> "$group_file"
 							#printf '\n%s %s\n' "Creating directory:" "$tmpdir/$depbase/$depname"
 							mkdir -p "$tmpdir/$depbase/$depname"
 							#read
@@ -338,6 +385,10 @@ find_nextsearchdir() {
 }
 
 recurse() {
+	if [[ "$level" = "" ]]
+	then 
+		local i=0
+	fi
 	while find_origin_lists; do
 		find_origin_lists
 		if [[ "$origin_lists" = "" ]]
