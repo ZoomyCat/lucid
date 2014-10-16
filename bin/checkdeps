@@ -65,12 +65,9 @@ check_name_set() {
 }
 
 create_group_origin() {
-	if [[ "$groupname" != "" ]]
-	then
-		local groupname=( $( pacman -Ssgq "$name" ) )
-		printf '\n%s %s\n' "This will scan everything in group" "$name"
-		#printf '%s\n' "${groupname[@]}"
-	fi
+	local groupname=( $( pacman -Ssgq "$name" ) )
+	printf '\n%s %s\n' "This will scan everything in group" "$name"
+	#printf '%s\n' "${groupname[@]}"
 	origin_file="$tmpdir/origin"
 	suborigin_file="$tmpdir/suborigin"
 	origin_tmpdir="$tmpdir"
