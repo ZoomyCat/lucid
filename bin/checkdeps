@@ -113,15 +113,19 @@ create_group_origin() { ## sets all information if a group name is sent
     done
 }
 
+## This function sets all the parameters for the program to operate correctly
 set_params() {
-    check_name_set
+    check_name_set ##checks whether the name has been set flag has been set.
     if [[ "$empty_name" = "0" ]]
+    ## Name will not have been set if this variable = 0.
     then
         printf "Please enter a name to start the search: "
         read name
         if [[ "$recursive" = "" ]]
+        ## Check if the user wants to run this as recursive or not.
+        ##This function needs to be updated to include asking for group as well.
         then
-            while [[ "$recursive" = "" ]] || [[ ! "$recursive" = "yes" ]] || [[ ! "$recursive" = "no" ]]
+            while [[ "$recursive" = "" ]] || [[ "$recursive" != "yes" ]] || [[ "$recursive" != "no" ]]
             do
                 printf "Would you like to run recursively? (yes/No) "
                 read recursive
@@ -138,61 +142,79 @@ set_params() {
     fi
     
     if [[ ! "$name" = "" ]]
+    ## name should no longer be blank so we can continue with setting the parameters.
     then
         if [[ "$tmpdir" = "/tmp/lbf" ]]
+        ## This checks if the tmpdir is the default or not.
         then
             if [[ "$info" != "yes" ]]
+            ## make sure not to attept to create a directory tree if the user only wants information.
             then
                 if [[ "$origin_file" = "" ]]
+				## sets the origin file location if it is not set.
                 then
                     origin_file="$tmpdir/origin"
                 fi
                 if [[ "$suborigin_file" = "" ]]
+                ## sets the suborigin file location if it is not set.
                 then
                     suborigin_file="$tmpdir/suborigin"
                 fi
+                ## sets the origin tmpdir and the new tmpdir.
                 origin_tmpdir="$tmpdir"
                 tmpdir="$tmpdir/$name"
             fi
         fi
         if [[ "$treeloc_file" = "" ]]
+        ## sets the treeloc file location if it is not set.
         then
             treeloc_file="$tmpdir/treeloc"
         fi
         if [[ "$searchdir" = "" ]]
+        ## sets the searchdir location if it is not set.
         then
             searchdir=$( find "$gitrepodir" -name "$name" -type d -print0 )
             #printf '\n%s %s\n' "Setting searchdir to:" "$searchdir"
         fi  
     fi
     
-    if [[ ! "$searchdir" = "" ]]
+    if [[ "$searchdir" != "" ]]
+    ## What to do if the searchdir has been set correctly.
     then
         #printf '\n%s %s\n' "Going into searchdir:" "$searchdir"
         if [[ -d "$searchdir" ]]
+        ## Make sure searchdir exists then cd into it, exit upon failure.
         then
             cd "$searchdir" || exit
         fi
         #printf '\ntmpdir is %s\n' "$tmpdir"
         #printf '\n%s %s\n' "source ./PKGBUILD for:" "$searchdir"
         if [[ -f ./PKGBUILD ]]
+        ## check if the sourcedir contains a PKGBUILD file and source it
+        ## if it exists.
         then
             source ./PKGBUILD
             #printf '%s\n' "Running ls -ld PKGBUILD: "
             #ls -ld ./PKGBUILD
         elif [[ ! -f ./PKGBUILD ]]
+        ## Sets the action to take if the PKGBUILD file does not exist.
         then 
             printf '%s\n' "This PKGBUILD file does not exist."
             printf '%s\n' "$checkdeps_usage" >&2; exit 1
         fi
+        
         if [[ "$origin" = "" ]]
+        ## some PKGBUILD files create multiple packages. This makes sure
+        ## we do not get false data and write a correct entry.
         then
-            for pkg in "${pkgname[@]}"; do
+            for pkg in "${pkgname[@]}"; do ## Scan all entries in the pkgname
                 if [[ "$pkg" = "$name" ]]
+                ## This makes sure the correct entry gets set to origin and added to the provides array.
                 then
                     origin="$pkg"
                     provides_array+=( "$pkg" )
                 elif [[ "$pkg" = "$name" ]] || [[ ! "$pkg" = "$name" ]]
+                ## for extra packages just add them to the provides array.
                 then
                     provides_array+=( "$pkg" )
                 fi
@@ -200,47 +222,59 @@ set_params() {
             #printf '\n%s\n' "privides is set to:"
             #printf '%s\n' "${provides[@]}"
         fi
+        
         if [[ "$origin_list_file" = "" ]]
+        ## sets the origin list file if it is not set.
         then
             origin_list_file="$tmpdir/origin_list"
             #printf '\n%s %s\n' "origin_list_file set to:" "$origin_list_file"
         fi
         if [[ "$provides_file" = "" ]]
+        ## sets the provides file if it is not set.
         then
             provides_file="$tmpdir/provides"
         fi
         if [[ "$repo_file" = "" ]]
+        ## sets the repo file if it is not set.
         then
             repo_file="$tmpdir/repo"            
         fi
         if [[ "$group_file" = "" ]]
+        ## sets the group file if it is not set.
         then
             group_file="$tmpdir/origin_$name"
         fi
     elif [[ "$searchdir" = "" ]]
+    ## If searchdir has not been set correctly then exit.
     then
         exit 1
     fi
 }
 
 check_todo(){ ## checks if the file has already been scanned or not.
-    local check_match="$1"
-    local check_file="$2"
-    match="0"
+    local check_match="$1" ## The entry sent to check against.
+    local check_file="$2"  ## The file sent to check against. 
+    match="0" ## Reset the parameter in case we have already checked something else.
     if [[ -f "$check_file" ]]
+    ## make sure the file sent to check against exists.
     then
-        while IFS= read -r line; do
+        while IFS= read -r line; do ## Read through the file.
             if [[ "$line" = "$check_match" ]]
+            ## This will tell if the entry has already been written to
+            ## the particular file being tested.
             then
                 match="1"
-            elif [[ ! "$line" = "$check_match" ]]
+                break
+            elif [[ "$line" != "$check_match" ]]
+            ## This is what will run through if the entries do not match.
             then
-                if [[ ! "$match" = "1" ]]
+                if [[ "$match" != "1" ]]
+                ## make sure the entry has not already been found.
                 then
                     match="0"
                 fi
             fi
-        done < "$check_file"
+        done < "$check_file" ## This sends what file to read in the while loop.
     fi
     #printf '\n%s %s%s %s\n' "This is the check done status for" "$check_match" ":" "$match"
     #read
