@@ -425,45 +425,58 @@ create_origins() { ## creates an origin set that gathers data used in nesting.
         if [[ ! -f "$origin_list_file" ]] && [[ ! -f "$origin_list_file_old" ]]
         ## if there is no origin list file or old origin list file then we want to grab all dependencies.
         then
-            for depbase in "${checkdeps_pkgbuild_array[@]}"; do ## allows us a start with all the dependency base names as defined in lbf.vars
+        ## allows us a start with all the dependency base names as defined in lbf.vars
+            for depbase in "${checkdeps_pkgbuild_array[@]}"; do 
                 if [[ "$i" = "" ]]
+                ## Keep a record of the for loop increment. This is used
+                ## To keep checkdeps_array in line with the checkdeps_pkgbuild_array
                 then
                     local i=0
                 fi
-                typeset -n local ref="$depbase" ## this allows the proceeding for loop
-                                        ## to activate correctly.
+                ## this allows the proceeding for loop to activate correctly.
+                ## by referencing what is actually in depbase.
+                typeset -n local ref="$depbase" 
                 
                 for dep in "${ref[@]}"; do ## sets origin_set.
-                    local depname=${dep%%[<>=]*}
-                    find_nextsearchdir "$depname"
-                    if [[ ! "$depname" = "" ]] && [[ "$nosearchdir" = "0" ]]
+                    local depname=${dep%%[<>=]*} ## Removes versioning if neccessary.
+                    find_nextsearchdir "$depname" ## Finds the next search directory.
+                    if [[ "$depname" != "" ]] && [[ "$nosearchdir" = "0" ]]
+                    ## make sure the depname is not blank and that the search directory exists.
                     then
+                    ## make sure the depname is not already in the suborigin file.
                         check_todo "$depname" "$suborigin_file"
                         if [[ "$match" = "0" ]]
                         then
+						## Write the origin list and suborigin file.
                             printf '%s\n' "$depname" >> "$origin_list_file"
                             printf '%s\n' "$depname" >> "$suborigin_file"
                             #printf '\n%s %s\n' "Creating directory:" "$tmpdir/$depbase/$depname"
+                            ## create the directory structure.
                             mkdir -p "$tmpdir/$depbase/$depname"
                             #read
                         fi
                     fi
+                    ## print the name to checkdeps_array as defined in lbf.vars
+                    ## This will either be deps, checkdeps or makedeps.
                     printf '%s\n' "$depname" >> "$tmpdir/${checkdeps_array[$i]}"
                 done
-                i="$i"+1
+                i="$i"+1 ## increment i so checkdeps_array moves forward with checkdeps_pkgbuild_array.
             done
         fi
 }
 
 find_origin_lists() {
-    origin_lists=( $( find "$origin_tmpdir" -name origin_list -type f -print ) )
+    origin_lists=( $( find "$origin_tmpdir" -name origin_list -type f -print ) ) ## find any existsing origin lists.
 }
 
 find_nextsearchdir() {
-    name="$1"
+    local name="$1" ## Sets the name being searched of the next program.
+    ## finds the program within the git repository.
     local nextsearchdir=$( find "$gitrepodir" -name "$name" -type d -print0 )
+    ## resets nosearchdir to default.
     nosearchdir="0"
     if [[ "$nextsearchdir" = "" ]]
+    ## if next searchdir is blank then set 1 to signify failure.
     then
         nosearchdir="1"
     fi
@@ -471,62 +484,88 @@ find_nextsearchdir() {
 
 recurse() {
     if [[ "$level" = "" ]]
+    ## I am pretty sure I was setting this up to be able to reference
+    ## allowing only a certain number of runs to be sent through the
+    ## system.
     then 
         local i=0
     fi
+    ## Make sure you can find origin lists and loop through them.
     while find_origin_lists; do
+        ## find a list of origin lists to use.
         find_origin_lists
         if [[ "$origin_lists" = "" ]]
+        ## if there are no origin lists then break out of the loop.
         then
             break
         fi
+        ## go through each origin list file.
         for origin_list_file in "${origin_lists[@]}"; do
             if [[ -f "$origin_list_file" ]]
+            ## make sure the origin list file exists.
             then
-                while IFS= read -r dep; do
-                    if [[ ! "$dep" = "" ]]
+                while IFS= read -r dep; do ## read each line of the origin list.
+                    if [[ "$dep" != "" ]]
+					## make sure the entry is not blank.
                     then
+                    ## Make sure the dep is not already in origin file.
                         check_todo "$dep" "$origin_file"
                         if [[ "$match" = "0" ]]
                         then
+							## find the next tmpdir location as created in the current iteration of the program.
                             tmpdir=$( find "$origin_tmpdir" -name "$dep" -type d -print0 )
                             #printf '\n sending tmpdir as searched from origin_tmpdir as searched from %s: \n%s\n%s\n' "$dep" "$tmpdir" "$origin_tmpdir"
+                            ## set the options in which checkdeps should use on the next run.
                             run_again_opts=( "-n" "$dep" "-t" "$tmpdir" "-f" "$origin_file" "-o" "$origin_tmpdir" "-S" "$suborigin_file" )
                             if [[ "$group_file" != "" ]]
+                            ## If the group file is not blank then add group options.
                             then
                                 #printf '\n%s %s\n' "Setting group_file run_again_opts:" "$group_file"
                                 run_again_opts+=( "-G" "$group_file" )
                             fi
                             if [[ "$step" = "yes" ]]
+                            ## If the user set step through keep that for next runs.
                             then
                                 run_again_opts+=( "-s" "$step" )
                             fi
                             #printf '\n%s\n' "run_again_opts equals:"           
                             #printf '%s\n' "${run_again_opts[@]}"
+                            ## do the next run of the program.
                             "$run_again" "${run_again_opts[@]}"
                         fi
                     fi              
-                done < "$origin_list_file"
+                done < "$origin_list_file" ## read the origin list file into the while loop.
                 if [[ "$origin_list_old" = "" ]]
+                ## Check if origin list old has been set and if not set it so we do not redundantly
+                ## check things that have already been checked.
                 then
                     printf '\n%s\n' "Doing a recursive scan ... This may take a while."
                 fi
+                ## Set the origin list old file location.
                 local origin_list_old="$origin_list_file""_old"
                 #printf '\n%s %s %s %s\n' "Moving origin_list:" "$origin_list_file" "to" "$origin_list_old"
                 #read
-                mv_opts=( "$origin_list_file" "$origin_list_old" ) ## Moving the origin_list to another file allows to check
+                ## set the options to pass to the move command and then move the origin list to origin list old.
+                local mv_opts=( "$origin_list_file" "$origin_list_old" ) ## Moving the origin_list to another file allows to check
                 mv "${mv_opts[@]}" ## whether the check has been done before or not.
             fi
         done
     done
 }
 
-give_info() {
+give_info() { ## Get the information we created during the scans and print it.
+	## info dir will contain the directory that the created files are located.
     local info_dir=$( find "$tmpdir" -name "$name" -type d -print0 )
-    cd "$info_dir" || exit
+    cd "$info_dir" || exit ## cd into the directory if it exists, if not exit.
+    ## check all files in the info_dir.
     for file in *; do
         if [[ ! -d "$file" ]]
+        ## make sure this is not a directory because we will be printing out information
+        ## that comes from a file.
         then
+			## make sure we do not print old origin lists, suborigins or origins.
+			## These files contain a lot of data that is used for logic and not
+			## used for useful display information.
             if [[ "$file" != "origin_list_old" ]]
             then
                 if [[ "$file" != "origin" ]]
@@ -545,29 +584,36 @@ give_info() {
 
 setup(){
     if [[ "$create_group" = "yes" ]]
+    ## If the user passed a group into the system then deal with that.
     then
         create_group_origin
     elif [[ "$create_group" = "" ]]
+    ## Do the actual tasks.
     then
         if [[ "$step" = "yes" ]]
+        ## this allows the user to step through iterations of the program.
         then
             printf '%s %s\n%s' "Running Scan on:" "$name" "Press enter to continue:"
             read < /dev/tty
         fi
+        ## setup the parameters of the program and create the origins.
         set_params
         create_origins
     fi
     if [[ "$recursive" = "yes" ]]
     then
+		## recurse if neccessary.
         recurse
     fi
 }
 
 if [[ "$info" != "yes" ]]
+## if the user is not looking for information then run the setup.
 then
     setup
 fi
 if [[ "$info" = "yes" ]]
+## if the user requested information then give them info.
 then
     give_info
 fi
