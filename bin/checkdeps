@@ -1,12 +1,12 @@
 #!/usr/bin/env bash
 ##Created by Edward "edge226" Tunnah.
 
-## Checks the depends of a program and writes it to /tmp/lbf/ in a
+## Checks the dependencies of a program and writes it to /tmp/lbf/ in a
 ## directory structure.
 
 
 
-## unset possibly use variables.
+## unset possibly used variables.
 unset pkgname depends makedepends checkdepends optdepends origin tmpdir origin_pass origin_set origin_list
 
 source /home/edge226/github/lucid/conf/lbf.vars ## This allows for the
@@ -81,7 +81,8 @@ create_group_origin() { ## sets all information if a group name is sent
     ## to $name with the -g flag. eg. checkdeps -gn base 
     
     ## groupname is set to packages in the name of the group passed to
-    ## checkdeps. It is only used within this function is is set to local.
+    ## checkdeps. It is only used within this function so it is set to local.
+    ## This means it will not show up outside this function.
     local groupname=( $( pacman -Ssgq "$name" ) )
     printf '\n%s %s\n' "This will scan everything in group" "$name"
     #printf '%s\n' "${groupname[@]}"
@@ -115,7 +116,7 @@ create_group_origin() { ## sets all information if a group name is sent
 
 ## This function sets all the parameters for the program to operate correctly
 set_params() {
-    check_name_set ##checks whether the name has been set flag has been set.
+    check_name_set ## checks whether the name flag has been set.
     if [[ "$empty_name" = "0" ]]
     ## Name will not have been set if this variable = 0.
     then
@@ -281,9 +282,11 @@ check_todo(){ ## checks if the file has already been scanned or not.
 }
 
 write_provides(){ ## writes the package names that the pkgbuild compile will provide. 
-    for pkg in "${provides_array[@]}"; do
-        if [[ ! "$pkg" = "" ]]
+    for pkg in "${provides_array[@]}"; do ## scan through provies array.
+        if [[ "$pkg" != "" ]]
+        ## Check if the name is not blank.
         then
+			## Write the provides and origin files.
             printf '%s\n' "$pkg" >> "$provides_file"
             printf '%s\n' "$pkg" >> "$origin_file"
         fi
@@ -291,39 +294,42 @@ write_provides(){ ## writes the package names that the pkgbuild compile will pro
 }
 
 get_repo() { ## removes the program name, forward slashes and prefix of the repository name.
-    repo="$searchdir"
+    repo="$searchdir" ## sets repo as searchdir.
     #printf '\n%s %s\n' "repo is" "$repo"
-    repo=${repo%%"/$origin"}
+    repo=${repo%%"/$origin"}  ## strips the name off the end.
     #printf '\n%s %s\n' "repo is" "$repo"
-    repo=${repo##*/}
+    repo=${repo##*/} ## strips everything preceeding the repo.
     #printf '\n%s %s\n' "repo is" "$repo"
     #read < /dev/tty
 }
 
-write_treeloc() {
-    local treeloc="$tmpdir"
-    treeloc=${treeloc##/tmp/lbf/}
-    printf '%s\n' "$treeloc" > "$treeloc_file"
+write_treeloc() { ## writes the treeloc to the treeloc file.
+    local treeloc="$tmpdir" ## sets treeloc as the tmpdir variable.
+    treeloc=${treeloc##/tmp/lbf/} ## remove the preceeding /tmp/lbf/
+    printf '%s\n' "$treeloc" > "$treeloc_file" ## write to the file.
 }
 
-get_spawned_from() {
-    ## tmpdir will equal whatever directory is currently being worked on within the metadata scan.
-    spawned_from="$tmpdir"
+get_spawned_from() { ## get where the search spawned from.
+    spawned_from="$tmpdir" ## set the tmpdir as spawned_from to be parsed.
     #printf '\n%s %s\n' "spawned_from origininates from" "$spawned_from"
-    spawned_from=${spawned_from##/tmp/lbf/}
+    spawned_from=${spawned_from##/tmp/lbf/} ## remove /tmp/lbf/ from the start.
     #printf '\n%s %s\n' "spawned_from has some stripped off the start" "$spawned_from"
     while [[ "$spawned_from" = */* ]] && [[ "$spawned_from" = */*/*/* ]]  ## this if never triggers
+    ## we want this to be equivelent to */*/* so anything bigger will have a section stripped.
     do
         spawned_from=${spawned_from%/*}
         #printf '%s %s %s\n' "spawned_from has been changed to" "$spawned_from" "by removing all except three limiters."
     done
 }
 
-write_spawned_from() {
-    get_spawned_from
+write_spawned_from() { ## writes the spawned from file.
+    get_spawned_from ## get the location in which this search spawned from.
     if [[ "$spawned_from" != "" ]]
+    ## Only run this stuff if spawned from is not blank.
     then
         if [[ "$spawned_from_file" = "" ]] && [[ "$tmpdir" != "" ]]
+        ## If the spawned_from file is blank and tmpdir is not blank
+        ## then set it and write the file.
         then
             spawned_from_file="$tmpdir/spawned_from"
         fi
@@ -332,14 +338,16 @@ write_spawned_from() {
             ##printf '\n%s %s\n' "This is the spawned from file:" "$spawned_from_file"
             #touch "$spawned_from_file"
         #fi
+        ## write the information to the spawned from file.
         printf '%s\n' "$spawned_from" >> "$spawned_from_file"
     fi
 }
 
-write_group_file() {
-    get_repo
-    get_spawned_from
+write_group_file() { ## This function writes the group file.
+    get_repo ## get the repo
+    get_spawned_from ## get the spawned from.
     #printf '%s %s %s %s\n' "Writing these entries to the group file:" "$origin" "$spawned_from" "$repo"
+    ## write them to the group file.
     printf '%s %s %s\n' "$origin" "$spawned_from" "$repo" >> "$group_file"
     #read < /dev/tty
 }
@@ -348,15 +356,19 @@ write_group_file() {
 ## iterations of this program.
 create_origins() { ## creates an origin set that gathers data used in nesting.
     #printf '\n%s\n' "Running create_origins: "
+    ## make sure depbase and depname are unset.
     unset depbase depname
     #printf '\n%s %s\n' "tmpdir set to:" "$tmpdir"
-        
+        ## check whether the program name has already been written to the origin file.
         check_todo "$origin" "$origin_file"
         if [[ "$match" = "0" ]]
+        ## if the program has not been put into the origin file already.
         then
             if [[ ! -d "$tmpdir" ]]
+            ## check if tmpdir exists.
             then
                 #printf '\n%s %s\n' "creating tmpdir directory:" "$tmpdir"
+                ## create tmpdir.
                 mkdir -p "$tmpdir"
                 #read
             fi
