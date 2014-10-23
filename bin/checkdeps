@@ -275,7 +275,7 @@ check_todo(){ ## checks if the file has already been scanned or not.
                     match="0"
                 fi
             fi
-        done < "$check_file" ## This sends what file to read in the while loop.
+        done < "$check_file" ## This sends the file to read in the while loop. This is where line comes from.
     fi
     #printf '\n%s %s%s %s\n' "This is the check done status for" "$check_match" ":" "$match"
     #read
@@ -373,15 +373,19 @@ create_origins() { ## creates an origin set that gathers data used in nesting.
                 #read
             fi
         fi
-        get_repo
+        
+        get_repo ## grab the repo information.
         if [[ ! -f "$repo_file" ]]
+        ## if the repo file does not exist then write the appropriate information to it.
         then
             printf '%s\n' "$repo" > "$repo_file"
             printf '%s\n' "$searchdir" >> "$repo_file"
         fi
         if [[ ! -f "$origin_file" ]]
+        ## if the origin file does not exist then write the appropriate information to it.
         then
-            if [[ ! "$origin" = "" ]]
+            if [[ "$origin" != "" ]]
+            ## make sure the origin is not blank before writing the file.
             then
                 touch "$origin_file"
                 write_provides
@@ -390,8 +394,13 @@ create_origins() { ## creates an origin set that gathers data used in nesting.
                 write_spawned_from
             fi
         elif [[ -f "$origin_file" ]]
+        ## If the origin file already exists we have no reason to touch
+        ## the file to make sure it exists.
+        ## This writes the needed information to the appropriate files.
         then
-            if [[ "$match" = "0" ]] && [[ ! "$origin" = "" ]]
+            if [[ "$match" = "0" ]] && [[ "$origin" != "" ]]
+            ## Makes sure the entry is not already in the origin file
+            ## and that the origin is not blank.
             then
                 write_provides
                 write_treeloc
@@ -400,11 +409,13 @@ create_origins() { ## creates an origin set that gathers data used in nesting.
             fi
         fi
         if [[ ! -f "$suborigin_file" ]]
+        ## if there is no suborigin file then write one.
         then
             #printf '\n%s %s\n' "suborigin_file is set to:" "$suborigin_file"
             printf '%s\n' "$origin" > "$suborigin_file"
         fi
         if [[ ! -f "$group_file" ]]
+        ## if there is no group file then write one.
         then
             #printf '\n%s %s %s %s\n' "Printing" "$origin" "to" "$group_file"
             
@@ -412,6 +423,7 @@ create_origins() { ## creates an origin set that gathers data used in nesting.
             
         fi
         if [[ ! -f "$origin_list_file" ]] && [[ ! -f "$origin_list_file_old" ]]
+        ## if there is no origin list file or old origin list file then we want to grab all dependencies.
         then
             for depbase in "${checkdeps_pkgbuild_array[@]}"; do ## allows us a start with all the dependency base names as defined in lbf.vars
                 if [[ "$i" = "" ]]
