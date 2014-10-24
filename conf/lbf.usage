@@ -36,6 +36,11 @@ Usage:			checkdeps <Options>
 
 Options:		
 
+				Although there are more flags than this used by the
+				program these are the only ones that should be used
+				by the user. All other flags are to be implemented
+				or used by the recursion mechanism.
+
 	-n			This flag is used to set the name of the package you are
 				either doing a check on the dependency chain or
 				gathering information. Leaving this blank will cause
