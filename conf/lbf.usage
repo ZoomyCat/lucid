@@ -26,6 +26,11 @@ Description:	checkdeps checks the depends, makedepends and
 				a package group. It also accumulates useful information
 				on every package that has been scanned into the
 				dependency chain tree that is then searchable.
+				
+				The current git location it scans is set to /var/abs and
+				the dependency chain tree is stored in /tmp/lbf but I
+				may change the location to be within /var so the files
+				are not removed when the user reboots.
 
 Usage:			checkdeps <Options>
 
@@ -37,10 +42,18 @@ Options:
 				the program to ask for a package name to search.
 	
 	-r			This will cause the program to go into recursive mode
-				for a single program dependency check.
+				for a single program dependency check. If the -g option
+				is used checkdeps automatically turns on recursive mode.
 		
 	-g			This will cause the program to go into recursive mode
-				for a package group eg. base base-devel.
+				for a package group eg. base base-devel. This mode
+				automatically turns on the -r flag.
+				
+	-s			This mode is to be used in conjunction with the -r and
+				-g flags. It will step through each iteration of the
+				recursion methods so once I have a verbose and/or debug
+				flag you can see what each iteration of the recursion
+				does.
 	
 	-i			This flag will produce information on the searched
 				program. It must be an entry that has already been
