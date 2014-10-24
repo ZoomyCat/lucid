@@ -9,10 +9,10 @@
 ## unset possibly used variables.
 unset pkgname depends makedepends checkdepends optdepends origin tmpdir origin_pass origin_set origin_list
 
-source /etc/lbf/lbf.vars ## This allows for the
-    ## usage of scanning an array of parameters to track in lbf.vars
+## This is needed for checkdeps_pkgbuild_array and checkdeps_array.
+source /etc/lbf/lbf.vars 
 
-## imported this to set gitrepodir.
+## imported this to set gitrepodir and tmpdir.
 source /etc/lbf/lbf.conf
 run_again="checkdeps"
 
