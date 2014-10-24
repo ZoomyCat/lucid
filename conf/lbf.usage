@@ -21,49 +21,42 @@ checkdeps_usage="
 Name: 			checkdeps
 
 Description:	checkdeps checks the depends, makedepends and
-				checkdepends of a PKGBUILD file. It will output
-				the dependencies to the screen if you use the verbose
-				flag. Otherwise it will only output to a file.
+				checkdepends of a PKGBUILD file. Checkdeps can operate
+				recursively on a single package or can operated via
+				a package group. It also accumulates useful information
+				on every package that has been scanned into the
+				dependency chain tree that is then searchable.
 
 Usage:			checkdeps <Options>
 
 Options:		
+
+	-n			This flag is used to set the name of the package you are
+				either doing a check on the dependency chain or
+				gathering information. Leaving this blank will cause
+				the program to ask for a package name to search.
+	
+	-r			This will cause the program to go into recursive mode
+				for a single program dependency check.
 		
-	-v 			This will turn on verbose mode. Displaying the results
-				to the screen.
-				
-	-p			This will activate in pretend mode. Without this 
-				activating verbose mode it will appear to do nothing.
-				
-	-o			Sets the package of the origin of this search. This is
-				for nested dependency searching. You should probably be
-				using lbf instead if you are trying to manually run this
-				flag. The algorithm should ideally set $origin as to be
-				used in a nested origin chain by the system.
-				
-				origin/origin/origin/origin essentially as the system
-				recursively finds a dependency chain that needs 
-				resolution. This combined with utilization of a tree
-				view could allow a visual view of dependency structures.
-				
-				This flag will accept a single argument but multiple
-				arguments can be sent with / as a delimiter as shown 
-				above. This contains the information at each stage of
-				the dependency scan within the PKGBUILD files.
-				
+	-g			This will cause the program to go into recursive mode
+				for a package group eg. base base-devel.
+	
+	-i			This flag will produce information on the searched
+				program. It must be an entry that has already been
+				populated by one of the non informational flags.
 
 Examples:
 
 		checkdeps
 		
-		checkdeps -v
+		checkdeps -n gcc
 		
-		checkdeps -p
+		checkdeps -rn gcc
 		
-		checkdeps -o gcc
+		checkdeps -gn base-devel
 		
-		checkdeps -o gcc/doxygen
-
+		checkdeps -in gcc
 		
 "
 
