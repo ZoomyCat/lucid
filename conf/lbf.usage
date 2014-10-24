@@ -43,8 +43,13 @@ Options:
 
 	-n			This flag is used to set the name of the package you are
 				either doing a check on the dependency chain or
-				gathering information. Leaving this blank will cause
-				the program to ask for a package name to search.
+				gathering information.
+				
+				This flag should be the last one used and is the only
+				flag that takes an argument. 
+				
+				Leaving this blank will cause the program to ask for a 
+				package name to search.
 	
 	-r			This will cause the program to go into recursive mode
 				for a single program dependency check. If the -g option
