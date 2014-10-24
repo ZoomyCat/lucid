@@ -9,13 +9,12 @@
 ## unset possibly used variables.
 unset pkgname depends makedepends checkdepends optdepends origin tmpdir origin_pass origin_set origin_list
 
-source /home/edge226/github/lucid/conf/lbf.vars ## This allows for the
+source /etc/lbf/lbf.vars ## This allows for the
     ## usage of scanning an array of parameters to track in lbf.vars
 
 ## imported this to set gitrepodir.
-source /home/edge226/github/lucid/conf/lbf.conf
-run_again="/home/edge226/github/lucid/bin/checkdeps"
-#recurse="/home/edge226/github/lucid/bin/recursedeps"
+source /etc/lbf/lbf.conf
+run_again="checkdeps"
 
 unset searchdir
 origin=""
@@ -38,7 +37,7 @@ while getopts "t:f:n:o:S:G:rRsgivph" opt; do  ## Standard getopts while loops fo
         G)  group_file=$OPTARG;;        
         i)  info="yes";;
         R)  create_repo="yes";;
-        L)  layer=$OPTARG;;
+        L)  level=$OPTARG;;
         r)  recursive="yes";;
         h)  printf '%s\n' "$checkdeps_usage"; exit 0;;
         \?) printf '%s\n' "$checkdeps_usage" >&2; exit 1;;
