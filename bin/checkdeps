@@ -10,7 +10,7 @@
 unset pkgname depends makedepends checkdepends optdepends origin tmpdir origin_pass origin_set origin_list
 
 ## This is needed for checkdeps_pkgbuild_array and checkdeps_array.
-source /etc/lbf/lbf.vars 
+source /etc/lbf/lbf.vars
 
 ## imported this to set gitrepodir and tmpdir.
 source /etc/lbf/lbf.conf
@@ -34,7 +34,7 @@ while getopts "t:f:n:o:S:G:rRsgivph" opt; do  ## Standard getopts while loops fo
         s)  step="yes";;
         g)  create_group="yes"
             recursive="yes";;
-        G)  group_file=$OPTARG;;        
+        G)  group_file=$OPTARG;;
         i)  info="yes";;
         R)  create_repo="yes";;
         L)  level=$OPTARG;;
@@ -48,16 +48,16 @@ check_name_set() { ## Name is the main input method.
     ## This function determines if the name has been set or not.
     ## This logic could be used to check any needed variable I simply
     ## use it to check the name.
-    
+
     ## Sets the default for empty_name since it is global.
     empty_name="0"
-    ## Checks the checkdeps_vars array in lbf.vars which is used to 
-    ## verify the required variables are set. 
+    ## Checks the checkdeps_vars array in lbf.vars which is used to
+    ## verify the required variables are set.
     for flag_set in "${checkdeps_vars[@]}"; do
         typeset -n local ref="$flag_set" ## This makes it so we can use the inside information.
         ## Many variables are set to yes or no. This strips out those entries. It is done to prevent useless debug information.
         if [[ ! "$ref" = "no" ]] && [[ ! "$ref" = "yes" ]]
-        then 
+        then
             #printf '\n%s %s\n' "Calculating variables:" "$ref"
             if [[ "$ref" = "" ]] && [[ "$empty_name" != "1" ]]
             ## This statement makes sure the name has not already been set
@@ -70,29 +70,29 @@ check_name_set() { ## Name is the main input method.
             ## This specifically checks against the name variable.
             then
                 #printf "Setting empty_name to 1\n"
-                empty_name="1" 
+                empty_name="1"
             fi
         fi
     done
 }
 
 create_group_origin() { ## sets all information if a group name is sent
-    ## to $name with the -g flag. eg. checkdeps -gn base 
-    
+    ## to $name with the -g flag. eg. checkdeps -gn base
+
     ## groupname is set to packages in the name of the group passed to
     ## checkdeps. It is only used within this function so it is set to local.
     ## This means it will not show up outside this function.
     local groupname=( $( pacman -Ssgq "$name" ) )
     printf '\n%s %s\n' "This will scan everything in group" "$name"
     #printf '%s\n' "${groupname[@]}"
-    
+
     ## Sets the minimum amount of informational files required to initiate
     ## a recursion scan.
     origin_file="$tmpdir/origin"
     suborigin_file="$tmpdir/suborigin"
     origin_tmpdir="$tmpdir"
     group_file="$tmpdir/origin_$name"
-    
+
     ## Scans through the groupname array.
     for depname in "${groupname[@]}"; do
         ## Check whether $depname needs action taken based upon the iteration.
@@ -140,7 +140,7 @@ set_params() {
             done
         fi
     fi
-    
+
     if [[ ! "$name" = "" ]]
     ## name should no longer be blank so we can continue with setting the parameters.
     then
@@ -151,7 +151,7 @@ set_params() {
             ## make sure not to attept to create a directory tree if the user only wants information.
             then
                 if [[ "$origin_file" = "" ]]
-				## sets the origin file location if it is not set.
+        ## sets the origin file location if it is not set.
                 then
                     origin_file="$tmpdir/origin"
                 fi
@@ -175,9 +175,9 @@ set_params() {
         then
             searchdir=$( find "$gitrepodir" -name "$name" -type d -print0 )
             #printf '\n%s %s\n' "Setting searchdir to:" "$searchdir"
-        fi  
+        fi
     fi
-    
+
     if [[ "$searchdir" != "" ]]
     ## What to do if the searchdir has been set correctly.
     then
@@ -198,11 +198,11 @@ set_params() {
             #ls -ld ./PKGBUILD
         elif [[ ! -f ./PKGBUILD ]]
         ## Sets the action to take if the PKGBUILD file does not exist.
-        then 
+        then
             printf '%s\n' "This PKGBUILD file does not exist."
             printf '%s\n' "$checkdeps_usage" >&2; exit 1
         fi
-        
+
         if [[ "$origin" = "" ]]
         ## some PKGBUILD files create multiple packages. This makes sure
         ## we do not get false data and write a correct entry.
@@ -222,7 +222,7 @@ set_params() {
             #printf '\n%s\n' "privides is set to:"
             #printf '%s\n' "${provides[@]}"
         fi
-        
+
         if [[ "$origin_list_file" = "" ]]
         ## sets the origin list file if it is not set.
         then
@@ -237,7 +237,7 @@ set_params() {
         if [[ "$repo_file" = "" ]]
         ## sets the repo file if it is not set.
         then
-            repo_file="$tmpdir/repo"            
+            repo_file="$tmpdir/repo"
         fi
         if [[ "$group_file" = "" ]]
         ## sets the group file if it is not set.
@@ -253,7 +253,7 @@ set_params() {
 
 check_todo(){ ## checks if the file has already been scanned or not.
     local check_match="$1" ## The entry sent to check against.
-    local check_file="$2"  ## The file sent to check against. 
+    local check_file="$2"  ## The file sent to check against.
     match="0" ## Reset the parameter in case we have already checked something else.
     if [[ -f "$check_file" ]]
     ## make sure the file sent to check against exists.
@@ -280,12 +280,12 @@ check_todo(){ ## checks if the file has already been scanned or not.
     #read
 }
 
-write_provides(){ ## writes the package names that the pkgbuild compile will provide. 
+write_provides(){ ## writes the package names that the pkgbuild compile will provide.
     for pkg in "${provides_array[@]}"; do ## scan through provies array.
         if [[ "$pkg" != "" ]]
         ## Check if the name is not blank.
         then
-			## Write the provides and origin files.
+      ## Write the provides and origin files.
             printf '%s\n' "$pkg" >> "$provides_file"
             printf '%s\n' "$pkg" >> "$origin_file"
         fi
@@ -372,7 +372,7 @@ create_origins() { ## creates an origin set that gathers data used in nesting.
                 #read
             fi
         fi
-        
+
         get_repo ## grab the repo information.
         if [[ ! -f "$repo_file" ]]
         ## if the repo file does not exist then write the appropriate information to it.
@@ -417,15 +417,15 @@ create_origins() { ## creates an origin set that gathers data used in nesting.
         ## if there is no group file then write one.
         then
             #printf '\n%s %s %s %s\n' "Printing" "$origin" "to" "$group_file"
-            
+
             printf '%s %s\n' "$origin" "$repo" > "$group_file"
-            
+
         fi
         if [[ ! -f "$origin_list_file" ]] && [[ ! -f "$origin_list_file_old" ]]
         ## if there is no origin list file or old origin list file then we want to grab all dependencies.
         then
         ## allows us a start with all the dependency base names as defined in lbf.vars
-            for depbase in "${checkdeps_pkgbuild_array[@]}"; do 
+            for depbase in "${checkdeps_pkgbuild_array[@]}"; do
                 if [[ "$i" = "" ]]
                 ## Keep a record of the for loop increment. This is used
                 ## To keep checkdeps_array in line with the checkdeps_pkgbuild_array
@@ -434,8 +434,8 @@ create_origins() { ## creates an origin set that gathers data used in nesting.
                 fi
                 ## this allows the proceeding for loop to activate correctly.
                 ## by referencing what is actually in depbase.
-                typeset -n local ref="$depbase" 
-                
+                typeset -n local ref="$depbase"
+
                 for dep in "${ref[@]}"; do ## sets origin_set.
                     local depname=${dep%%[<>=]*} ## Removes versioning if neccessary.
                     find_nextsearchdir "$depname" ## Finds the next search directory.
@@ -446,13 +446,13 @@ create_origins() { ## creates an origin set that gathers data used in nesting.
                         check_todo "$depname" "$suborigin_file"
                         if [[ "$match" = "0" ]]
                         then
-						## Write the origin list and suborigin file.
-                            printf '%s\n' "$depname" >> "$origin_list_file"
-                            printf '%s\n' "$depname" >> "$suborigin_file"
-                            #printf '\n%s %s\n' "Creating directory:" "$tmpdir/$depbase/$depname"
-                            ## create the directory structure.
-                            mkdir -p "$tmpdir/$depbase/$depname"
-                            #read
+                          ## Write the origin list and suborigin file.
+                          printf '%s\n' "$depname" >> "$origin_list_file"
+                          printf '%s\n' "$depname" >> "$suborigin_file"
+                          #printf '\n%s %s\n' "Creating directory:" "$tmpdir/$depbase/$depname"
+                          ## create the directory structure.
+                          mkdir -p "$tmpdir/$depbase/$depname"
+                          #read
                         fi
                     fi
                     ## print the name to checkdeps_array as defined in lbf.vars
@@ -486,7 +486,7 @@ recurse() {
     ## I am pretty sure I was setting this up to be able to reference
     ## allowing only a certain number of runs to be sent through the
     ## system.
-    then 
+    then
         local i=0
     fi
     ## Make sure you can find origin lists and loop through them.
@@ -505,13 +505,13 @@ recurse() {
             then
                 while IFS= read -r dep; do ## read each line of the origin list.
                     if [[ "$dep" != "" ]]
-					## make sure the entry is not blank.
+                      ## make sure the entry is not blank.
                     then
                     ## Make sure the dep is not already in origin file.
                         check_todo "$dep" "$origin_file"
                         if [[ "$match" = "0" ]]
                         then
-							## find the next tmpdir location as created in the current iteration of the program.
+                            ## find the next tmpdir location as created in the current iteration of the program.
                             tmpdir=$( find "$origin_tmpdir" -name "$dep" -type d -print0 )
                             #printf '\n sending tmpdir as searched from origin_tmpdir as searched from %s: \n%s\n%s\n' "$dep" "$tmpdir" "$origin_tmpdir"
                             ## set the options in which checkdeps should use on the next run.
@@ -527,12 +527,12 @@ recurse() {
                             then
                                 run_again_opts+=( "-s" "$step" )
                             fi
-                            #printf '\n%s\n' "run_again_opts equals:"           
+                            #printf '\n%s\n' "run_again_opts equals:"
                             #printf '%s\n' "${run_again_opts[@]}"
                             ## do the next run of the program.
                             "$run_again" "${run_again_opts[@]}"
                         fi
-                    fi              
+                    fi
                 done < "$origin_list_file" ## read the origin list file into the while loop.
                 if [[ "$origin_list_old" = "" ]]
                 ## Check if origin list old has been set and if not set it so we do not redundantly
@@ -553,7 +553,7 @@ recurse() {
 }
 
 give_info() { ## Get the information we created during the scans and print it.
-	## info dir will contain the directory that the created files are located.
+  ## info dir will contain the directory that the created files are located.
     local info_dir=$( find "$tmpdir" -name "$name" -type d -print0 )
     cd "$info_dir" || exit ## cd into the directory if it exists, if not exit.
     ## check all files in the info_dir.
@@ -562,9 +562,9 @@ give_info() { ## Get the information we created during the scans and print it.
         ## make sure this is not a directory because we will be printing out information
         ## that comes from a file.
         then
-			## make sure we do not print old origin lists, suborigins or origins.
-			## These files contain a lot of data that is used for logic and not
-			## used for useful display information.
+      ## make sure we do not print old origin lists, suborigins or origins.
+      ## These files contain a lot of data that is used for logic and not
+      ## used for useful display information.
             if [[ "$file" != "origin_list_old" ]]
             then
                 if [[ "$file" != "origin" ]]
@@ -601,7 +601,7 @@ setup(){
     fi
     if [[ "$recursive" = "yes" ]]
     then
-		## recurse if neccessary.
+    ## recurse if neccessary.
         recurse
     fi
 }
