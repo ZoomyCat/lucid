@@ -1,7 +1,7 @@
 This build tool interfaces with devtools. It is complete awesomeness.
 
 Things in bin are meant to be interfaced with either automatically or
-manually if required. These things should be put in /usr/bin.
+manually if required. These things should be put in /usr/local/bin
 
 Things in conf are config files to be put in /etc/lb/ and are currently hardcoded to only operate correctly if placed in the correct directory.
 
