@@ -10,5 +10,4 @@ pkg
 *.log
 *~
 .lock
-#mbuild.conf
-/.project
+ghmd-ccs
