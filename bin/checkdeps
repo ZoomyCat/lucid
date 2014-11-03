@@ -425,7 +425,8 @@ create_origins() { ## creates an origin set that gathers data used in nesting.
         ## if there is no origin list file or old origin list file then we want to grab all dependencies.
         then
         ## allows us a start with all the dependency base names as defined in lbf.vars
-            for depbase in "${checkdeps_pkgbuild_array[@]}"; do
+            for depbase in "${checkdeps_pkgbuild_array[@]}"
+            do
                 if [[ "$i" = "" ]]
                 ## Keep a record of the for loop increment. This is used
                 ## To keep checkdeps_array in line with the checkdeps_pkgbuild_array
@@ -606,14 +607,17 @@ setup(){
     fi
 }
 
-if [[ "$info" != "yes" ]]
-## if the user is not looking for information then run the setup.
-then
-    setup
-fi
-if [[ "$info" = "yes" ]]
-## if the user requested information then give them info.
-then
-    give_info
-fi
-exit 0
+main(){
+  if [[ "$info" != "yes" ]]
+  ## if the user is not looking for information then run the setup.
+  then
+      setup
+  fi
+  if [[ "$info" = "yes" ]]
+  ## if the user requested information then give them info.
+  then
+      give_info
+  fi
+  exit 0
+}
+main
