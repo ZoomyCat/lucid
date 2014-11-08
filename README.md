@@ -1,4 +1,4 @@
-## Lucid information.
+## Lucid Roadmap.
 
 ### Why change things?
 With me using GitHub to host my website it becomes almost required to split things off into many repositories. I guess this goes in line with making things as modular as possible.
@@ -11,4 +11,4 @@ With me using GitHub to host my website it becomes almost required to split thin
 * Moving all documentation into the appropriate places with a corresponding website.
 
 ### What this means in terms I can understand.
-This repository will disappear after it is modularized into seperate sections.
+This repository will continue to exist after it is modularized into seperate sections for learning purposes. Development will Continue on the split repositories.
