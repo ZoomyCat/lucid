@@ -27,10 +27,11 @@ fi
 
 for type in "${install_array[@]}"
   do
+    ## I do this eval so I can reference the location in the config file that $type points to.
     eval "ref=\$$type"
-    if [[ -d "$ref" ]]
+    if [[ ! -d "$ref" ]]
       then
-      ## printf '\n%s %s\n\n' "Creating directory:" "$ref"
+      printf '\n%s %s\n\n' "Creating directory:" "$ref"
       mkdir -p "$ref"
     fi
   ## printf '\n%s %s\n\n' "The type of type is:" "$type"
@@ -43,7 +44,9 @@ for type in "${install_array[@]}"
     done
   fi
   ## add installation stuff here.
+  printf '\n%s %s %s %s\n' "rsyncing files from" "$type" "to" "$ref"
   rsync -rvp "${source[@]}" "$ref/"
+  printf '\n'
 
 unset source
 unset -n ref

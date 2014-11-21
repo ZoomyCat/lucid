@@ -49,14 +49,14 @@ if [[ ! "$pretend" = "yes" ]]; then ## Only check if they do not want pretend mo
     if [[ -f "$url" ]]; then ## If the entry in the sources is a file and exists.
       if [[ "$verbose" = "yes" ]]; then
         printf "%s exists!\n" "$url"
-      elif [[ "$verbose" = "yes" ]] || [[ ! "$verbose" = "yes" ]]; then
+      elif [[ ! "$verbose" = "yes" ]]; then
         printf "%s exists!\n" "$url" >> "$slog" ## Print if it exists!
       fi
     else ## Everything else should be a URL that is parsed through wget.
       if wget --spider -q "$url"; then ## This will end up outputting to a log file in lucid-build.
         if [[ "$verbose" = "yes" ]]; then
           printf "%s exists!\n" "$url"
-        elif [[ "$verbose" = "yes" ]] || [[ ! "$verbose" = "yes" ]]; then
+        elif [[ ! "$verbose" = "yes" ]]; then
           printf "%s exists!\n" "$url" >> "$slog" ## Print if it exists!
           fi
       else

@@ -82,3 +82,16 @@ Examples:
     checkdeps -in gcc
 
 "
+
+checklinks_usage="
+Name:     check-links
+
+Description:    Verifies the existence of all files needed to preform a buld on a package. This program needs a little work.
+
+Usage:    check-links -vn <program name>.
+
+Options: See above. Thats the only thing that works right now.
+
+Examples:  See usage.
+
+"
