@@ -43,7 +43,8 @@ for type in "${install_array[@]}"
     done
   fi
   ## add installation stuff here.
-  rsync -rvplH "${source[@]}" "$ref/"
+  rsync -rvp "${source[@]}" "$ref/"
+
 unset source
 unset -n ref
 done
