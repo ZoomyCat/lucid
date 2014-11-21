@@ -14,6 +14,7 @@ source /etc/lbf/lbf.vars
 
 ## imported this to set gitrepodir and tmpdir.
 source /etc/lbf/lbf.conf
+source /etc/lbf/lbf.usage
 run_again="checkdeps"
 
 unset searchdir
