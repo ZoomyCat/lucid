@@ -13,4 +13,4 @@ pkg
 #mbuild.conf
 /.project
 .tags
-./ghmd-css
+ghmd-css

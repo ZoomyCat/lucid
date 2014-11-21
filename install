@@ -48,5 +48,3 @@ for type in "${install_array[@]}"
 unset source
 unset -n ref
 done
-
-read
